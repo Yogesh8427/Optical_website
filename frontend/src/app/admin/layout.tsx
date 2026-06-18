@@ -2,6 +2,7 @@
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import AdminSidebar from '@/components/layout/AdminSidebar';
+import AdminHeader from '@/components/layout/AdminHeader';
 import { useAuthStore } from '@/store/authStore';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -13,9 +14,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   if (pathname === '/admin/login') return <>{children}</>;
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-slate-50">
       <AdminSidebar />
-      <main className="flex-1 bg-gray-50 p-6 overflow-auto">{children}</main>
+      <div className="flex-1 flex flex-col min-w-0">
+        <AdminHeader />
+        <main className="flex-1 p-6 overflow-auto">{children}</main>
+      </div>
     </div>
   );
 }
