@@ -75,6 +75,8 @@ export interface Inquiry {
   phone: string;
   email: string;
   city: string;
+  selectedColor: string;
+  selectedSize: string;
   powerRequired: boolean;
   prescriptionFile: string;
   rightEye: EyePrescription;
@@ -154,6 +156,8 @@ export interface DashboardStats {
 export interface WizardFormData {
   frameId: string;
   frameName: string;
+  selectedColor: string;
+  selectedSize: string;
   powerRequired: boolean;
   prescriptionMethod: 'upload' | 'manual' | null;
   prescriptionFile: File | null;

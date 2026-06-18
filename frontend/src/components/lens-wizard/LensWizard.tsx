@@ -16,6 +16,8 @@ const EMPTY_EYE = { sph: '', cyl: '', axis: '' };
 const defaultData: WizardFormData = {
   frameId: '',
   frameName: '',
+  selectedColor: '',
+  selectedSize: '',
   powerRequired: false,
   prescriptionMethod: null,
   prescriptionFile: null,
@@ -34,13 +36,15 @@ const defaultData: WizardFormData = {
 interface Props {
   frameId: string;
   frameName: string;
+  selectedColor?: string;
+  selectedSize?: string;
   open: boolean;
   onClose: () => void;
 }
 
-export default function LensWizard({ frameId, frameName, open, onClose }: Props) {
+export default function LensWizard({ frameId, frameName, selectedColor = '', selectedSize = '', open, onClose }: Props) {
   const [step, setStep] = useState(1);
-  const [data, setData] = useState<WizardFormData>({ ...defaultData, frameId, frameName });
+  const [data, setData] = useState<WizardFormData>({ ...defaultData, frameId, frameName, selectedColor, selectedSize });
 
   function update(partial: Partial<WizardFormData>) {
     setData((d) => ({ ...d, ...partial }));
@@ -64,7 +68,7 @@ export default function LensWizard({ frameId, frameName, open, onClose }: Props)
 
   function handleClose() {
     setStep(1);
-    setData({ ...defaultData, frameId, frameName });
+    setData({ ...defaultData, frameId, frameName, selectedColor, selectedSize });
     onClose();
   }
 

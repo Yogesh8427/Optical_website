@@ -1,14 +1,16 @@
+import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import type { WizardFormData } from '@/types';
 
 interface Props { data: WizardFormData; onUpdate: (p: Partial<WizardFormData>) => void; onNext: () => void; onBack: () => void; }
 
 export default function Step2PrescriptionMethod({ data, onUpdate, onNext, onBack }: Props) {
-  // If no power needed skip straight to lens brand step
-  if (!data.powerRequired) {
-    onNext(); // step 3 → will go to step 4 handled by parent routing
-    return null;
-  }
+  // If no power needed, skip straight to lens brand step after render
+  useEffect(() => {
+    if (!data.powerRequired) onNext();
+  }, [data.powerRequired, onNext]);
+
+  if (!data.powerRequired) return null;
 
   function choose(method: 'upload' | 'manual') {
     onUpdate({ prescriptionMethod: method });

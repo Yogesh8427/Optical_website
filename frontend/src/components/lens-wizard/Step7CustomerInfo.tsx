@@ -30,6 +30,8 @@ export default function Step7CustomerInfo({ data, onBack, onClose }: Props) {
   function onSubmit(values: FormValues) {
     const form = new FormData();
     form.append('frameId', data.frameId);
+    if (data.selectedColor) form.append('selectedColor', data.selectedColor);
+    if (data.selectedSize)  form.append('selectedSize',  data.selectedSize);
     form.append('powerRequired', String(data.powerRequired));
     if (data.prescriptionFile) form.append('prescriptionFile', data.prescriptionFile);
     if (data.powerRequired) {

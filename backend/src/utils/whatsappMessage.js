@@ -1,14 +1,17 @@
 function buildWhatsAppUrl(whatsappNumber, inquiry) {
-  const { frameName, powerRequired, lensBrand, lensTypes, customerName, phone } = inquiry;
+  const { frameName, selectedColor, selectedSize, powerRequired, lensBrand, lensTypes, customerName, phone } = inquiry;
 
   const message = [
     'Hello,',
     'I am interested in the following frame:',
     '',
     `Frame: ${frameName}`,
+    selectedColor ? `Color: ${selectedColor}` : null,
+    selectedSize  ? `Size: ${selectedSize}`   : null,
     `Need Power: ${powerRequired ? 'Yes' : 'No'}`,
     lensBrand ? `Lens Brand: ${lensBrand}` : null,
     lensTypes?.length ? `Lens Types: ${lensTypes.join(', ')}` : null,
+    '',
     `Customer Name: ${customerName}`,
     `Phone: ${phone}`,
     '',

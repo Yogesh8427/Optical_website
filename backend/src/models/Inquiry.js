@@ -21,6 +21,8 @@ const inquirySchema = new mongoose.Schema(
     rightEye: { type: eyeSchema, default: () => ({}) },
     leftEye: { type: eyeSchema, default: () => ({}) },
     add: { type: String, default: '' },
+    selectedColor: { type: String, default: '' },
+    selectedSize: { type: String, default: '' },
     lensBrandId: { type: mongoose.Schema.Types.ObjectId, ref: 'LensBrand', default: null },
     lensTypes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'LensType' }],
     notes: { type: String, default: '' },

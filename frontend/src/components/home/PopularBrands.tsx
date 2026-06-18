@@ -37,21 +37,23 @@ export default function PopularBrands() {
             <Link
               key={brand._id}
               href={`/products?brand=${brand._id}`}
-              className="group flex flex-col items-center gap-3 w-36 py-5 px-3 rounded-2xl border border-gray-100 bg-white hover:shadow-lg hover:-translate-y-1 transition-all duration-200"
+              className="group flex flex-col items-center gap-3 w-40 pb-4 rounded-2xl border border-gray-100 bg-white hover:shadow-lg hover:-translate-y-1 transition-all duration-200 overflow-hidden"
             >
               {/* Logo or initials fallback */}
-              <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-gray-50 border border-gray-100 flex items-center justify-center">
+              <div className="relative w-full h-28 rounded-xl overflow-hidden bg-gray-100">
                 {brand.logo ? (
                   <Image
                     src={brand.logo}
                     alt={brand.name}
                     fill
-                    className="object-contain p-1 group-hover:scale-105 transition-transform duration-300"
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 ) : (
-                  <span className="text-xl font-bold text-gray-500">
-                    {getInitials(brand.name)}
-                  </span>
+                  <div className="w-full h-full flex items-center justify-center">
+                    <span className="text-2xl font-bold text-gray-400">
+                      {getInitials(brand.name)}
+                    </span>
+                  </div>
                 )}
               </div>
 

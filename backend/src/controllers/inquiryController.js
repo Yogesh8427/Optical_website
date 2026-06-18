@@ -12,6 +12,7 @@ exports.create = async (req, res, next) => {
       frameId, customerName, phone, email, city,
       powerRequired, rightEye, leftEye, add,
       lensBrandId, lensTypes, notes,
+      selectedColor, selectedSize,
     } = req.body;
 
     let prescriptionFile = '';
@@ -28,6 +29,8 @@ exports.create = async (req, res, next) => {
       rightEye: rightEye ? (typeof rightEye === 'string' ? JSON.parse(rightEye) : rightEye) : {},
       leftEye: leftEye ? (typeof leftEye === 'string' ? JSON.parse(leftEye) : leftEye) : {},
       add, lensBrandId, lensTypes, notes,
+      selectedColor: selectedColor || '',
+      selectedSize: selectedSize || '',
     });
 
     // Build WhatsApp URL
@@ -41,6 +44,8 @@ exports.create = async (req, res, next) => {
     const whatsappUrl = settings?.whatsappNumber
       ? buildWhatsAppUrl(settings.whatsappNumber, {
           frameName: frame?.name || 'Unknown',
+          selectedColor: selectedColor || '',
+          selectedSize: selectedSize || '',
           powerRequired: powerRequired === 'true' || powerRequired === true,
           lensBrand: lensBrand?.name || '',
           lensTypes: lensTypesDocs.map((t) => t.name),

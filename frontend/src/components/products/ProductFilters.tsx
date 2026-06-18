@@ -35,8 +35,14 @@ export default function ProductFilters({ filters, onChange, onReset }: Props) {
     <div className="space-y-5">
       <div>
         <Label className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2 block">Category</Label>
-        <Select value={filters.category} onValueChange={(v) => set('category', v)}>
-          <SelectTrigger><SelectValue placeholder="All Categories" /></SelectTrigger>
+        <Select value={filters.category || 'all'} onValueChange={(v) => set('category', v === 'all' ? '' : v)}>
+          <SelectTrigger>
+            <span className="text-sm">
+              {filters.category
+                ? (categories.find((c) => c._id === filters.category)?.name ?? 'All Categories')
+                : 'All Categories'}
+            </span>
+          </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Categories</SelectItem>
             {categories.map((c) => <SelectItem key={c._id} value={c._id}>{c.name}</SelectItem>)}
@@ -46,8 +52,14 @@ export default function ProductFilters({ filters, onChange, onReset }: Props) {
 
       <div>
         <Label className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2 block">Brand</Label>
-        <Select value={filters.brand} onValueChange={(v) => set('brand', v)}>
-          <SelectTrigger><SelectValue placeholder="All Brands" /></SelectTrigger>
+        <Select value={filters.brand || 'all'} onValueChange={(v) => set('brand', v === 'all' ? '' : v)}>
+          <SelectTrigger>
+            <span className="text-sm">
+              {filters.brand
+                ? (brands.find((b) => b._id === filters.brand)?.name ?? 'All Brands')
+                : 'All Brands'}
+            </span>
+          </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Brands</SelectItem>
             {brands.map((b) => <SelectItem key={b._id} value={b._id}>{b.name}</SelectItem>)}

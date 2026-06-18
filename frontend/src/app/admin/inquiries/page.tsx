@@ -44,6 +44,7 @@ export default function InquiriesPage() {
             <tr>
               <th className="px-4 py-3 text-left text-gray-600 font-medium">Customer</th>
               <th className="px-4 py-3 text-left text-gray-600 font-medium">Frame</th>
+              <th className="px-4 py-3 text-left text-gray-600 font-medium">Color / Size</th>
               <th className="px-4 py-3 text-left text-gray-600 font-medium">Phone</th>
               <th className="px-4 py-3 text-left text-gray-600 font-medium">Power?</th>
               <th className="px-4 py-3 text-left text-gray-600 font-medium">Status</th>
@@ -58,6 +59,11 @@ export default function InquiriesPage() {
               <tr key={inq._id} className="hover:bg-gray-50">
                 <td className="px-4 py-3 font-medium text-gray-900">{inq.customerName}</td>
                 <td className="px-4 py-3 text-gray-600 max-w-[140px] truncate">{inq.frameId?.name ?? '—'}</td>
+                <td className="px-4 py-3 text-gray-600 text-xs">
+                  {inq.selectedColor && <span className="block">🎨 {inq.selectedColor}</span>}
+                  {inq.selectedSize  && <span className="block">📐 {inq.selectedSize}</span>}
+                  {!inq.selectedColor && !inq.selectedSize && <span className="text-gray-300">—</span>}
+                </td>
                 <td className="px-4 py-3 text-gray-600">{inq.phone}</td>
                 <td className="px-4 py-3 text-gray-600">{inq.powerRequired ? 'Yes' : 'No'}</td>
                 <td className="px-4 py-3">
@@ -96,6 +102,8 @@ export default function InquiriesPage() {
                 <div><p className="text-gray-500">Email</p><p className="font-medium">{selected.email || '—'}</p></div>
                 <div><p className="text-gray-500">City</p><p className="font-medium">{selected.city || '—'}</p></div>
                 <div><p className="text-gray-500">Frame</p><p className="font-medium">{selected.frameId?.name ?? '—'}</p></div>
+                {selected.selectedColor && <div><p className="text-gray-500">Color</p><p className="font-medium">{selected.selectedColor}</p></div>}
+                {selected.selectedSize  && <div><p className="text-gray-500">Size</p><p className="font-medium">{selected.selectedSize}</p></div>}
                 <div><p className="text-gray-500">Power Required</p><p className="font-medium">{selected.powerRequired ? 'Yes' : 'No'}</p></div>
                 {selected.lensBrandId && <div><p className="text-gray-500">Lens Brand</p><p className="font-medium">{selected.lensBrandId.name}</p></div>}
                 {selected.lensTypes?.length > 0 && <div className="col-span-2"><p className="text-gray-500">Lens Types</p><p className="font-medium">{selected.lensTypes.map((t) => t.name).join(', ')}</p></div>}
