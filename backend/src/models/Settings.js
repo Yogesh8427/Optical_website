@@ -14,6 +14,16 @@ const settingsSchema = new mongoose.Schema(
       youtube: { type: String, default: '' },
     },
     googleMapsUrl: { type: String, default: '' },
+    phone: { type: String, default: '' },
+    businessHours: { type: String, default: '' },
+    aboutContent: {
+      heading: { type: String, default: 'About Us' },
+      subheading: { type: String, default: '' },
+      body: { type: String, default: '' },
+      mission: { type: String, default: '' },
+      vision: { type: String, default: '' },
+      highlights: [{ type: String }],
+    },
     seoDefaults: {
       title: { type: String, default: '' },
       description: { type: String, default: '' },

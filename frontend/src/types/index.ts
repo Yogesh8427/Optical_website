@@ -95,8 +95,10 @@ export interface Settings {
   storeName: string;
   logo: string;
   whatsappNumber: string;
+  phone: string;
   email: string;
   address: string;
+  businessHours: string;
   socialLinks: {
     facebook: string;
     instagram: string;
@@ -104,6 +106,14 @@ export interface Settings {
     youtube: string;
   };
   googleMapsUrl: string;
+  aboutContent: {
+    heading: string;
+    subheading: string;
+    body: string;
+    mission: string;
+    vision: string;
+    highlights: string[];
+  };
   seoDefaults: {
     title: string;
     description: string;
