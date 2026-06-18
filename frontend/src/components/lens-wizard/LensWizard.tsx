@@ -74,7 +74,7 @@ export default function LensWizard({ frameId, frameName, selectedColor = '', sel
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         <DialogHeader>
           <DialogTitle className="text-lg">{getStepTitle()}</DialogTitle>
           <p className="text-sm text-gray-500">Step {step} of 7</p>
