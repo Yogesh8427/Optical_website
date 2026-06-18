@@ -1,0 +1,22 @@
+{
+  "name": "OptiVision — Premium Eyewear",
+  "short_name": "OptiVision",
+  "description": "Browse premium eyewear, customize lenses and get a quote via WhatsApp.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

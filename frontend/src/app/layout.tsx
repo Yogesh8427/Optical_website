@@ -9,6 +9,18 @@ const geist = Geist({ subsets: ['latin'], variable: '--font-geist' });
 export const metadata: Metadata = {
   title: 'OptiVision — Premium Eyewear',
   description: 'Browse our collection of premium eyewear frames. Customize lenses and get a personalized quote.',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'OptiVision',
+  },
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+  },
+  themeColor: '#2563eb',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

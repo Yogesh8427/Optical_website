@@ -1,54 +1,122 @@
 'use client';
 import Link from 'next/link';
-import { useState } from 'react';
-import { Menu, X, Eye } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
+import { Menu, X, Eye, Search, ShoppingBag } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const links = [
-  { href: '/', label: 'Home' },
+  { href: '/',         label: 'Home'     },
   { href: '/products', label: 'Products' },
-  { href: '/about', label: 'About' },
-  { href: '/contact', label: 'Contact' },
+  { href: '/about',    label: 'About'    },
+  { href: '/contact',  label: 'Contact'  },
 ];
 
 export default function Navbar() {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen]       = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const pathname              = usePathname();
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 10);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  // close drawer on route change
+  useEffect(() => { setOpen(false); }, [pathname]);
 
   return (
-    <nav className="sticky top-0 z-50 bg-white border-b shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <Link href="/" className="flex items-center gap-2 font-bold text-xl text-blue-700">
-            <Eye className="w-6 h-6" />
-            OptiVision
-          </Link>
+    <>
+      <nav className={cn(
+        'sticky top-0 z-50 transition-all duration-300',
+        scrolled
+          ? 'bg-white/95 backdrop-blur-md shadow-md border-b border-gray-100'
+          : 'bg-white border-b border-gray-100'
+      )}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
 
-          {/* Desktop */}
-          <div className="hidden md:flex items-center gap-6">
+            {/* Logo */}
+            <Link href="/" className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                <Eye className="w-5 h-5 text-white" />
+              </div>
+              <span className="font-bold text-xl text-gray-900 tracking-tight">Opti<span className="text-blue-600">Vision</span></span>
+            </Link>
+
+            {/* Desktop links */}
+            <div className="hidden md:flex items-center gap-1">
+              {links.map((l) => (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  className={cn(
+                    'px-4 py-2 rounded-lg text-sm font-medium transition-all',
+                    pathname === l.href
+                      ? 'text-blue-600 bg-blue-50'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  )}
+                >
+                  {l.label}
+                </Link>
+              ))}
+            </div>
+
+            {/* Desktop actions */}
+            <div className="hidden md:flex items-center gap-2">
+              <Link href="/products" className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">
+                <ShoppingBag className="w-4 h-4" />
+                Browse Frames
+              </Link>
+            </div>
+
+            {/* Mobile: search + hamburger */}
+            <div className="flex md:hidden items-center gap-1">
+              <Link href="/products" className="p-2 rounded-lg text-gray-600 hover:bg-gray-100">
+                <Search className="w-5 h-5" />
+              </Link>
+              <button
+                onClick={() => setOpen(!open)}
+                className="p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
+                aria-label="Menu"
+              >
+                {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile slide-down menu */}
+        <div className={cn(
+          'md:hidden overflow-hidden transition-all duration-300 bg-white border-t border-gray-100',
+          open ? 'max-h-80 opacity-100' : 'max-h-0 opacity-0'
+        )}>
+          <div className="px-4 py-3 space-y-1">
             {links.map((l) => (
-              <Link key={l.href} href={l.href} className="text-gray-600 hover:text-blue-700 font-medium transition-colors">
+              <Link
+                key={l.href}
+                href={l.href}
+                className={cn(
+                  'flex items-center px-3 py-2.5 rounded-xl text-sm font-medium transition-colors',
+                  pathname === l.href
+                    ? 'bg-blue-50 text-blue-600'
+                    : 'text-gray-700 hover:bg-gray-50'
+                )}
+              >
                 {l.label}
               </Link>
             ))}
-          </div>
-
-          {/* Mobile toggle */}
-          <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setOpen(!open)}>
-            {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </Button>
-        </div>
-      </div>
-
-      {/* Mobile menu */}
-      {open && (
-        <div className="md:hidden bg-white border-t px-4 pb-4">
-          {links.map((l) => (
-            <Link key={l.href} href={l.href} className="block py-2 text-gray-700 hover:text-blue-700 font-medium" onClick={() => setOpen(false)}>
-              {l.label}
+            <Link
+              href="/products"
+              className="flex items-center justify-center gap-2 mt-2 w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors"
+            >
+              <ShoppingBag className="w-4 h-4" />
+              Browse All Frames
             </Link>
-          ))}
+          </div>
         </div>
-      )}
-    </nav>
+      </nav>
+    </>
   );
 }
