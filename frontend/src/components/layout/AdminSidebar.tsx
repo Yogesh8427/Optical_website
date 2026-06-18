@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   Glasses, LayoutDashboard, Image, Tag, Award, Layers, List,
-  MessageSquare, Settings, LogOut, Star, HelpCircle, ChevronRight,
+  MessageSquare, Settings, LogOut, Star, HelpCircle, ChevronRight, X,
 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { cn } from '@/lib/utils';
@@ -18,25 +18,25 @@ const navGroups = [
   {
     label: 'Store Content',
     items: [
-      { href: '/admin/banners', label: 'Banners', icon: Image },
+      { href: '/admin/banners',    label: 'Banners',    icon: Image },
       { href: '/admin/categories', label: 'Categories', icon: Tag },
-      { href: '/admin/brands', label: 'Brands', icon: Award },
-      { href: '/admin/frames', label: 'Frames', icon: Glasses },
+      { href: '/admin/brands',     label: 'Brands',     icon: Award },
+      { href: '/admin/frames',     label: 'Frames',     icon: Glasses },
     ],
   },
   {
     label: 'Lens Options',
     items: [
       { href: '/admin/lens-brands', label: 'Lens Brands', icon: Layers },
-      { href: '/admin/lens-types', label: 'Lens Types', icon: List },
+      { href: '/admin/lens-types',  label: 'Lens Types',  icon: List },
     ],
   },
   {
     label: 'Engagement',
     items: [
-      { href: '/admin/inquiries', label: 'Inquiries', icon: MessageSquare },
+      { href: '/admin/inquiries',    label: 'Inquiries',    icon: MessageSquare },
       { href: '/admin/testimonials', label: 'Testimonials', icon: Star },
-      { href: '/admin/faqs', label: 'FAQs', icon: HelpCircle },
+      { href: '/admin/faqs',         label: 'FAQs',         icon: HelpCircle },
     ],
   },
   {
@@ -47,10 +47,15 @@ const navGroups = [
   },
 ];
 
-export default function AdminSidebar() {
+interface Props {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export default function AdminSidebar({ isOpen, onClose }: Props) {
   const pathname = usePathname();
-  const router = useRouter();
-  const logout = useAuthStore((s) => s.logout);
+  const router   = useRouter();
+  const logout   = useAuthStore((s) => s.logout);
 
   function isActive(href: string, exact?: boolean) {
     if (exact) return pathname === href;
@@ -62,17 +67,26 @@ export default function AdminSidebar() {
     router.push('/admin/login');
   }
 
-  return (
-    <aside className="w-64 bg-slate-900 text-slate-100 min-h-screen flex flex-col shrink-0">
+  const sidebar = (
+    <aside className="w-64 bg-slate-900 text-slate-100 h-full flex flex-col">
       {/* Logo */}
-      <div className="flex items-center gap-3 px-5 py-5 border-b border-slate-800">
-        <div className="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/30">
-          <Glasses className="w-5 h-5 text-white" />
+      <div className="flex items-center justify-between gap-3 px-5 py-5 border-b border-slate-800">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/30">
+            <Glasses className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <p className="font-bold text-sm text-white leading-none">OptiVision</p>
+            <p className="text-xs text-slate-500 mt-0.5">Admin Panel</p>
+          </div>
         </div>
-        <div>
-          <p className="font-bold text-sm text-white leading-none">OptiVision</p>
-          <p className="text-xs text-slate-500 mt-0.5">Admin Panel</p>
-        </div>
+        {/* Close button — mobile only */}
+        <button
+          onClick={onClose}
+          className="lg:hidden w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white"
+        >
+          <X className="w-4 h-4" />
+        </button>
       </div>
 
       {/* Nav */}
@@ -89,8 +103,9 @@ export default function AdminSidebar() {
                   <Link
                     key={href}
                     href={href}
+                    onClick={onClose}
                     className={cn(
-                      'group flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150',
+                      'group flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150',
                       active
                         ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20'
                         : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100'
@@ -113,12 +128,40 @@ export default function AdminSidebar() {
       <div className="px-3 py-4 border-t border-slate-800">
         <button
           onClick={handleLogout}
-          className="group flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-red-500/10 hover:text-red-400 transition-all"
+          className="group flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-red-500/10 hover:text-red-400 transition-all"
         >
           <LogOut className="w-4 h-4 shrink-0 group-hover:text-red-400" />
           Sign Out
         </button>
       </div>
     </aside>
+  );
+
+  return (
+    <>
+      {/* ── Desktop: always visible ── */}
+      <div className="hidden lg:flex lg:shrink-0 lg:min-h-screen">
+        {sidebar}
+      </div>
+
+      {/* ── Mobile: slide-in drawer ── */}
+      {/* Backdrop */}
+      <div
+        className={cn(
+          'fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 lg:hidden',
+          isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        )}
+        onClick={onClose}
+      />
+      {/* Drawer */}
+      <div
+        className={cn(
+          'fixed top-0 left-0 z-50 h-full transition-transform duration-300 ease-in-out lg:hidden',
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        )}
+      >
+        {sidebar}
+      </div>
+    </>
   );
 }
