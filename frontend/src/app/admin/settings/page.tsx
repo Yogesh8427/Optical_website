@@ -79,38 +79,73 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="max-w-2xl space-y-6">
+    <div className="space-y-6">
       <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
 
-        {/* ── Store Info ── */}
-        <div className="bg-white rounded-xl border shadow-sm p-6 space-y-4">
-          <h2 className="font-semibold text-gray-800 text-base">🏪 Store Info</h2>
-          <div><Label>Store Name</Label><Input value={form.storeName} onChange={(e) => set('storeName', e.target.value)} className="mt-1" /></div>
-          <div><Label>Logo</Label><Input type="file" accept="image/*" onChange={(e) => setLogoFile(e.target.files?.[0] ?? null)} className="mt-1" /></div>
-          <div><Label>WhatsApp Number (with country code)</Label><Input value={form.whatsappNumber} onChange={(e) => set('whatsappNumber', e.target.value)} placeholder="919876543210" className="mt-1" /></div>
-          <div><Label>Phone Number</Label><Input value={form.phone} onChange={(e) => set('phone', e.target.value)} placeholder="+91 98765 43210" className="mt-1" /></div>
-          <div><Label>Email</Label><Input type="email" value={form.email} onChange={(e) => set('email', e.target.value)} className="mt-1" /></div>
-          <div><Label>Address</Label><Textarea value={form.address} onChange={(e) => set('address', e.target.value)} className="mt-1" rows={2} /></div>
-          <div><Label>Business Hours</Label><Input value={form.businessHours} onChange={(e) => set('businessHours', e.target.value)} placeholder="Mon – Sat: 10am – 8pm" className="mt-1" /></div>
-          <div><Label>Google Maps URL</Label><Input value={form.googleMapsUrl} onChange={(e) => set('googleMapsUrl', e.target.value)} className="mt-1" /></div>
+        {/* ── Row 1: Store Info + Contact ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+          {/* Store Info */}
+          <div className="bg-white rounded-xl border shadow-sm p-6 space-y-4">
+            <h2 className="font-semibold text-gray-800 text-base">🏪 Store Info</h2>
+            <div><Label>Store Name</Label><Input value={form.storeName} onChange={(e) => set('storeName', e.target.value)} className="mt-1" /></div>
+            <div><Label>Logo</Label><Input type="file" accept="image/*" onChange={(e) => setLogoFile(e.target.files?.[0] ?? null)} className="mt-1" /></div>
+            <div><Label>Address</Label><Textarea value={form.address} onChange={(e) => set('address', e.target.value)} className="mt-1" rows={2} /></div>
+            <div><Label>Google Maps URL</Label><Input value={form.googleMapsUrl} onChange={(e) => set('googleMapsUrl', e.target.value)} className="mt-1" placeholder="https://maps.google.com/..." /></div>
+          </div>
+
+          {/* Contact Details */}
+          <div className="bg-white rounded-xl border shadow-sm p-6 space-y-4">
+            <h2 className="font-semibold text-gray-800 text-base">📞 Contact Details</h2>
+            <div><Label>WhatsApp Number (with country code)</Label><Input value={form.whatsappNumber} onChange={(e) => set('whatsappNumber', e.target.value)} placeholder="919876543210" className="mt-1" /></div>
+            <div><Label>Phone Number</Label><Input value={form.phone} onChange={(e) => set('phone', e.target.value)} placeholder="+91 98765 43210" className="mt-1" /></div>
+            <div><Label>Email</Label><Input type="email" value={form.email} onChange={(e) => set('email', e.target.value)} className="mt-1" /></div>
+            <div><Label>Business Hours</Label><Input value={form.businessHours} onChange={(e) => set('businessHours', e.target.value)} placeholder="Mon – Sat: 10am – 8pm" className="mt-1" /></div>
+          </div>
         </div>
 
-        {/* ── About Page Content ── */}
+        {/* ── Row 2: Social Links + SEO ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+          {/* Social Links */}
+          <div className="bg-white rounded-xl border shadow-sm p-6 space-y-4">
+            <h2 className="font-semibold text-gray-800 text-base">🔗 Social Links</h2>
+            {(['facebook', 'instagram', 'twitter', 'youtube'] as const).map((s) => (
+              <div key={s}>
+                <Label className="capitalize">{s}</Label>
+                <Input value={form[s]} onChange={(e) => set(s, e.target.value)} className="mt-1" placeholder={`https://${s}.com/...`} />
+              </div>
+            ))}
+          </div>
+
+          {/* SEO */}
+          <div className="bg-white rounded-xl border shadow-sm p-6 space-y-4">
+            <h2 className="font-semibold text-gray-800 text-base">🔍 SEO Defaults</h2>
+            <div><Label>Default Title</Label><Input value={form.seoTitle} onChange={(e) => set('seoTitle', e.target.value)} className="mt-1" /></div>
+            <div><Label>Default Description</Label><Textarea value={form.seoDescription} onChange={(e) => set('seoDescription', e.target.value)} className="mt-1" rows={5} /></div>
+          </div>
+        </div>
+
+        {/* ── Row 3: About Page (full width) ── */}
         <div className="bg-white rounded-xl border shadow-sm p-6 space-y-4">
-          <h2 className="font-semibold text-gray-800 text-base">📄 About Page</h2>
-          <p className="text-xs text-gray-400">This content is shown on the public About Us page.</p>
-          <div><Label>Page Heading</Label><Input value={form.aboutHeading} onChange={(e) => set('aboutHeading', e.target.value)} placeholder="About Our Store" className="mt-1" /></div>
-          <div><Label>Subheading</Label><Input value={form.aboutSubheading} onChange={(e) => set('aboutSubheading', e.target.value)} placeholder="A short tagline" className="mt-1" /></div>
+          <h2 className="font-semibold text-gray-800 text-base">📄 About Page Content</h2>
+          <p className="text-xs text-gray-400">This content appears on the public About Us page.</p>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div><Label>Page Heading</Label><Input value={form.aboutHeading} onChange={(e) => set('aboutHeading', e.target.value)} placeholder="About Our Store" className="mt-1" /></div>
+            <div><Label>Subheading / Tagline</Label><Input value={form.aboutSubheading} onChange={(e) => set('aboutSubheading', e.target.value)} placeholder="A short tagline" className="mt-1" /></div>
+            <div><Label>Our Mission</Label><Textarea value={form.aboutMission} onChange={(e) => set('aboutMission', e.target.value)} className="mt-1" rows={3} placeholder="What drives your store..." /></div>
+            <div><Label>Our Vision</Label><Textarea value={form.aboutVision} onChange={(e) => set('aboutVision', e.target.value)} className="mt-1" rows={3} placeholder="Where you want to be..." /></div>
+          </div>
+
           <div>
             <Label>Main Content</Label>
-            <Textarea value={form.aboutBody} onChange={(e) => set('aboutBody', e.target.value)} className="mt-1" rows={5} placeholder="Tell customers about your store, history, values..." />
+            <Textarea value={form.aboutBody} onChange={(e) => set('aboutBody', e.target.value)} className="mt-1" rows={4} placeholder="Tell customers about your store, history, values..." />
           </div>
-          <div><Label>Our Mission</Label><Textarea value={form.aboutMission} onChange={(e) => set('aboutMission', e.target.value)} className="mt-1" rows={2} placeholder="What drives your store..." /></div>
-          <div><Label>Our Vision</Label><Textarea value={form.aboutVision} onChange={(e) => set('aboutVision', e.target.value)} className="mt-1" rows={2} placeholder="Where you want to be..." /></div>
 
-          {/* Highlights / bullet points */}
+          {/* Highlights */}
           <div>
             <div className="flex items-center justify-between mb-2">
               <Label>Why Choose Us (bullet points)</Label>
@@ -118,10 +153,10 @@ export default function SettingsPage() {
                 <Plus className="w-3 h-3 mr-1" /> Add Point
               </Button>
             </div>
-            <div className="space-y-2">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
               {highlights.map((h, i) => (
                 <div key={i} className="flex items-center gap-2">
-                  <Input value={h} onChange={(e) => setHighlights((arr) => arr.map((v, idx) => idx === i ? e.target.value : v))} placeholder={`e.g. Wide range of frames`} />
+                  <Input value={h} onChange={(e) => setHighlights((arr) => arr.map((v, idx) => idx === i ? e.target.value : v))} placeholder="e.g. Wide range of frames" />
                   {highlights.length > 1 && (
                     <button type="button" onClick={() => setHighlights((arr) => arr.filter((_, idx) => idx !== i))}>
                       <X className="w-4 h-4 text-red-400 hover:text-red-600" />
@@ -131,21 +166,6 @@ export default function SettingsPage() {
               ))}
             </div>
           </div>
-        </div>
-
-        {/* ── Social Links ── */}
-        <div className="bg-white rounded-xl border shadow-sm p-6 space-y-4">
-          <h2 className="font-semibold text-gray-800 text-base">🔗 Social Links</h2>
-          {(['facebook', 'instagram', 'twitter', 'youtube'] as const).map((s) => (
-            <div key={s}><Label className="capitalize">{s}</Label><Input value={form[s]} onChange={(e) => set(s, e.target.value)} className="mt-1" placeholder={`https://${s}.com/...`} /></div>
-          ))}
-        </div>
-
-        {/* ── SEO ── */}
-        <div className="bg-white rounded-xl border shadow-sm p-6 space-y-4">
-          <h2 className="font-semibold text-gray-800 text-base">🔍 SEO Defaults</h2>
-          <div><Label>Default Title</Label><Input value={form.seoTitle} onChange={(e) => set('seoTitle', e.target.value)} className="mt-1" /></div>
-          <div><Label>Default Description</Label><Textarea value={form.seoDescription} onChange={(e) => set('seoDescription', e.target.value)} className="mt-1" rows={3} /></div>
         </div>
 
         <Button type="submit" disabled={update.isPending} size="lg" className="w-full">
