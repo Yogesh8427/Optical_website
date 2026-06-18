@@ -56,67 +56,102 @@ export default function TestimonialsPage() {
     remove.mutate(id, { onSuccess: () => toast.success('Deleted'), onError: () => toast.error('Failed') });
   }
 
+  const testimonials = data?.data ?? [];
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 max-w-7xl mx-auto">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Testimonials</h1>
-        <Button onClick={openCreate}><Plus className="w-4 h-4 mr-2" />Add Testimonial</Button>
+        <h1 className="text-xl md:text-2xl font-bold text-slate-800">Testimonials</h1>
+        <Button onClick={openCreate} size="sm">
+          <Plus className="w-4 h-4 md:mr-2" /><span className="hidden md:inline">Add Testimonial</span>
+        </Button>
       </div>
 
-      <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
-        <table className="w-full text-sm">
-          <thead className="bg-gray-50 border-b">
-            <tr>
-              <th className="px-4 py-3 text-left text-gray-600 font-medium">Photo</th>
-              <th className="px-4 py-3 text-left text-gray-600 font-medium">Name</th>
-              <th className="px-4 py-3 text-left text-gray-600 font-medium">Review</th>
-              <th className="px-4 py-3 text-left text-gray-600 font-medium">Rating</th>
-              <th className="px-4 py-3 text-left text-gray-600 font-medium">Status</th>
-              <th className="px-4 py-3 text-right text-gray-600 font-medium">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y">
-            {isLoading ? (
-              <tr><td colSpan={6} className="text-center py-8 text-gray-400">Loading...</td></tr>
-            ) : data?.data?.length === 0 ? (
-              <tr><td colSpan={6} className="text-center py-8 text-gray-400">No testimonials yet</td></tr>
-            ) : data?.data?.map((t) => (
-              <tr key={t._id} className="hover:bg-gray-50">
-                <td className="px-4 py-3">
-                  {t.image ? (
-                    <Image src={t.image} alt={t.name} width={40} height={40} className="rounded-full object-cover w-10 h-10" />
-                  ) : (
-                    <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold text-sm">
-                      {t.name[0]}
-                    </div>
-                  )}
-                </td>
-                <td className="px-4 py-3 font-medium text-gray-900">{t.name}</td>
-                <td className="px-4 py-3 text-gray-500 max-w-xs">
-                  <p className="line-clamp-2">{t.text}</p>
-                </td>
-                <td className="px-4 py-3">
-                  <div className="flex items-center gap-0.5">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} className={`w-3.5 h-3.5 ${i < t.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} />
-                    ))}
-                  </div>
-                </td>
-                <td className="px-4 py-3">
-                  <Badge variant={t.active ? 'default' : 'secondary'}>{t.active ? 'Active' : 'Inactive'}</Badge>
-                </td>
-                <td className="px-4 py-3 text-right">
-                  <Button variant="ghost" size="icon" onClick={() => openEdit(t)}><Pencil className="w-4 h-4" /></Button>
-                  <Button variant="ghost" size="icon" onClick={() => handleDelete(t._id)}><Trash2 className="w-4 h-4 text-red-500" /></Button>
-                </td>
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        {/* Mobile cards */}
+        <div className="divide-y divide-slate-50 md:hidden">
+          {isLoading ? (
+            <div className="py-10 text-center text-slate-400 text-sm">Loading...</div>
+          ) : testimonials.length === 0 ? (
+            <div className="py-10 text-center text-slate-400 text-sm">No testimonials yet</div>
+          ) : testimonials.map((t) => (
+            <div key={t._id} className="flex items-center gap-3 px-4 py-3">
+              {t.image
+                ? <Image src={t.image} alt={t.name} width={40} height={40} className="rounded-full object-cover shrink-0 w-10 h-10" />
+                : <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 font-bold text-sm shrink-0">{t.name[0]}</div>}
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-slate-800 text-sm truncate">{t.name}</p>
+                <div className="flex items-center gap-0.5 mt-0.5">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star key={i} className={`w-3 h-3 ${i < t.rating ? 'text-yellow-400 fill-yellow-400' : 'text-slate-300'}`} />
+                  ))}
+                </div>
+              </div>
+              <Badge variant={t.active ? 'default' : 'secondary'} className="shrink-0 text-xs">{t.active ? 'Active' : 'Inactive'}</Badge>
+              <div className="flex gap-1 shrink-0">
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(t)}><Pencil className="w-3.5 h-3.5" /></Button>
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDelete(t._id)}><Trash2 className="w-3.5 h-3.5 text-red-500" /></Button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop table */}
+        <div className="hidden md:block overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="bg-slate-50 border-b text-xs text-slate-500 uppercase tracking-wider">
+              <tr>
+                <th className="px-4 py-3 text-left font-medium">Photo</th>
+                <th className="px-4 py-3 text-left font-medium">Name</th>
+                <th className="px-4 py-3 text-left font-medium">Review</th>
+                <th className="px-4 py-3 text-left font-medium">Rating</th>
+                <th className="px-4 py-3 text-left font-medium">Status</th>
+                <th className="px-4 py-3 text-right font-medium">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-slate-50">
+              {isLoading ? (
+                <tr><td colSpan={6} className="text-center py-8 text-slate-400">Loading...</td></tr>
+              ) : testimonials.length === 0 ? (
+                <tr><td colSpan={6} className="text-center py-8 text-slate-400">No testimonials yet</td></tr>
+              ) : testimonials.map((t) => (
+                <tr key={t._id} className="hover:bg-slate-50/50 transition-colors">
+                  <td className="px-4 py-3">
+                    {t.image ? (
+                      <Image src={t.image} alt={t.name} width={40} height={40} className="rounded-full object-cover w-10 h-10" />
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 font-bold text-sm">
+                        {t.name[0]}
+                      </div>
+                    )}
+                  </td>
+                  <td className="px-4 py-3 font-medium text-slate-800">{t.name}</td>
+                  <td className="px-4 py-3 text-slate-500 max-w-xs">
+                    <p className="line-clamp-2">{t.text}</p>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-0.5">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star key={i} className={`w-3.5 h-3.5 ${i < t.rating ? 'text-yellow-400 fill-yellow-400' : 'text-slate-300'}`} />
+                      ))}
+                    </div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <Badge variant={t.active ? 'default' : 'secondary'}>{t.active ? 'Active' : 'Inactive'}</Badge>
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <Button variant="ghost" size="icon" onClick={() => openEdit(t)}><Pencil className="w-4 h-4" /></Button>
+                    <Button variant="ghost" size="icon" onClick={() => handleDelete(t._id)}><Trash2 className="w-4 h-4 text-red-500" /></Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader><DialogTitle>{editing ? 'Edit Testimonial' : 'New Testimonial'}</DialogTitle></DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div><Label>Customer Name *</Label><Input value={name} onChange={(e) => setName(e.target.value)} required className="mt-1" /></div>
@@ -136,10 +171,10 @@ export default function TestimonialsPage() {
               <div className="flex items-center gap-2 mt-2">
                 {[1, 2, 3, 4, 5].map((n) => (
                   <button key={n} type="button" onClick={() => setRating(n)}>
-                    <Star className={`w-6 h-6 ${n <= rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} />
+                    <Star className={`w-6 h-6 ${n <= rating ? 'text-yellow-400 fill-yellow-400' : 'text-slate-300'}`} />
                   </button>
                 ))}
-                <span className="text-sm text-gray-500 ml-1">{rating}/5</span>
+                <span className="text-sm text-slate-500 ml-1">{rating}/5</span>
               </div>
             </div>
             <div><Label>Photo</Label><Input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files?.[0] ?? null)} className="mt-1" /></div>

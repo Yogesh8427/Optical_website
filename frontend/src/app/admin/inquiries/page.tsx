@@ -25,10 +25,12 @@ export default function InquiriesPage() {
     });
   }
 
+  const inquiries = data?.data ?? [];
+
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Inquiries</h1>
+    <div className="space-y-4 max-w-7xl mx-auto">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h1 className="text-xl md:text-2xl font-bold text-slate-800">Inquiries</h1>
         <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v === 'all' ? '' : (v ?? '')); setPage(1); }}>
           <SelectTrigger className="w-40"><SelectValue placeholder="All Statuses" /></SelectTrigger>
           <SelectContent>
@@ -38,83 +40,115 @@ export default function InquiriesPage() {
         </Select>
       </div>
 
-      <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
-        <table className="w-full text-sm">
-          <thead className="bg-gray-50 border-b">
-            <tr>
-              <th className="px-4 py-3 text-left text-gray-600 font-medium">Customer</th>
-              <th className="px-4 py-3 text-left text-gray-600 font-medium">Frame</th>
-              <th className="px-4 py-3 text-left text-gray-600 font-medium">Color / Size</th>
-              <th className="px-4 py-3 text-left text-gray-600 font-medium">Phone</th>
-              <th className="px-4 py-3 text-left text-gray-600 font-medium">Power?</th>
-              <th className="px-4 py-3 text-left text-gray-600 font-medium">Status</th>
-              <th className="px-4 py-3 text-left text-gray-600 font-medium">Date</th>
-              <th className="px-4 py-3 text-right text-gray-600 font-medium">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y">
-            {isLoading ? (
-              <tr><td colSpan={7} className="text-center py-8 text-gray-400">Loading...</td></tr>
-            ) : data?.data?.map((inq) => (
-              <tr key={inq._id} className="hover:bg-gray-50">
-                <td className="px-4 py-3 font-medium text-gray-900">{inq.customerName}</td>
-                <td className="px-4 py-3 text-gray-600 max-w-[140px] truncate">{inq.frameId?.name ?? '—'}</td>
-                <td className="px-4 py-3 text-gray-600 text-xs">
-                  {inq.selectedColor && <span className="block">🎨 {inq.selectedColor}</span>}
-                  {inq.selectedSize  && <span className="block">📐 {inq.selectedSize}</span>}
-                  {!inq.selectedColor && !inq.selectedSize && <span className="text-gray-300">—</span>}
-                </td>
-                <td className="px-4 py-3 text-gray-600">{inq.phone}</td>
-                <td className="px-4 py-3 text-gray-600">{inq.powerRequired ? 'Yes' : 'No'}</td>
-                <td className="px-4 py-3">
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        {/* Mobile cards */}
+        <div className="divide-y divide-slate-50 md:hidden">
+          {isLoading ? (
+            <div className="py-10 text-center text-slate-400 text-sm">Loading...</div>
+          ) : inquiries.length === 0 ? (
+            <div className="py-10 text-center text-slate-400 text-sm">No inquiries yet</div>
+          ) : inquiries.map((inq) => (
+            <div key={inq._id} className="px-4 py-3 space-y-2">
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <p className="font-medium text-slate-800 text-sm">{inq.customerName}</p>
+                  <p className="text-xs text-slate-400">{inq.phone}</p>
+                </div>
+                <div className="flex items-center gap-1 shrink-0">
                   <Select value={inq.status} onValueChange={(v) => v && handleStatusChange(inq._id, v)}>
                     <SelectTrigger className="h-7 text-xs w-28"><SelectValue /></SelectTrigger>
                     <SelectContent>{STATUSES.map((s) => <SelectItem key={s} value={s} className="capitalize text-xs">{s}</SelectItem>)}</SelectContent>
                   </Select>
-                </td>
-                <td className="px-4 py-3 text-gray-500">{new Date(inq.createdAt).toLocaleDateString()}</td>
-                <td className="px-4 py-3 text-right">
-                  <Button variant="ghost" size="icon" onClick={() => setSelected(inq)}><Eye className="w-4 h-4" /></Button>
-                </td>
+                  <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setSelected(inq)}><Eye className="w-3.5 h-3.5" /></Button>
+                </div>
+              </div>
+              <p className="text-xs text-slate-500">
+                {inq.frameId?.name ?? '—'}{inq.selectedColor && ` · ${inq.selectedColor}`}{inq.selectedSize && ` · ${inq.selectedSize}`}
+              </p>
+              <p className="text-xs text-slate-400">{new Date(inq.createdAt).toLocaleDateString()}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop table */}
+        <div className="hidden md:block overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="bg-slate-50 border-b text-xs text-slate-500 uppercase tracking-wider">
+              <tr>
+                <th className="px-4 py-3 text-left font-medium">Customer</th>
+                <th className="px-4 py-3 text-left font-medium">Frame</th>
+                <th className="px-4 py-3 text-left font-medium">Color / Size</th>
+                <th className="px-4 py-3 text-left font-medium">Phone</th>
+                <th className="px-4 py-3 text-left font-medium">Power?</th>
+                <th className="px-4 py-3 text-left font-medium">Status</th>
+                <th className="px-4 py-3 text-left font-medium">Date</th>
+                <th className="px-4 py-3 text-right font-medium">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-slate-50">
+              {isLoading ? (
+                <tr><td colSpan={7} className="text-center py-8 text-slate-400">Loading...</td></tr>
+              ) : inquiries.map((inq) => (
+                <tr key={inq._id} className="hover:bg-slate-50/50 transition-colors">
+                  <td className="px-4 py-3 font-medium text-slate-800">{inq.customerName}</td>
+                  <td className="px-4 py-3 text-slate-600 max-w-[140px] truncate">{inq.frameId?.name ?? '—'}</td>
+                  <td className="px-4 py-3 text-slate-600 text-xs">
+                    {inq.selectedColor && <span className="block">🎨 {inq.selectedColor}</span>}
+                    {inq.selectedSize  && <span className="block">📐 {inq.selectedSize}</span>}
+                    {!inq.selectedColor && !inq.selectedSize && <span className="text-slate-300">—</span>}
+                  </td>
+                  <td className="px-4 py-3 text-slate-600">{inq.phone}</td>
+                  <td className="px-4 py-3 text-slate-600">{inq.powerRequired ? 'Yes' : 'No'}</td>
+                  <td className="px-4 py-3">
+                    <Select value={inq.status} onValueChange={(v) => v && handleStatusChange(inq._id, v)}>
+                      <SelectTrigger className="h-7 text-xs w-28"><SelectValue /></SelectTrigger>
+                      <SelectContent>{STATUSES.map((s) => <SelectItem key={s} value={s} className="capitalize text-xs">{s}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </td>
+                  <td className="px-4 py-3 text-slate-500">{new Date(inq.createdAt).toLocaleDateString()}</td>
+                  <td className="px-4 py-3 text-right">
+                    <Button variant="ghost" size="icon" onClick={() => setSelected(inq)}><Eye className="w-4 h-4" /></Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {data?.pagination && data.pagination.pages > 1 && (
         <div className="flex justify-center gap-2">
           <Button variant="outline" disabled={page === 1} onClick={() => setPage(page - 1)}>Previous</Button>
-          <span className="flex items-center px-4 text-sm text-gray-600">Page {page} of {data.pagination.pages}</span>
+          <span className="flex items-center px-4 text-sm text-slate-600">Page {page} of {data.pagination.pages}</span>
           <Button variant="outline" disabled={page >= data.pagination.pages} onClick={() => setPage(page + 1)}>Next</Button>
         </div>
       )}
 
       {/* Detail modal */}
       <Dialog open={!!selected} onOpenChange={() => setSelected(null)}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader><DialogTitle>Inquiry Detail</DialogTitle></DialogHeader>
           {selected && (
             <div className="space-y-3 text-sm">
               <div className="grid grid-cols-2 gap-2">
-                <div><p className="text-gray-500">Customer</p><p className="font-medium">{selected.customerName}</p></div>
-                <div><p className="text-gray-500">Phone</p><p className="font-medium">{selected.phone}</p></div>
-                <div><p className="text-gray-500">Email</p><p className="font-medium">{selected.email || '—'}</p></div>
-                <div><p className="text-gray-500">City</p><p className="font-medium">{selected.city || '—'}</p></div>
-                <div><p className="text-gray-500">Frame</p><p className="font-medium">{selected.frameId?.name ?? '—'}</p></div>
-                {selected.selectedColor && <div><p className="text-gray-500">Color</p><p className="font-medium">{selected.selectedColor}</p></div>}
-                {selected.selectedSize  && <div><p className="text-gray-500">Size</p><p className="font-medium">{selected.selectedSize}</p></div>}
-                <div><p className="text-gray-500">Power Required</p><p className="font-medium">{selected.powerRequired ? 'Yes' : 'No'}</p></div>
-                {selected.lensBrandId && <div><p className="text-gray-500">Lens Brand</p><p className="font-medium">{selected.lensBrandId.name}</p></div>}
-                {selected.lensTypes?.length > 0 && <div className="col-span-2"><p className="text-gray-500">Lens Types</p><p className="font-medium">{selected.lensTypes.map((t) => t.name).join(', ')}</p></div>}
+                <div><p className="text-slate-500">Customer</p><p className="font-medium">{selected.customerName}</p></div>
+                <div><p className="text-slate-500">Phone</p><p className="font-medium">{selected.phone}</p></div>
+                <div><p className="text-slate-500">Email</p><p className="font-medium">{selected.email || '—'}</p></div>
+                <div><p className="text-slate-500">City</p><p className="font-medium">{selected.city || '—'}</p></div>
+                <div><p className="text-slate-500">Frame</p><p className="font-medium">{selected.frameId?.name ?? '—'}</p></div>
+                {selected.selectedColor && <div><p className="text-slate-500">Color</p><p className="font-medium">{selected.selectedColor}</p></div>}
+                {selected.selectedSize  && <div><p className="text-slate-500">Size</p><p className="font-medium">{selected.selectedSize}</p></div>}
+                <div><p className="text-slate-500">Power Required</p><p className="font-medium">{selected.powerRequired ? 'Yes' : 'No'}</p></div>
+                {selected.lensBrandId && <div><p className="text-slate-500">Lens Brand</p><p className="font-medium">{selected.lensBrandId.name}</p></div>}
+                {selected.lensTypes?.length > 0 && <div className="col-span-2"><p className="text-slate-500">Lens Types</p><p className="font-medium">{selected.lensTypes.map((t) => t.name).join(', ')}</p></div>}
                 {selected.powerRequired && (
                   <>
-                    <div><p className="text-gray-500">Right Eye</p><p className="font-medium">SPH {selected.rightEye.sph} / CYL {selected.rightEye.cyl} / AXIS {selected.rightEye.axis}</p></div>
-                    <div><p className="text-gray-500">Left Eye</p><p className="font-medium">SPH {selected.leftEye.sph} / CYL {selected.leftEye.cyl} / AXIS {selected.leftEye.axis}</p></div>
+                    <div><p className="text-slate-500">Right Eye</p><p className="font-medium">SPH {selected.rightEye.sph} / CYL {selected.rightEye.cyl} / AXIS {selected.rightEye.axis}</p></div>
+                    <div><p className="text-slate-500">Left Eye</p><p className="font-medium">SPH {selected.leftEye.sph} / CYL {selected.leftEye.cyl} / AXIS {selected.leftEye.axis}</p></div>
                   </>
                 )}
-                {selected.notes && <div className="col-span-2"><p className="text-gray-500">Notes</p><p className="font-medium">{selected.notes}</p></div>}
-                <div><p className="text-gray-500">Status</p><StatusBadge status={selected.status} /></div>
+                {selected.notes && <div className="col-span-2"><p className="text-slate-500">Notes</p><p className="font-medium">{selected.notes}</p></div>}
+                <div><p className="text-slate-500">Status</p><StatusBadge status={selected.status} /></div>
               </div>
             </div>
           )}

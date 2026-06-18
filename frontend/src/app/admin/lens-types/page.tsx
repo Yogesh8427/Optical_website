@@ -63,66 +63,100 @@ export default function LensTypesPage() {
       .catch(() => toast.error('Failed to save'));
   }
 
+  const lensTypes = data?.data ?? [];
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 max-w-7xl mx-auto">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Lens Types</h1>
-        <Button onClick={openCreate}><Plus className="w-4 h-4 mr-2" />Add Lens Type</Button>
+        <h1 className="text-xl md:text-2xl font-bold text-slate-800">Lens Types</h1>
+        <Button onClick={openCreate} size="sm">
+          <Plus className="w-4 h-4 md:mr-2" /><span className="hidden md:inline">Add Lens Type</span>
+        </Button>
       </div>
 
-      <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
-        <table className="w-full text-sm">
-          <thead className="bg-gray-50 border-b">
-            <tr>
-              <th className="px-4 py-3 text-left text-gray-600 font-medium">Image</th>
-              <th className="px-4 py-3 text-left text-gray-600 font-medium">Name</th>
-              <th className="px-4 py-3 text-left text-gray-600 font-medium">Description</th>
-              <th className="px-4 py-3 text-left text-gray-600 font-medium">Extra Price</th>
-              <th className="px-4 py-3 text-left text-gray-600 font-medium">Status</th>
-              <th className="px-4 py-3 text-right text-gray-600 font-medium">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y">
-            {isLoading ? (
-              <tr><td colSpan={6} className="text-center py-8 text-gray-400">Loading...</td></tr>
-            ) : data?.data?.length === 0 ? (
-              <tr><td colSpan={6} className="text-center py-8 text-gray-400">No lens types yet</td></tr>
-            ) : data?.data?.map((t) => (
-              <tr key={t._id} className="hover:bg-gray-50">
-                <td className="px-4 py-3">
-                  {t.image ? (
-                    <Image src={t.image} alt={t.name} width={56} height={40} className="object-cover rounded-lg w-14 h-10" />
-                  ) : (
-                    <div className="w-14 h-10 bg-gray-100 rounded-lg flex items-center justify-center text-gray-300 text-xs">No img</div>
-                  )}
-                </td>
-                <td className="px-4 py-3 font-medium text-gray-900">{t.name}</td>
-                <td className="px-4 py-3 text-gray-500 max-w-xs">
-                  <p className="line-clamp-1">{t.description || '—'}</p>
-                </td>
-                <td className="px-4 py-3 font-medium text-blue-700">
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        {/* Mobile cards */}
+        <div className="divide-y divide-slate-50 md:hidden">
+          {isLoading ? (
+            <div className="py-10 text-center text-slate-400 text-sm">Loading...</div>
+          ) : lensTypes.length === 0 ? (
+            <div className="py-10 text-center text-slate-400 text-sm">No lens types yet</div>
+          ) : lensTypes.map((t) => (
+            <div key={t._id} className="flex items-center gap-3 px-4 py-3">
+              {t.image
+                ? <Image src={t.image} alt={t.name} width={56} height={40} className="object-cover rounded-lg shrink-0 w-14 h-10" />
+                : <div className="w-14 h-10 bg-slate-100 rounded-lg shrink-0 flex items-center justify-center text-slate-300 text-xs">No img</div>}
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-slate-800 text-sm truncate">{t.name}</p>
+                <p className="text-xs text-slate-500 font-medium">
                   {t.extraPrice > 0 ? `+₹${t.extraPrice.toLocaleString()}` : <span className="text-green-600">Free</span>}
-                </td>
-                <td className="px-4 py-3">
-                  <Badge variant={t.active ? 'default' : 'secondary'}>{t.active ? 'Active' : 'Inactive'}</Badge>
-                </td>
-                <td className="px-4 py-3 text-right">
-                  <Button variant="ghost" size="icon" onClick={() => openEdit(t)}><Pencil className="w-4 h-4" /></Button>
-                  <Button variant="ghost" size="icon" onClick={() => { if (confirm('Delete this lens type?')) remove.mutate(t._id, { onSuccess: () => toast.success('Deleted'), onError: () => toast.error('Failed') }); }}>
-                    <Trash2 className="w-4 h-4 text-red-500" />
-                  </Button>
-                </td>
+                </p>
+              </div>
+              <Badge variant={t.active ? 'default' : 'secondary'} className="shrink-0 text-xs">{t.active ? 'Active' : 'Inactive'}</Badge>
+              <div className="flex gap-1 shrink-0">
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(t)}><Pencil className="w-3.5 h-3.5" /></Button>
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => { if (confirm('Delete this lens type?')) remove.mutate(t._id, { onSuccess: () => toast.success('Deleted'), onError: () => toast.error('Failed') }); }}>
+                  <Trash2 className="w-3.5 h-3.5 text-red-500" />
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop table */}
+        <div className="hidden md:block overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="bg-slate-50 border-b text-xs text-slate-500 uppercase tracking-wider">
+              <tr>
+                <th className="px-4 py-3 text-left font-medium">Image</th>
+                <th className="px-4 py-3 text-left font-medium">Name</th>
+                <th className="px-4 py-3 text-left font-medium">Description</th>
+                <th className="px-4 py-3 text-left font-medium">Extra Price</th>
+                <th className="px-4 py-3 text-left font-medium">Status</th>
+                <th className="px-4 py-3 text-right font-medium">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-slate-50">
+              {isLoading ? (
+                <tr><td colSpan={6} className="text-center py-8 text-slate-400">Loading...</td></tr>
+              ) : lensTypes.length === 0 ? (
+                <tr><td colSpan={6} className="text-center py-8 text-slate-400">No lens types yet</td></tr>
+              ) : lensTypes.map((t) => (
+                <tr key={t._id} className="hover:bg-slate-50/50 transition-colors">
+                  <td className="px-4 py-3">
+                    {t.image ? (
+                      <Image src={t.image} alt={t.name} width={56} height={40} className="object-cover rounded-lg w-14 h-10" />
+                    ) : (
+                      <div className="w-14 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-slate-300 text-xs">No img</div>
+                    )}
+                  </td>
+                  <td className="px-4 py-3 font-medium text-slate-800">{t.name}</td>
+                  <td className="px-4 py-3 text-slate-500 max-w-xs">
+                    <p className="line-clamp-1">{t.description || '—'}</p>
+                  </td>
+                  <td className="px-4 py-3 font-medium text-blue-700">
+                    {t.extraPrice > 0 ? `+₹${t.extraPrice.toLocaleString()}` : <span className="text-green-600">Free</span>}
+                  </td>
+                  <td className="px-4 py-3">
+                    <Badge variant={t.active ? 'default' : 'secondary'}>{t.active ? 'Active' : 'Inactive'}</Badge>
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <Button variant="ghost" size="icon" onClick={() => openEdit(t)}><Pencil className="w-4 h-4" /></Button>
+                    <Button variant="ghost" size="icon" onClick={() => { if (confirm('Delete this lens type?')) remove.mutate(t._id, { onSuccess: () => toast.success('Deleted'), onError: () => toast.error('Failed') }); }}>
+                      <Trash2 className="w-4 h-4 text-red-500" />
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader><DialogTitle>{editing ? 'Edit Lens Type' : 'New Lens Type'}</DialogTitle></DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
-
             <div><Label>Name *</Label><Input value={name} onChange={(e) => setName(e.target.value)} required className="mt-1" placeholder="e.g. Single Vision" /></div>
             <div>
               <Label>Description</Label>
@@ -140,17 +174,16 @@ export default function LensTypesPage() {
             <div>
               <Label>Image</Label>
               <div className="mt-1 flex items-center gap-3">
-                {/* Preview */}
-                <div className="w-20 h-16 rounded-xl overflow-hidden border bg-gray-50 shrink-0 flex items-center justify-center">
+                <div className="w-20 h-16 rounded-xl overflow-hidden border bg-slate-50 shrink-0 flex items-center justify-center">
                   {imagePreview ? (
                     <img src={imagePreview} alt="preview" className="w-full h-full object-cover" />
                   ) : (
-                    <span className="text-xs text-gray-400">No image</span>
+                    <span className="text-xs text-slate-400">No image</span>
                   )}
                 </div>
                 <div className="flex-1">
                   <Input type="file" accept="image/*" onChange={handleImageChange} className="text-sm" />
-                  <p className="text-xs text-gray-400 mt-1">Upload a photo that represents this lens type</p>
+                  <p className="text-xs text-slate-400 mt-1">Upload a photo that represents this lens type</p>
                 </div>
               </div>
             </div>

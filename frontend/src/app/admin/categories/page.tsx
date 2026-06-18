@@ -45,47 +45,78 @@ export default function CategoriesPage() {
     remove.mutate(id, { onSuccess: () => toast.success('Deleted'), onError: () => toast.error('Failed') });
   }
 
+  const categories = data?.data ?? [];
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 max-w-7xl mx-auto">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Categories</h1>
-        <Button onClick={openCreate}><Plus className="w-4 h-4 mr-2" />Add Category</Button>
+        <h1 className="text-xl md:text-2xl font-bold text-slate-800">Categories</h1>
+        <Button onClick={openCreate} size="sm">
+          <Plus className="w-4 h-4 md:mr-2" /><span className="hidden md:inline">Add Category</span>
+        </Button>
       </div>
 
-      <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
-        <table className="w-full text-sm">
-          <thead className="bg-gray-50 border-b">
-            <tr>
-              <th className="px-4 py-3 text-left text-gray-600 font-medium">Image</th>
-              <th className="px-4 py-3 text-left text-gray-600 font-medium">Name</th>
-              <th className="px-4 py-3 text-left text-gray-600 font-medium">Slug</th>
-              <th className="px-4 py-3 text-left text-gray-600 font-medium">Status</th>
-              <th className="px-4 py-3 text-right text-gray-600 font-medium">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y">
-            {isLoading ? (
-              <tr><td colSpan={5} className="text-center py-8 text-gray-400">Loading...</td></tr>
-            ) : data?.data?.map((cat) => (
-              <tr key={cat._id} className="hover:bg-gray-50">
-                <td className="px-4 py-3">
-                  {cat.image ? <Image src={cat.image} alt={cat.name} width={48} height={32} className="object-cover rounded" /> : <div className="w-12 h-8 bg-gray-100 rounded" />}
-                </td>
-                <td className="px-4 py-3 font-medium text-gray-900">{cat.name}</td>
-                <td className="px-4 py-3 text-gray-500 font-mono text-xs">{cat.slug}</td>
-                <td className="px-4 py-3"><Badge variant={cat.active ? 'default' : 'secondary'}>{cat.active ? 'Active' : 'Inactive'}</Badge></td>
-                <td className="px-4 py-3 text-right">
-                  <Button variant="ghost" size="icon" onClick={() => openEdit(cat)}><Pencil className="w-4 h-4" /></Button>
-                  <Button variant="ghost" size="icon" onClick={() => handleDelete(cat._id)}><Trash2 className="w-4 h-4 text-red-500" /></Button>
-                </td>
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        {/* Mobile cards */}
+        <div className="divide-y divide-slate-50 md:hidden">
+          {isLoading ? (
+            <div className="py-10 text-center text-slate-400 text-sm">Loading...</div>
+          ) : categories.length === 0 ? (
+            <div className="py-10 text-center text-slate-400 text-sm">No categories yet</div>
+          ) : categories.map((cat) => (
+            <div key={cat._id} className="flex items-center gap-3 px-4 py-3">
+              {cat.image
+                ? <Image src={cat.image} alt={cat.name} width={48} height={32} className="object-cover rounded-lg shrink-0 w-12 h-8" />
+                : <div className="w-12 h-8 bg-slate-100 rounded-lg shrink-0" />}
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-slate-800 text-sm truncate">{cat.name}</p>
+                <p className="text-xs text-slate-400 font-mono hidden sm:block">{cat.slug}</p>
+              </div>
+              <Badge variant={cat.active ? 'default' : 'secondary'} className="shrink-0 text-xs">{cat.active ? 'Active' : 'Inactive'}</Badge>
+              <div className="flex gap-1 shrink-0">
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(cat)}><Pencil className="w-3.5 h-3.5" /></Button>
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDelete(cat._id)}><Trash2 className="w-3.5 h-3.5 text-red-500" /></Button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop table */}
+        <div className="hidden md:block overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="bg-slate-50 border-b text-xs text-slate-500 uppercase tracking-wider">
+              <tr>
+                <th className="px-4 py-3 text-left font-medium">Image</th>
+                <th className="px-4 py-3 text-left font-medium">Name</th>
+                <th className="px-4 py-3 text-left font-medium">Slug</th>
+                <th className="px-4 py-3 text-left font-medium">Status</th>
+                <th className="px-4 py-3 text-right font-medium">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-slate-50">
+              {isLoading ? (
+                <tr><td colSpan={5} className="text-center py-8 text-slate-400">Loading...</td></tr>
+              ) : categories.map((cat) => (
+                <tr key={cat._id} className="hover:bg-slate-50/50 transition-colors">
+                  <td className="px-4 py-3">
+                    {cat.image ? <Image src={cat.image} alt={cat.name} width={48} height={32} className="object-cover rounded-lg" /> : <div className="w-12 h-8 bg-slate-100 rounded-lg" />}
+                  </td>
+                  <td className="px-4 py-3 font-medium text-slate-800">{cat.name}</td>
+                  <td className="px-4 py-3 text-slate-500 font-mono text-xs">{cat.slug}</td>
+                  <td className="px-4 py-3"><Badge variant={cat.active ? 'default' : 'secondary'}>{cat.active ? 'Active' : 'Inactive'}</Badge></td>
+                  <td className="px-4 py-3 text-right">
+                    <Button variant="ghost" size="icon" onClick={() => openEdit(cat)}><Pencil className="w-4 h-4" /></Button>
+                    <Button variant="ghost" size="icon" onClick={() => handleDelete(cat._id)}><Trash2 className="w-4 h-4 text-red-500" /></Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader><DialogTitle>{editing ? 'Edit Category' : 'New Category'}</DialogTitle></DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div><Label>Name *</Label><Input value={name} onChange={(e) => setName(e.target.value)} required className="mt-1" /></div>

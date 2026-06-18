@@ -79,8 +79,8 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
+    <div className="space-y-6 max-w-7xl mx-auto">
+      <h1 className="text-xl md:text-2xl font-bold text-slate-800">Settings</h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
 
@@ -88,8 +88,8 @@ export default function SettingsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
           {/* Store Info */}
-          <div className="bg-white rounded-xl border shadow-sm p-6 space-y-4">
-            <h2 className="font-semibold text-gray-800 text-base">🏪 Store Info</h2>
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-4">
+            <h2 className="font-semibold text-slate-800 text-base">🏪 Store Info</h2>
             <div><Label>Store Name</Label><Input value={form.storeName} onChange={(e) => set('storeName', e.target.value)} className="mt-1" /></div>
             <div><Label>Logo</Label><Input type="file" accept="image/*" onChange={(e) => setLogoFile(e.target.files?.[0] ?? null)} className="mt-1" /></div>
             <div><Label>Address</Label><Textarea value={form.address} onChange={(e) => set('address', e.target.value)} className="mt-1" rows={2} /></div>
@@ -97,8 +97,8 @@ export default function SettingsPage() {
           </div>
 
           {/* Contact Details */}
-          <div className="bg-white rounded-xl border shadow-sm p-6 space-y-4">
-            <h2 className="font-semibold text-gray-800 text-base">📞 Contact Details</h2>
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-4">
+            <h2 className="font-semibold text-slate-800 text-base">📞 Contact Details</h2>
             <div><Label>WhatsApp Number (with country code)</Label><Input value={form.whatsappNumber} onChange={(e) => set('whatsappNumber', e.target.value)} placeholder="919876543210" className="mt-1" /></div>
             <div><Label>Phone Number</Label><Input value={form.phone} onChange={(e) => set('phone', e.target.value)} placeholder="+91 98765 43210" className="mt-1" /></div>
             <div><Label>Email</Label><Input type="email" value={form.email} onChange={(e) => set('email', e.target.value)} className="mt-1" /></div>
@@ -110,8 +110,8 @@ export default function SettingsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
           {/* Social Links */}
-          <div className="bg-white rounded-xl border shadow-sm p-6 space-y-4">
-            <h2 className="font-semibold text-gray-800 text-base">🔗 Social Links</h2>
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-4">
+            <h2 className="font-semibold text-slate-800 text-base">🔗 Social Links</h2>
             {(['facebook', 'instagram', 'twitter', 'youtube'] as const).map((s) => (
               <div key={s}>
                 <Label className="capitalize">{s}</Label>
@@ -121,17 +121,17 @@ export default function SettingsPage() {
           </div>
 
           {/* SEO */}
-          <div className="bg-white rounded-xl border shadow-sm p-6 space-y-4">
-            <h2 className="font-semibold text-gray-800 text-base">🔍 SEO Defaults</h2>
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-4">
+            <h2 className="font-semibold text-slate-800 text-base">🔍 SEO Defaults</h2>
             <div><Label>Default Title</Label><Input value={form.seoTitle} onChange={(e) => set('seoTitle', e.target.value)} className="mt-1" /></div>
             <div><Label>Default Description</Label><Textarea value={form.seoDescription} onChange={(e) => set('seoDescription', e.target.value)} className="mt-1" rows={5} /></div>
           </div>
         </div>
 
         {/* ── Row 3: About Page (full width) ── */}
-        <div className="bg-white rounded-xl border shadow-sm p-6 space-y-4">
-          <h2 className="font-semibold text-gray-800 text-base">📄 About Page Content</h2>
-          <p className="text-xs text-gray-400">This content appears on the public About Us page.</p>
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-4">
+          <h2 className="font-semibold text-slate-800 text-base">📄 About Page Content</h2>
+          <p className="text-xs text-slate-400">This content appears on the public About Us page.</p>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div><Label>Page Heading</Label><Input value={form.aboutHeading} onChange={(e) => set('aboutHeading', e.target.value)} placeholder="About Our Store" className="mt-1" /></div>

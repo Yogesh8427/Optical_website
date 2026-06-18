@@ -33,47 +33,83 @@ export default function BannersPage() {
     const fd = new FormData();
     Object.entries(form).forEach(([k, v]) => fd.append(k, String(v)));
     if (imageFile) fd.append('image', imageFile);
-
     const action = editing ? update.mutateAsync({ id: editing._id, f: fd }) : create.mutateAsync(fd);
     action.then(() => { toast.success('Saved'); setModalOpen(false); }).catch((err) => toast.error(err?.response?.data?.message ?? 'Failed'));
   }
 
+  function handleDelete(id: string) {
+    if (!confirm('Delete this banner?')) return;
+    remove.mutate(id, { onSuccess: () => toast.success('Deleted') });
+  }
+
+  const banners = data?.data ?? [];
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 max-w-7xl mx-auto">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Banners</h1>
-        <Button onClick={openCreate}><Plus className="w-4 h-4 mr-2" />Add Banner</Button>
+        <h1 className="text-xl md:text-2xl font-bold text-slate-800">Banners</h1>
+        <Button onClick={openCreate} size="sm">
+          <Plus className="w-4 h-4 md:mr-2" /><span className="hidden md:inline">Add Banner</span>
+        </Button>
       </div>
-      <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
-        <table className="w-full text-sm">
-          <thead className="bg-gray-50 border-b">
-            <tr>
-              <th className="px-4 py-3 text-left text-gray-600 font-medium">Image</th>
-              <th className="px-4 py-3 text-left text-gray-600 font-medium">Title</th>
-              <th className="px-4 py-3 text-left text-gray-600 font-medium">Order</th>
-              <th className="px-4 py-3 text-left text-gray-600 font-medium">Status</th>
-              <th className="px-4 py-3 text-right text-gray-600 font-medium">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y">
-            {isLoading ? <tr><td colSpan={5} className="text-center py-8 text-gray-400">Loading...</td></tr>
-              : data?.data?.map((b) => (
-                <tr key={b._id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3"><Image src={b.image} alt={b.title} width={80} height={45} className="object-cover rounded" /></td>
-                  <td className="px-4 py-3 font-medium text-gray-900">{b.title}</td>
-                  <td className="px-4 py-3 text-gray-500">{b.sortOrder}</td>
+
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        {/* Mobile cards */}
+        <div className="divide-y divide-slate-50 md:hidden">
+          {isLoading ? (
+            <div className="py-10 text-center text-slate-400 text-sm">Loading...</div>
+          ) : banners.length === 0 ? (
+            <div className="py-10 text-center text-slate-400 text-sm">No banners yet</div>
+          ) : banners.map((b) => (
+            <div key={b._id} className="flex items-center gap-3 px-4 py-3">
+              {b.image && <Image src={b.image} alt={b.title} width={64} height={40} className="object-cover rounded-lg shrink-0 w-16 h-10" />}
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-slate-800 text-sm truncate">{b.title}</p>
+                <p className="text-xs text-slate-400">Order: {b.sortOrder}</p>
+              </div>
+              <Badge variant={b.active ? 'default' : 'secondary'} className="shrink-0 text-xs">{b.active ? 'Active' : 'Inactive'}</Badge>
+              <div className="flex gap-1 shrink-0">
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(b)}><Pencil className="w-3.5 h-3.5" /></Button>
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDelete(b._id)}><Trash2 className="w-3.5 h-3.5 text-red-500" /></Button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop table */}
+        <div className="hidden md:block overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="bg-slate-50 border-b text-xs text-slate-500 uppercase tracking-wider">
+              <tr>
+                <th className="px-4 py-3 text-left font-medium">Image</th>
+                <th className="px-4 py-3 text-left font-medium">Title</th>
+                <th className="px-4 py-3 text-left font-medium">Order</th>
+                <th className="px-4 py-3 text-left font-medium">Status</th>
+                <th className="px-4 py-3 text-right font-medium">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-50">
+              {isLoading ? (
+                <tr><td colSpan={5} className="text-center py-8 text-slate-400">Loading...</td></tr>
+              ) : banners.map((b) => (
+                <tr key={b._id} className="hover:bg-slate-50/50 transition-colors">
+                  <td className="px-4 py-3">{b.image && <Image src={b.image} alt={b.title} width={80} height={45} className="object-cover rounded-lg" />}</td>
+                  <td className="px-4 py-3 font-medium text-slate-800">{b.title}</td>
+                  <td className="px-4 py-3 text-slate-500">{b.sortOrder}</td>
                   <td className="px-4 py-3"><Badge variant={b.active ? 'default' : 'secondary'}>{b.active ? 'Active' : 'Inactive'}</Badge></td>
                   <td className="px-4 py-3 text-right">
                     <Button variant="ghost" size="icon" onClick={() => openEdit(b)}><Pencil className="w-4 h-4" /></Button>
-                    <Button variant="ghost" size="icon" onClick={() => { if (confirm('Delete?')) remove.mutate(b._id, { onSuccess: () => toast.success('Deleted') }); }}><Trash2 className="w-4 h-4 text-red-500" /></Button>
+                    <Button variant="ghost" size="icon" onClick={() => handleDelete(b._id)}><Trash2 className="w-4 h-4 text-red-500" /></Button>
                   </td>
                 </tr>
               ))}
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
       </div>
+
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader><DialogTitle>{editing ? 'Edit Banner' : 'New Banner'}</DialogTitle></DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div><Label>Title *</Label><Input value={form.title} onChange={(e) => set('title', e.target.value)} required className="mt-1" /></div>

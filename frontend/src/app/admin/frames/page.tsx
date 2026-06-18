@@ -120,57 +120,87 @@ export default function FramesPage() {
     remove.mutate(id, { onSuccess: () => toast.success('Deleted'), onError: () => toast.error('Failed') });
   }
 
+  const frames = data?.data ?? [];
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 max-w-7xl mx-auto">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Frames</h1>
-        <Button onClick={openCreate}><Plus className="w-4 h-4 mr-2" />Add Frame</Button>
+        <h1 className="text-xl md:text-2xl font-bold text-slate-800">Frames</h1>
+        <Button onClick={openCreate} size="sm">
+          <Plus className="w-4 h-4 md:mr-2" /><span className="hidden md:inline">Add Frame</span>
+        </Button>
       </div>
 
-      {/* Table */}
-      <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
-        <table className="w-full text-sm">
-          <thead className="bg-gray-50 border-b">
-            <tr>
-              <th className="px-4 py-3 text-left text-gray-600 font-medium">Image</th>
-              <th className="px-4 py-3 text-left text-gray-600 font-medium">Name</th>
-              <th className="px-4 py-3 text-left text-gray-600 font-medium">Brand</th>
-              <th className="px-4 py-3 text-left text-gray-600 font-medium">Price</th>
-              <th className="px-4 py-3 text-left text-gray-600 font-medium">Colors</th>
-              <th className="px-4 py-3 text-left text-gray-600 font-medium">Status</th>
-              <th className="px-4 py-3 text-right text-gray-600 font-medium">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y">
-            {isLoading ? (
-              <tr><td colSpan={7} className="text-center py-8 text-gray-400">Loading...</td></tr>
-            ) : data?.data?.map((f) => (
-              <tr key={f._id} className="hover:bg-gray-50">
-                <td className="px-4 py-3">
-                  {f.images?.[0]
-                    ? <Image src={f.images[0]} alt={f.name} width={48} height={40} className="object-cover rounded-lg w-12 h-10" />
-                    : <div className="w-12 h-10 bg-gray-100 rounded-lg" />}
-                </td>
-                <td className="px-4 py-3 font-medium text-gray-900">{f.name}</td>
-                <td className="px-4 py-3 text-gray-500">{f.brandId?.name}</td>
-                <td className="px-4 py-3 font-medium text-blue-700">₹{f.framePrice.toLocaleString()}</td>
-                <td className="px-4 py-3">
-                  <div className="flex gap-1 flex-wrap">
-                    {f.colors?.slice(0, 3).map((c) => (
-                      <span key={c} className="text-xs bg-gray-100 rounded-full px-2 py-0.5 text-gray-600">{c}</span>
-                    ))}
-                    {(f.colors?.length ?? 0) > 3 && <span className="text-xs text-gray-400">+{f.colors.length - 3}</span>}
-                  </div>
-                </td>
-                <td className="px-4 py-3"><Badge variant={f.active ? 'default' : 'secondary'}>{f.active ? 'Active' : 'Inactive'}</Badge></td>
-                <td className="px-4 py-3 text-right">
-                  <Button variant="ghost" size="icon" onClick={() => openEdit(f)}><Pencil className="w-4 h-4" /></Button>
-                  <Button variant="ghost" size="icon" onClick={() => handleDelete(f._id)}><Trash2 className="w-4 h-4 text-red-500" /></Button>
-                </td>
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        {/* Mobile cards */}
+        <div className="divide-y divide-slate-50 md:hidden">
+          {isLoading ? (
+            <div className="py-10 text-center text-slate-400 text-sm">Loading...</div>
+          ) : frames.length === 0 ? (
+            <div className="py-10 text-center text-slate-400 text-sm">No frames yet</div>
+          ) : frames.map((f) => (
+            <div key={f._id} className="flex items-center gap-3 px-4 py-3">
+              {f.images?.[0]
+                ? <Image src={f.images[0]} alt={f.name} width={48} height={40} className="object-cover rounded-lg shrink-0 w-12 h-10" />
+                : <div className="w-12 h-10 bg-slate-100 rounded-lg shrink-0" />}
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-slate-800 text-sm truncate">{f.name}</p>
+                <p className="text-xs text-slate-400">{f.brandId?.name} · <span className="text-blue-600 font-medium">₹{f.framePrice.toLocaleString()}</span></p>
+              </div>
+              <Badge variant={f.active ? 'default' : 'secondary'} className="shrink-0 text-xs">{f.active ? 'Active' : 'Inactive'}</Badge>
+              <div className="flex gap-1 shrink-0">
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(f)}><Pencil className="w-3.5 h-3.5" /></Button>
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDelete(f._id)}><Trash2 className="w-3.5 h-3.5 text-red-500" /></Button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop table */}
+        <div className="hidden md:block overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="bg-slate-50 border-b text-xs text-slate-500 uppercase tracking-wider">
+              <tr>
+                <th className="px-4 py-3 text-left font-medium">Image</th>
+                <th className="px-4 py-3 text-left font-medium">Name</th>
+                <th className="px-4 py-3 text-left font-medium">Brand</th>
+                <th className="px-4 py-3 text-left font-medium">Price</th>
+                <th className="px-4 py-3 text-left font-medium">Colors</th>
+                <th className="px-4 py-3 text-left font-medium">Status</th>
+                <th className="px-4 py-3 text-right font-medium">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-slate-50">
+              {isLoading ? (
+                <tr><td colSpan={7} className="text-center py-8 text-slate-400">Loading...</td></tr>
+              ) : frames.map((f) => (
+                <tr key={f._id} className="hover:bg-slate-50/50 transition-colors">
+                  <td className="px-4 py-3">
+                    {f.images?.[0]
+                      ? <Image src={f.images[0]} alt={f.name} width={48} height={40} className="object-cover rounded-lg w-12 h-10" />
+                      : <div className="w-12 h-10 bg-slate-100 rounded-lg" />}
+                  </td>
+                  <td className="px-4 py-3 font-medium text-slate-800">{f.name}</td>
+                  <td className="px-4 py-3 text-slate-500">{f.brandId?.name}</td>
+                  <td className="px-4 py-3 font-medium text-blue-700">₹{f.framePrice.toLocaleString()}</td>
+                  <td className="px-4 py-3">
+                    <div className="flex gap-1 flex-wrap">
+                      {f.colors?.slice(0, 3).map((c) => (
+                        <span key={c} className="text-xs bg-slate-100 rounded-full px-2 py-0.5 text-slate-600">{c}</span>
+                      ))}
+                      {(f.colors?.length ?? 0) > 3 && <span className="text-xs text-slate-400">+{f.colors.length - 3}</span>}
+                    </div>
+                  </td>
+                  <td className="px-4 py-3"><Badge variant={f.active ? 'default' : 'secondary'}>{f.active ? 'Active' : 'Inactive'}</Badge></td>
+                  <td className="px-4 py-3 text-right">
+                    <Button variant="ghost" size="icon" onClick={() => openEdit(f)}><Pencil className="w-4 h-4" /></Button>
+                    <Button variant="ghost" size="icon" onClick={() => handleDelete(f._id)}><Trash2 className="w-4 h-4 text-red-500" /></Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Modal */}
@@ -251,7 +281,7 @@ export default function FramesPage() {
               </div>
               <div className="space-y-2">
                 {colorRows.map((row, i) => (
-                  <div key={i} className="flex items-center gap-2 bg-gray-50 rounded-xl p-2">
+                  <div key={i} className="flex items-center gap-2 bg-slate-50 rounded-xl p-2">
                     {/* Color preview / existing image */}
                     <div className="w-12 h-12 rounded-lg overflow-hidden border bg-white shrink-0">
                       {row.file ? (
@@ -259,7 +289,7 @@ export default function FramesPage() {
                       ) : row.existingUrl ? (
                         <img src={row.existingUrl} alt="" className="w-full h-full object-cover" />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-300 text-xs">No img</div>
+                        <div className="w-full h-full flex items-center justify-center text-slate-300 text-xs">No img</div>
                       )}
                     </div>
 
@@ -273,7 +303,7 @@ export default function FramesPage() {
 
                     {/* Image upload */}
                     <label className="cursor-pointer shrink-0">
-                      <span className="text-xs bg-white border rounded-lg px-3 py-2 text-gray-600 hover:bg-gray-100 transition-colors whitespace-nowrap">
+                      <span className="text-xs bg-white border rounded-lg px-3 py-2 text-slate-600 hover:bg-slate-100 transition-colors whitespace-nowrap">
                         {row.file ? '✓ Changed' : row.existingUrl ? 'Replace' : 'Upload'}
                       </span>
                       <input
@@ -305,7 +335,7 @@ export default function FramesPage() {
               </div>
               <div className="flex flex-wrap gap-2">
                 {sizes.map((sz, i) => (
-                  <div key={i} className="flex items-center gap-1 bg-gray-50 rounded-lg border px-2 py-1">
+                  <div key={i} className="flex items-center gap-1 bg-slate-50 rounded-lg border px-2 py-1">
                     <Input
                       placeholder="e.g. S, M, L, 52mm"
                       value={sz}
@@ -320,7 +350,7 @@ export default function FramesPage() {
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-gray-400 mt-1">e.g. S, M, L &nbsp;or&nbsp; 50mm, 52mm, 54mm</p>
+              <p className="text-xs text-slate-400 mt-1">e.g. S, M, L &nbsp;or&nbsp; 50mm, 52mm, 54mm</p>
             </div>
 
             {/* Featured / Active */}
