@@ -47,6 +47,7 @@ export interface LensType {
   _id: string;
   name: string;
   description: string;
+  image: string;
   extraPrice: number;
   active: boolean;
 }
