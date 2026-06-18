@@ -1,0 +1,11 @@
+const router = require('express').Router();
+const ctrl = require('../controllers/categoryController');
+const { protect } = require('../middleware/auth');
+const { upload } = require('../middleware/upload');
+
+router.get('/', ctrl.getAll);
+router.post('/', protect, upload.single('image'), ctrl.create);
+router.put('/:id', protect, upload.single('image'), ctrl.update);
+router.delete('/:id', protect, ctrl.remove);
+
+module.exports = router;

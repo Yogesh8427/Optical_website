@@ -1,0 +1,26 @@
+const mongoose = require('mongoose');
+
+const settingsSchema = new mongoose.Schema(
+  {
+    storeName: { type: String, default: 'OptiVision' },
+    logo: { type: String, default: '' },
+    whatsappNumber: { type: String, default: '' },
+    email: { type: String, default: '' },
+    address: { type: String, default: '' },
+    socialLinks: {
+      facebook: { type: String, default: '' },
+      instagram: { type: String, default: '' },
+      twitter: { type: String, default: '' },
+      youtube: { type: String, default: '' },
+    },
+    googleMapsUrl: { type: String, default: '' },
+    seoDefaults: {
+      title: { type: String, default: '' },
+      description: { type: String, default: '' },
+      ogImage: { type: String, default: '' },
+    },
+  },
+  { timestamps: true }
+);
+
+module.exports = mongoose.model('Settings', settingsSchema);
