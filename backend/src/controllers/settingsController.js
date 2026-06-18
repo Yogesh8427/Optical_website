@@ -12,8 +12,9 @@ exports.get = async (_req, res, next) => {
 exports.update = async (req, res, next) => {
   try {
     const updates = { ...req.body };
-    if (typeof updates.socialLinks === 'string') updates.socialLinks = JSON.parse(updates.socialLinks);
-    if (typeof updates.seoDefaults === 'string') updates.seoDefaults = JSON.parse(updates.seoDefaults);
+    if (typeof updates.socialLinks  === 'string') updates.socialLinks  = JSON.parse(updates.socialLinks);
+    if (typeof updates.seoDefaults  === 'string') updates.seoDefaults  = JSON.parse(updates.seoDefaults);
+    if (typeof updates.aboutContent === 'string') updates.aboutContent = JSON.parse(updates.aboutContent);
     if (req.file) updates.logo = await uploadToCloudinary(req.file.buffer, 'settings');
 
     let settings = await Settings.findOne();

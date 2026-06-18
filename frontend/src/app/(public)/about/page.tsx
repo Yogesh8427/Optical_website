@@ -3,30 +3,54 @@ import { useSettings } from '@/hooks/useSettings';
 import { CheckCircle2 } from 'lucide-react';
 
 export default function AboutPage() {
-  const { data } = useSettings();
+  const { data, isLoading } = useSettings();
   const s = data?.data;
   const about = s?.aboutContent;
 
-  const heading     = about?.heading     || 'About Us';
-  const subheading  = about?.subheading  || '';
-  const body        = about?.body        || '';
-  const mission     = about?.mission     || '';
-  const vision      = about?.vision      || '';
-  const highlights  = about?.highlights?.filter(Boolean) ?? [];
-  const storeName   = s?.storeName       || 'Our Store';
+  const heading    = about?.heading    || '';
+  const subheading = about?.subheading || '';
+  const body       = about?.body       || '';
+  const mission    = about?.mission    || '';
+  const vision     = about?.vision     || '';
+  const highlights = about?.highlights?.filter(Boolean) ?? [];
+  const storeName  = s?.storeName      || 'Our Store';
+
+  const hasContent = heading || body || mission || vision || highlights.length > 0;
+
+  if (isLoading) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-4 animate-pulse">
+        <div className="h-10 bg-gray-200 rounded w-1/2" />
+        <div className="h-5 bg-gray-100 rounded w-1/3" />
+        <div className="h-32 bg-gray-100 rounded mt-8" />
+      </div>
+    );
+  }
+
+  if (!hasContent) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
+        <div className="text-6xl mb-4">🏪</div>
+        <h1 className="text-3xl font-bold text-gray-800 mb-3">About {storeName}</h1>
+        <p className="text-gray-400 text-lg">
+          Our story is coming soon. Check back later!
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
 
       {/* Header */}
       <div className="mb-10">
-        <h1 className="text-4xl font-bold text-gray-900 mb-3">{heading}</h1>
+        <h1 className="text-4xl font-bold text-gray-900 mb-3">{heading || `About ${storeName}`}</h1>
         {subheading && <p className="text-xl text-gray-500">{subheading}</p>}
       </div>
 
       {/* Main body */}
       {body && (
-        <div className="prose prose-lg text-gray-600 mb-10 whitespace-pre-line leading-relaxed">
+        <div className="text-gray-600 mb-10 whitespace-pre-line leading-relaxed text-lg">
           {body}
         </div>
       )}
@@ -49,7 +73,7 @@ export default function AboutPage() {
         </div>
       )}
 
-      {/* Why Choose Us highlights */}
+      {/* Why Choose Us */}
       {highlights.length > 0 && (
         <div>
           <h2 className="text-2xl font-bold text-gray-900 mb-5">Why Choose {storeName}?</h2>
@@ -61,14 +85,6 @@ export default function AboutPage() {
               </li>
             ))}
           </ul>
-        </div>
-      )}
-
-      {/* Fallback if nothing is filled yet */}
-      {!body && !mission && !vision && highlights.length === 0 && (
-        <div className="text-center py-16 text-gray-400">
-          <p className="text-lg">About page content not set yet.</p>
-          <p className="text-sm mt-1">Go to <strong>Admin → Settings → About Page</strong> to add your content.</p>
         </div>
       )}
     </div>
