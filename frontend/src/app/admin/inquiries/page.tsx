@@ -130,25 +130,115 @@ export default function InquiriesPage() {
           <DialogHeader><DialogTitle>Inquiry Detail</DialogTitle></DialogHeader>
           {selected && (
             <div className="space-y-3 text-sm">
-              <div className="grid grid-cols-2 gap-2">
-                <div><p className="text-slate-500">Customer</p><p className="font-medium">{selected.customerName}</p></div>
-                <div><p className="text-slate-500">Phone</p><p className="font-medium">{selected.phone}</p></div>
-                <div><p className="text-slate-500">Email</p><p className="font-medium">{selected.email || '—'}</p></div>
-                <div><p className="text-slate-500">City</p><p className="font-medium">{selected.city || '—'}</p></div>
-                <div><p className="text-slate-500">Frame</p><p className="font-medium">{selected.frameId?.name ?? '—'}</p></div>
-                {selected.selectedColor && <div><p className="text-slate-500">Color</p><p className="font-medium">{selected.selectedColor}</p></div>}
-                {selected.selectedSize  && <div><p className="text-slate-500">Size</p><p className="font-medium">{selected.selectedSize}</p></div>}
-                <div><p className="text-slate-500">Power Required</p><p className="font-medium">{selected.powerRequired ? 'Yes' : 'No'}</p></div>
-                {selected.lensBrandId && <div><p className="text-slate-500">Lens Brand</p><p className="font-medium">{selected.lensBrandId.name}</p></div>}
-                {selected.lensTypes?.length > 0 && <div className="col-span-2"><p className="text-slate-500">Lens Types</p><p className="font-medium">{selected.lensTypes.map((t) => t.name).join(', ')}</p></div>}
-                {selected.powerRequired && (
-                  <>
-                    <div><p className="text-slate-500">Right Eye</p><p className="font-medium">SPH {selected.rightEye.sph} / CYL {selected.rightEye.cyl} / AXIS {selected.rightEye.axis}</p></div>
-                    <div><p className="text-slate-500">Left Eye</p><p className="font-medium">SPH {selected.leftEye.sph} / CYL {selected.leftEye.cyl} / AXIS {selected.leftEye.axis}</p></div>
-                  </>
+
+              {/* ── Row helper ── */}
+              <div className="rounded-xl border border-slate-100 overflow-hidden divide-y divide-slate-50">
+
+                {/* Customer + Phone */}
+                <div className="grid grid-cols-2">
+                  <div className="px-4 py-3 min-w-0">
+                    <p className="text-xs text-slate-400 mb-0.5">Customer</p>
+                    <p className="font-medium text-slate-800 truncate">{selected.customerName}</p>
+                  </div>
+                  <div className="px-4 py-3 border-l border-slate-50 min-w-0">
+                    <p className="text-xs text-slate-400 mb-0.5">Phone</p>
+                    <p className="font-medium text-slate-800 truncate">{selected.phone}</p>
+                  </div>
+                </div>
+
+                {/* Email — full width so long addresses don't overflow */}
+                <div className="px-4 py-3 min-w-0">
+                  <p className="text-xs text-slate-400 mb-0.5">Email</p>
+                  <p className="font-medium text-slate-800 break-all">{selected.email || '—'}</p>
+                </div>
+
+                {/* City + Status */}
+                <div className="grid grid-cols-2">
+                  <div className="px-4 py-3 min-w-0">
+                    <p className="text-xs text-slate-400 mb-0.5">City</p>
+                    <p className="font-medium text-slate-800 truncate">{selected.city || '—'}</p>
+                  </div>
+                  <div className="px-4 py-3 border-l border-slate-50 min-w-0">
+                    <p className="text-xs text-slate-400 mb-0.5">Status</p>
+                    <StatusBadge status={selected.status} />
+                  </div>
+                </div>
+
+                {/* Frame — full width */}
+                <div className="px-4 py-3 min-w-0">
+                  <p className="text-xs text-slate-400 mb-0.5">Frame</p>
+                  <p className="font-medium text-slate-800">{selected.frameId?.name ?? '—'}</p>
+                </div>
+
+                {/* Color + Size */}
+                {(selected.selectedColor || selected.selectedSize) && (
+                  <div className="grid grid-cols-2">
+                    {selected.selectedColor && (
+                      <div className="px-4 py-3 min-w-0">
+                        <p className="text-xs text-slate-400 mb-0.5">Color</p>
+                        <p className="font-medium text-slate-800 truncate">{selected.selectedColor}</p>
+                      </div>
+                    )}
+                    {selected.selectedSize && (
+                      <div className={`px-4 py-3 min-w-0 ${selected.selectedColor ? 'border-l border-slate-50' : ''}`}>
+                        <p className="text-xs text-slate-400 mb-0.5">Size</p>
+                        <p className="font-medium text-slate-800 truncate">{selected.selectedSize}</p>
+                      </div>
+                    )}
+                  </div>
                 )}
-                {selected.notes && <div className="col-span-2"><p className="text-slate-500">Notes</p><p className="font-medium">{selected.notes}</p></div>}
-                <div><p className="text-slate-500">Status</p><StatusBadge status={selected.status} /></div>
+
+                {/* Power Required + Lens Brand */}
+                <div className="grid grid-cols-2">
+                  <div className="px-4 py-3 min-w-0">
+                    <p className="text-xs text-slate-400 mb-0.5">Power Required</p>
+                    <p className="font-medium text-slate-800">{selected.powerRequired ? 'Yes' : 'No'}</p>
+                  </div>
+                  {selected.lensBrandId && (
+                    <div className="px-4 py-3 border-l border-slate-50 min-w-0">
+                      <p className="text-xs text-slate-400 mb-0.5">Lens Brand</p>
+                      <p className="font-medium text-slate-800 truncate">{selected.lensBrandId.name}</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Lens Types */}
+                {selected.lensTypes?.length > 0 && (
+                  <div className="px-4 py-3 min-w-0">
+                    <p className="text-xs text-slate-400 mb-0.5">Lens Types</p>
+                    <p className="font-medium text-slate-800">{selected.lensTypes.map((t) => t.name).join(', ')}</p>
+                  </div>
+                )}
+
+                {/* Prescription — Right + Left eye */}
+                {selected.powerRequired && (
+                  <div className="grid grid-cols-2">
+                    <div className="px-4 py-3 min-w-0">
+                      <p className="text-xs text-slate-400 mb-0.5">Right Eye</p>
+                      <p className="font-medium text-slate-800 text-xs leading-relaxed">
+                        SPH {selected.rightEye.sph || '—'}<br />
+                        CYL {selected.rightEye.cyl || '—'}<br />
+                        AXIS {selected.rightEye.axis || '—'}
+                      </p>
+                    </div>
+                    <div className="px-4 py-3 border-l border-slate-50 min-w-0">
+                      <p className="text-xs text-slate-400 mb-0.5">Left Eye</p>
+                      <p className="font-medium text-slate-800 text-xs leading-relaxed">
+                        SPH {selected.leftEye.sph || '—'}<br />
+                        CYL {selected.leftEye.cyl || '—'}<br />
+                        AXIS {selected.leftEye.axis || '—'}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Notes */}
+                {selected.notes && (
+                  <div className="px-4 py-3 min-w-0">
+                    <p className="text-xs text-slate-400 mb-0.5">Notes</p>
+                    <p className="font-medium text-slate-800">{selected.notes}</p>
+                  </div>
+                )}
               </div>
 
               {/* Prescription File */}
