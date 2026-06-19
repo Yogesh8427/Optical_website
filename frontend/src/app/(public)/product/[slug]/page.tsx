@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import ProductCard from '@/components/products/ProductCard';
 import LensWizard from '@/components/lens-wizard/LensWizard';
 import { Check, MessageCircle, X } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 import type { Frame } from '@/types';
 
 const COLOR_MAP: Record<string, string> = {
@@ -119,6 +120,7 @@ function QuickInquiry({
 export default function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
   const { data, isLoading } = useFrame(slug);
+  const { localize } = useLanguage();
   const { data: settingsData } = useSettings();
   const [activeImg, setActiveImg] = useState(0);
   const [activeColor, setActiveColor] = useState(0);
@@ -194,7 +196,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
         <div className="space-y-5">
           <div>
             <p className="text-sm text-blue-600 font-medium uppercase tracking-wide mb-1">{frame.brandId?.name}</p>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">{frame.name}</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">{localize(frame)}</h1>
           </div>
 
           <div className="flex items-center gap-3 flex-wrap">
@@ -207,7 +209,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
           </div>
 
           {frame.description && (
-            <p className="text-gray-600 leading-relaxed">{frame.description}</p>
+            <p className="text-gray-600 leading-relaxed">{localize(frame, 'description')}</p>
           )}
 
           <div className="space-y-1 text-sm text-gray-600">

@@ -3,6 +3,7 @@ import { Geist } from 'next/font/google';
 import './globals.css';
 import Providers from '@/components/Providers';
 import { Toaster } from '@/components/ui/sonner';
+import { LanguageProvider } from '@/contexts/LanguageContext';
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-geist' });
 
@@ -27,10 +28,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${geist.variable} antialiased`}>
       <body className="min-h-screen flex flex-col" suppressHydrationWarning>
-        <Providers>
-          {children}
-          <Toaster richColors position="top-right" />
-        </Providers>
+        <LanguageProvider>
+          <Providers>
+            {children}
+            <Toaster richColors position="top-right" />
+          </Providers>
+        </LanguageProvider>
       </body>
     </html>
   );

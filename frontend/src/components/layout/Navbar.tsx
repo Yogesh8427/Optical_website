@@ -4,18 +4,20 @@ import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { Menu, X, Eye, Search, ShoppingBag } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
-const links = [
-  { href: '/',         label: 'Home'     },
-  { href: '/products', label: 'Products' },
-  { href: '/about',    label: 'About'    },
-  { href: '/contact',  label: 'Contact'  },
-];
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function Navbar() {
-  const [open, setOpen]       = useState(false);
+  const [open, setOpen]         = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const pathname              = usePathname();
+  const pathname                = usePathname();
+  const { lang, setLang, t }    = useLanguage();
+
+  const links = [
+    { href: '/',         label: t.nav.home     },
+    { href: '/products', label: t.nav.products },
+    { href: '/about',    label: t.nav.about    },
+    { href: '/contact',  label: t.nav.contact  },
+  ];
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -65,9 +67,18 @@ export default function Navbar() {
 
             {/* Desktop actions */}
             <div className="hidden md:flex items-center gap-2">
+              {/* Language switcher */}
+              <button
+                onClick={() => setLang(lang === 'en' ? 'hi' : 'en')}
+                className="flex items-center gap-1 px-3 py-1.5 rounded-full border border-slate-200 text-sm font-medium hover:border-blue-400 hover:text-blue-600 transition-all"
+              >
+                <span className={lang === 'en' ? 'text-blue-600 font-bold' : 'text-slate-400'}>EN</span>
+                <span className="text-slate-300">|</span>
+                <span className={lang === 'hi' ? 'text-blue-600 font-bold' : 'text-slate-400'}>हिं</span>
+              </button>
               <Link href="/products" className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">
                 <ShoppingBag className="w-4 h-4" />
-                Browse Frames
+                {t.nav.browseFrames}
               </Link>
             </div>
 
@@ -90,7 +101,7 @@ export default function Navbar() {
         {/* Mobile slide-down menu */}
         <div className={cn(
           'md:hidden overflow-hidden transition-all duration-300 bg-white border-t border-gray-100',
-          open ? 'max-h-80 opacity-100' : 'max-h-0 opacity-0'
+          open ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
         )}>
           <div className="px-4 py-3 space-y-1">
             {links.map((l) => (
@@ -107,12 +118,21 @@ export default function Navbar() {
                 {l.label}
               </Link>
             ))}
+            {/* Mobile language switcher */}
+            <button
+              onClick={() => setLang(lang === 'en' ? 'hi' : 'en')}
+              className="flex items-center gap-1 px-3 py-2.5 rounded-xl text-sm font-medium border border-slate-200 w-full hover:border-blue-400 transition-all"
+            >
+              <span className={lang === 'en' ? 'text-blue-600 font-bold' : 'text-slate-400'}>EN</span>
+              <span className="text-slate-300 mx-1">|</span>
+              <span className={lang === 'hi' ? 'text-blue-600 font-bold' : 'text-slate-400'}>हिं</span>
+            </button>
             <Link
               href="/products"
               className="flex items-center justify-center gap-2 mt-2 w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors"
             >
               <ShoppingBag className="w-4 h-4" />
-              Browse All Frames
+              {t.nav.browseFrames}
             </Link>
           </div>
         </div>

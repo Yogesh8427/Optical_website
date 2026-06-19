@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface Filters {
   category: string;
@@ -23,6 +24,7 @@ interface Props {
 }
 
 export default function ProductFilters({ filters, onChange, onReset }: Props) {
+  const { t } = useLanguage();
   const { data: catData } = useCategories();
   const { data: brandData } = useBrands();
 
@@ -72,7 +74,7 @@ export default function ProductFilters({ filters, onChange, onReset }: Props) {
 
       {/* ── Category ── */}
       <div>
-        <Label className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2 block">Category</Label>
+        <Label className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2 block">{t.products.category}</Label>
 
         {/* Step 1 — parent buttons */}
         <div className="flex flex-wrap gap-2">
@@ -84,7 +86,7 @@ export default function ProductFilters({ filters, onChange, onReset }: Props) {
                 : 'bg-white text-slate-600 border-slate-200 hover:border-blue-300'
             }`}
           >
-            All
+            {t.products.all}
           </button>
           {parents.map((p) => (
             <button
@@ -139,15 +141,15 @@ export default function ProductFilters({ filters, onChange, onReset }: Props) {
 
       {/* ── Brand ── */}
       <div>
-        <Label className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2 block">Brand</Label>
+        <Label className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2 block">{t.products.brand}</Label>
         <Select value={filters.brand || 'all'} onValueChange={(v) => set('brand', v === 'all' ? '' : v)}>
           <SelectTrigger>
             <span className="text-sm">
-              {filters.brand ? (brands.find((b) => b._id === filters.brand)?.name ?? 'All Brands') : 'All Brands'}
+              {filters.brand ? (brands.find((b) => b._id === filters.brand)?.name ?? t.products.allBrands) : t.products.allBrands}
             </span>
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Brands</SelectItem>
+            <SelectItem value="all">{t.products.allBrands}</SelectItem>
             {brands.map((b) => <SelectItem key={b._id} value={b._id}>{b.name}</SelectItem>)}
           </SelectContent>
         </Select>
@@ -155,35 +157,35 @@ export default function ProductFilters({ filters, onChange, onReset }: Props) {
 
       {/* ── Gender ── */}
       <div>
-        <Label className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2 block">Gender</Label>
+        <Label className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2 block">{t.products.gender}</Label>
         <Select value={filters.gender || 'all'} onValueChange={(v) => set('gender', v === 'all' ? '' : v)}>
-          <SelectTrigger><SelectValue placeholder="All" /></SelectTrigger>
+          <SelectTrigger><SelectValue placeholder={t.products.all} /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All</SelectItem>
-            <SelectItem value="men">Men</SelectItem>
-            <SelectItem value="women">Women</SelectItem>
-            <SelectItem value="unisex">Unisex</SelectItem>
-            <SelectItem value="kids">Kids</SelectItem>
+            <SelectItem value="all">{t.products.all}</SelectItem>
+            <SelectItem value="men">{t.products.men}</SelectItem>
+            <SelectItem value="women">{t.products.women}</SelectItem>
+            <SelectItem value="unisex">{t.products.unisex}</SelectItem>
+            <SelectItem value="kids">{t.products.kids}</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       {/* ── Material ── */}
       <div>
-        <Label className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2 block">Material</Label>
+        <Label className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2 block">{t.products.material}</Label>
         <Input placeholder="e.g. Metal, Acetate" value={filters.material} onChange={(e) => set('material', e.target.value)} />
       </div>
 
       {/* ── Price ── */}
       <div>
-        <Label className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2 block">Price Range</Label>
+        <Label className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2 block">{t.products.priceRange}</Label>
         <div className="flex gap-2">
           <Input type="number" placeholder="Min" value={filters.minPrice} onChange={(e) => set('minPrice', e.target.value)} />
           <Input type="number" placeholder="Max" value={filters.maxPrice} onChange={(e) => set('maxPrice', e.target.value)} />
         </div>
       </div>
 
-      <Button variant="outline" className="w-full" onClick={onReset}>Reset Filters</Button>
+      <Button variant="outline" className="w-full" onClick={onReset}>{t.products.resetFilters}</Button>
     </div>
   );
 }

@@ -24,6 +24,8 @@ export default function CategoriesPage() {
   const [active, setActive] = useState(true);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [parentId, setParentId] = useState('');
+  const [hiName, setHiName] = useState('');
+  const [hiDesc, setHiDesc] = useState('');
 
   const allCats = data?.data ?? [];
   // Top-level = no parent
@@ -36,13 +38,13 @@ export default function CategoriesPage() {
   });
 
   function openCreate(defaultParentId = '') {
-    setEditing(null); setName(''); setDescription(''); setActive(true); setImageFile(null);
+    setEditing(null); setName(''); setDescription(''); setActive(true); setImageFile(null); setHiName(''); setHiDesc('');
     setParentId(defaultParentId);
     setModalOpen(true);
   }
 
   function openEdit(cat: Category) {
-    setEditing(cat); setName(cat.name); setDescription(cat.description); setActive(cat.active); setImageFile(null);
+    setEditing(cat); setName(cat.name); setDescription(cat.description); setActive(cat.active); setImageFile(null); setHiName(cat.translations?.hi?.name ?? ''); setHiDesc(cat.translations?.hi?.description ?? '');
     const p = cat.parentId;
     setParentId(p ? (typeof p === 'string' ? p : p._id) : '');
     setModalOpen(true);
@@ -56,6 +58,8 @@ export default function CategoriesPage() {
     form.append('active', String(active));
     if (parentId) form.append('parentId', parentId);
     if (imageFile) form.append('image', imageFile);
+    form.append('hi_name', hiName);
+    form.append('hi_description', hiDesc);
 
     const action = editing ? update.mutateAsync({ id: editing._id, form }) : create.mutateAsync(form);
     action
@@ -209,6 +213,12 @@ export default function CategoriesPage() {
 
             <div><Label>Name *</Label><Input value={name} onChange={(e) => setName(e.target.value)} required className="mt-1" placeholder={parentId ? 'e.g. Metal Eyewear, Goggles…' : 'e.g. Men, Women, Kids…'} /></div>
             <div><Label>Description</Label><Input value={description} onChange={(e) => setDescription(e.target.value)} className="mt-1" /></div>
+            {/* Hindi Translation */}
+            <div className="rounded-xl border border-orange-100 bg-orange-50 p-3 space-y-2">
+              <p className="text-xs font-bold text-orange-700 flex items-center gap-1">🇮🇳 Hindi Translation <span className="font-normal text-orange-500">(optional)</span></p>
+              <div><Label className="text-xs">नाम (Name in Hindi)</Label><Input value={hiName} onChange={(e) => setHiName(e.target.value)} className="mt-1 text-sm" placeholder="e.g. पुरुष, महिला…" /></div>
+              <div><Label className="text-xs">विवरण (Description in Hindi)</Label><Input value={hiDesc} onChange={(e) => setHiDesc(e.target.value)} className="mt-1 text-sm" placeholder="Hindi description…" /></div>
+            </div>
             <div><Label>Image</Label><Input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files?.[0] ?? null)} className="mt-1" /></div>
             <div className="flex items-center gap-2"><input type="checkbox" id="active" checked={active} onChange={(e) => setActive(e.target.checked)} /><Label htmlFor="active">Active</Label></div>
             <div className="flex gap-3 pt-2">

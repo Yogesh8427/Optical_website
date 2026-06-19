@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useCategories } from '@/hooks/useCategories';
 import { Glasses, Sun, Monitor, Dumbbell, Baby, Sparkles } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const categoryIcons: Record<string, { icon: React.ElementType; color: string }> = {
   'mens-glasses':     { icon: Glasses,  color: 'text-blue-400' },
@@ -15,6 +16,7 @@ const categoryIcons: Record<string, { icon: React.ElementType; color: string }> 
 const fallbackIcon = { icon: Glasses, color: 'text-gray-400' };
 
 export default function CategoryGrid() {
+  const { t, localize } = useLanguage();
   const { data, isLoading } = useCategories();
   // Only show top-level (parent) categories on home screen
   const categories = data?.data?.filter((c) => c.active && !c.parentId) ?? [];
@@ -23,7 +25,7 @@ export default function CategoryGrid() {
     return (
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-gray-900 text-center mb-10">Shop by Category</h2>
+          <h2 className="text-3xl font-bold text-gray-900 text-center mb-10">{t.home.shopByCategory}</h2>
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="h-48 bg-gray-200 rounded-2xl animate-pulse" />
@@ -37,8 +39,8 @@ export default function CategoryGrid() {
   return (
     <section className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl font-bold text-gray-900 text-center mb-2">Shop by Category</h2>
-        <p className="text-center text-gray-500 mb-10">Find the perfect frames for every occasion</p>
+        <h2 className="text-3xl font-bold text-gray-900 text-center mb-2">{t.home.shopByCategory}</h2>
+        <p className="text-center text-gray-500 mb-10">{t.home.categorySubtitle}</p>
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
           {categories.map((cat) => {
             const { icon: Icon, color } = categoryIcons[cat.slug] ?? fallbackIcon;
@@ -53,7 +55,7 @@ export default function CategoryGrid() {
                   {cat.image ? (
                     <Image
                       src={cat.image}
-                      alt={cat.name}
+                      alt={localize(cat)}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-300"
                     />
@@ -69,7 +71,7 @@ export default function CategoryGrid() {
                 {/* Label */}
                 <div className="absolute bottom-0 left-0 right-0 p-2 text-center">
                   <span className="text-white text-xs font-semibold drop-shadow leading-tight">
-                    {cat.name}
+                    {localize(cat)}
                   </span>
                 </div>
               </Link>

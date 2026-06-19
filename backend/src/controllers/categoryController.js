@@ -16,7 +16,7 @@ exports.getAll = async (_req, res, next) => {
 
 exports.create = async (req, res, next) => {
   try {
-    const { name, description, active, parentId } = req.body;
+    const { name, description, active, parentId, hi_name, hi_description } = req.body;
     let image = '';
     if (req.file) {
       image = await uploadToCloudinary(req.file.buffer, 'categories');
@@ -30,6 +30,7 @@ exports.create = async (req, res, next) => {
       name, slug, description, image,
       active: active !== undefined ? active : true,
       parentId: parentId || null,
+      translations: { hi: { name: hi_name || '', description: hi_description || '' } },
     });
     const populated = await category.populate('parentId', 'name slug _id');
     res.status(201).json({ success: true, data: populated });
@@ -40,11 +41,13 @@ exports.create = async (req, res, next) => {
 
 exports.update = async (req, res, next) => {
   try {
-    const { name, description, active, parentId } = req.body;
+    const { name, description, active, parentId, hi_name, hi_description } = req.body;
     const updates = {
       description,
       active,
       parentId: parentId || null,
+      'translations.hi.name': hi_name || '',
+      'translations.hi.description': hi_description || '',
     };
     if (name) {
       updates.name = name;

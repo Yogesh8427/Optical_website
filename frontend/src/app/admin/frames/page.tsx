@@ -16,7 +16,7 @@ import { toast } from 'sonner';
 import type { Frame } from '@/types';
 
 interface ColorRow { color: string; file: File | null; existingUrl: string }
-const emptyForm = { name: '', description: '', categoryId: '', brandId: '', framePrice: '', material: '', gender: 'unisex', featured: false, active: true, requiresLens: true };
+const emptyForm = { name: '', description: '', categoryId: '', brandId: '', framePrice: '', material: '', gender: 'unisex', featured: false, active: true, requiresLens: true, hi_name: '', hi_description: '' };
 
 function emptyColor(): ColorRow { return { color: '', file: null, existingUrl: '' }; }
 
@@ -68,7 +68,9 @@ export default function ProductsPage() {
       categoryId: f.categoryId?._id ?? '', brandId: f.brandId?._id ?? '',
       framePrice: String(f.framePrice), material: f.material, gender: f.gender,
       featured: f.featured, active: f.active,
-      requiresLens: f.requiresLens !== false, // default true for old products
+      requiresLens: f.requiresLens !== false,
+      hi_name: f.translations?.hi?.name ?? '',
+      hi_description: f.translations?.hi?.description ?? '',
     });
     const rows: ColorRow[] = f.colors?.length
       ? f.colors.map((color, i) => ({ color, file: null, existingUrl: f.images?.[i] ?? '' }))
@@ -315,6 +317,19 @@ export default function ProductsPage() {
               <div className="col-span-2">
                 <Label>Description</Label>
                 <Textarea value={form.description} onChange={(e) => set('description', e.target.value)} className="mt-1" rows={2} />
+              </div>
+
+              {/* Hindi Translation */}
+              <div className="col-span-2 rounded-xl border border-orange-100 bg-orange-50 p-3 space-y-2">
+                <p className="text-xs font-bold text-orange-700">🇮🇳 Hindi Translation <span className="font-normal text-orange-500">(optional — shown when user switches to हिं)</span></p>
+                <div>
+                  <Label className="text-xs">नाम — Product Name in Hindi</Label>
+                  <Input value={form.hi_name} onChange={(e) => set('hi_name', e.target.value)} className="mt-1 text-sm" placeholder="e.g. रे-बैन एविएटर क्लासिक" />
+                </div>
+                <div>
+                  <Label className="text-xs">विवरण — Description in Hindi</Label>
+                  <Textarea value={form.hi_description} onChange={(e) => set('hi_description', e.target.value)} className="mt-1 text-sm" rows={2} placeholder="Hindi description…" />
+                </div>
               </div>
             </div>
 

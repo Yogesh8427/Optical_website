@@ -8,6 +8,12 @@ const categorySchema = new mongoose.Schema(
     image: { type: String, default: '' },
     active: { type: Boolean, default: true },
     parentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', default: null },
+    translations: {
+      hi: {
+        name: { type: String, default: '' },
+        description: { type: String, default: '' },
+      },
+    },
   },
   { timestamps: true }
 );

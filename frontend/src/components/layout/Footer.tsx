@@ -1,7 +1,11 @@
+'use client';
 import Link from 'next/link';
 import { Eye, MapPin, Phone, Mail, MessageCircle } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function Footer() {
+  const { t } = useLanguage();
+
   return (
     <footer className="bg-gray-950 text-gray-400 mt-auto mb-16 md:mb-0">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-10">
@@ -16,7 +20,7 @@ export default function Footer() {
               <span className="font-bold text-lg text-white">Opti<span className="text-blue-400">Vision</span></span>
             </div>
             <p className="text-sm text-gray-500 leading-relaxed mb-4">
-              Premium eyewear, expertly customized for you. Your vision is our mission.
+              {t.footer.tagline}
             </p>
             {/* Social */}
             <div className="flex gap-2">
@@ -34,9 +38,9 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Quick Links</h3>
+            <h3 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">{t.footer.quickLinks}</h3>
             <ul className="space-y-2.5">
-              {[['/', 'Home'], ['/products', 'Products'], ['/about', 'About Us'], ['/contact', 'Contact']].map(([href, label]) => (
+              {([['/', t.nav.home], ['/products', t.nav.products], ['/about', t.nav.about], ['/contact', t.nav.contact]] as [string, string][]).map(([href, label]) => (
                 <li key={href}>
                   <Link href={href} className="text-sm text-gray-500 hover:text-white transition-colors">
                     {label}
@@ -50,7 +54,7 @@ export default function Footer() {
           <div>
             <h3 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Legal</h3>
             <ul className="space-y-2.5">
-              {[['/privacy-policy', 'Privacy Policy'], ['/terms', 'Terms & Conditions']].map(([href, label]) => (
+              {([['/privacy-policy', t.footer.privacy], ['/terms', t.footer.terms]] as [string, string][]).map(([href, label]) => (
                 <li key={href}>
                   <Link href={href} className="text-sm text-gray-500 hover:text-white transition-colors">
                     {label}
@@ -62,7 +66,7 @@ export default function Footer() {
 
           {/* Contact */}
           <div>
-            <h3 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Contact</h3>
+            <h3 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">{t.contact.title}</h3>
             <ul className="space-y-3">
               <li className="flex items-start gap-2 text-sm text-gray-500">
                 <MessageCircle className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
@@ -70,15 +74,15 @@ export default function Footer() {
               </li>
               <li className="flex items-start gap-2 text-sm text-gray-500">
                 <Phone className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
-                <span>Call Us</span>
+                <span>{t.contact.callUs}</span>
               </li>
               <li className="flex items-start gap-2 text-sm text-gray-500">
                 <Mail className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
-                <span>Email Us</span>
+                <span>{t.contact.emailUs}</span>
               </li>
               <li className="flex items-start gap-2 text-sm text-gray-500">
                 <MapPin className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
-                <span>Find Our Store</span>
+                <span>{t.contact.address}</span>
               </li>
             </ul>
           </div>
@@ -87,7 +91,7 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="border-t border-gray-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-2">
           <p className="text-xs text-gray-600">
-            &copy; {new Date().getFullYear()} OptiVision. All rights reserved.
+            &copy; {new Date().getFullYear()} OptiVision. {t.footer.rights}
           </p>
           <p className="text-xs text-gray-700">
             Crafted with ❤️ for perfect vision

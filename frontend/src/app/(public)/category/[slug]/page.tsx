@@ -7,12 +7,14 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
-  const [selectedSubId, setSelectedSubId] = useState(''); // '' = all (parent), or a sub-cat _id
+  const [selectedSubId, setSelectedSubId] = useState('');
+  const { localize } = useLanguage(); // '' = all (parent), or a sub-cat _id
 
   const { data: catData } = useCategories();
   const allCats = catData?.data ?? [];
@@ -60,7 +62,7 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
-      <h1 className="text-3xl font-bold text-gray-900 mb-1">{category?.name ?? slug}</h1>
+      <h1 className="text-3xl font-bold text-gray-900 mb-1">{category ? localize(category) : slug}</h1>
       {category?.description && <p className="text-gray-500 mb-4 text-sm">{category.description}</p>}
 
       {/* Sub-category chips — only when this is a parent with children */}
@@ -128,7 +130,7 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
           <p className="font-medium">No products found{activeSubName ? ` in "${activeSubName}"` : ''}.</p>
           {selectedSubId && (
             <button onClick={() => pickSub('')} className="mt-2 text-sm text-blue-600 underline">
-              Show all {category?.name}
+              Show all  {category ? localize(category) : ''}
             </button>
           )}
         </div>

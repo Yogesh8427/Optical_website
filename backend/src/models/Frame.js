@@ -16,6 +16,12 @@ const frameSchema = new mongoose.Schema(
     featured: { type: Boolean, default: false },
     active: { type: Boolean, default: true },
     requiresLens: { type: Boolean, default: true },
+    translations: {
+      hi: {
+        name: { type: String, default: '' },
+        description: { type: String, default: '' },
+      },
+    },
   },
   { timestamps: true }
 );

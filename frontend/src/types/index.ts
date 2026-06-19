@@ -1,3 +1,7 @@
+export interface Translations {
+  hi?: { name?: string; description?: string };
+}
+
 export interface Category {
   _id: string;
   name: string;
@@ -6,6 +10,7 @@ export interface Category {
   image: string;
   active: boolean;
   parentId: Category | null;
+  translations?: Translations;
   createdAt: string;
 }
 
@@ -34,6 +39,7 @@ export interface Frame {
   featured: boolean;
   active: boolean;
   requiresLens: boolean;
+  translations?: Translations;
   createdAt: string;
 }
 
