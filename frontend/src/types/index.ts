@@ -176,6 +176,37 @@ export interface DashboardStats {
   monthlyInquiries: { _id: { year: number; month: number }; count: number }[];
 }
 
+export interface Offer {
+  _id: string;
+  title: string;
+  description: string;
+  occasionName: string;
+  discountType: 'percentage' | 'flat';
+  discountValue: number;
+  productIds: { _id: string; name: string; slug: string; images: string[]; framePrice: number }[];
+  bannerImage: string;
+  bgColor: string;
+  startDate?: string;
+  endDate?: string;
+  active: boolean;
+  createdAt: string;
+}
+
+export interface Coupon {
+  _id: string;
+  code: string;
+  title: string;
+  description: string;
+  type: 'eye_checkup' | 'discount' | 'gift';
+  discountType: 'percentage' | 'flat' | 'free_service';
+  discountValue: number;
+  validUntil?: string;
+  maxUses: number;
+  usedCount: number;
+  active: boolean;
+  createdAt: string;
+}
+
 // Lens Wizard form state
 export interface WizardFormData {
   frameId: string;

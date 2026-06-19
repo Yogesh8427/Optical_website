@@ -26,6 +26,9 @@ app.use('/api/testimonials', require('./routes/testimonials'));
 app.use('/api/faqs', require('./routes/faqs'));
 app.use('/api/dashboard', require('./routes/dashboard'));
 
+app.use('/api/offers', require('./routes/offers'));
+app.use('/api/coupons', require('./routes/coupons'));
+
 app.get('/api/health', (_req, res) => res.json({ status: 'ok' }));
 
 app.use(errorHandler);

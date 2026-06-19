@@ -3,6 +3,7 @@ import { use, useState } from 'react';
 import Image from 'next/image';
 import { useFrame } from '@/hooks/useFrames';
 import { useSettings } from '@/hooks/useSettings';
+import { useOffers } from '@/hooks/useOffers';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import ProductCard from '@/components/products/ProductCard';
@@ -123,6 +124,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   const { data, isLoading } = useFrame(slug);
   const { localize } = useLanguage();
   const { data: settingsData } = useSettings();
+  const { data: offersData } = useOffers(true);
   const [activeImg, setActiveImg] = useState(0);
   const [activeColor, setActiveColor] = useState(0);
   const [activeSize, setActiveSize] = useState(0);
@@ -152,6 +154,10 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   const frame: Frame = data?.data;
   const related: Frame[] = data?.related ?? [];
   if (!frame) return <div className="text-center py-20 text-gray-500">Product not found.</div>;
+
+  const activeOffer = offersData?.data?.find((o: { productIds?: Array<{ _id?: string } | string>; discountType: string; discountValue: number; title: string; occasionName?: string }) =>
+    !o.productIds?.length || o.productIds.some((p) => ((p as { _id?: string })._id ?? p) === frame._id)
+  ) ?? null;
 
   const images = frame.images?.length ? frame.images : [];
   const colors = frame.colors ?? [];
@@ -232,6 +238,18 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
               <Badge className="bg-green-100 text-green-700 text-xs border-0">In Stock</Badge>
             )}
           </div>
+
+          {activeOffer && (
+            <div className="flex items-center gap-2 bg-red-50 border border-red-100 rounded-xl px-4 py-2.5">
+              <span className="text-red-600 font-bold text-lg">
+                {activeOffer.discountType === 'percentage' ? `${activeOffer.discountValue}% OFF` : `₹${activeOffer.discountValue} OFF`}
+              </span>
+              <div>
+                <p className="font-semibold text-red-700 text-sm">{activeOffer.title}</p>
+                {activeOffer.occasionName && <p className="text-red-500 text-xs">{activeOffer.occasionName}</p>}
+              </div>
+            </div>
+          )}
 
           {frame.description && (
             <p className="text-gray-600 leading-relaxed">{localize(frame, 'description')}</p>

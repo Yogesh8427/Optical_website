@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useFrames } from '@/hooks/useFrames';
 import ProductCard from '@/components/products/ProductCard';
@@ -10,6 +10,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Search } from 'lucide-react';
 import { useCategories } from '@/hooks/useCategories';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useOffers } from '@/hooks/useOffers';
 
 interface Filters { category: string; brand: string; gender: string; material: string; minPrice: string; maxPrice: string; }
 const EMPTY: Filters = { category: '', brand: '', gender: '', material: '', minPrice: '', maxPrice: '' };
@@ -40,6 +41,13 @@ export default function ProductsPage() {
     if (brand) setFilters((f) => ({ ...f, brand }));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, catData]);
+
+  const { data: offersData } = useOffers(true);
+  const offerMap = useMemo(() => {
+    const map = new Map();
+    offersData?.data?.forEach((o: { productIds?: Array<{ _id?: string } | string>; discountType: string; discountValue: number }) => o.productIds?.forEach((p) => map.set((p as { _id?: string })._id ?? p, o)));
+    return map;
+  }, [offersData]);
 
   const { data, isLoading } = useFrames({
     search: search || undefined,
@@ -110,7 +118,7 @@ export default function ProductsPage() {
             <>
               <p className="text-sm text-gray-400 mb-4">{pagination?.total ?? frames.length} {t.products.found}</p>
               <div className="grid grid-cols-2 lg:grid-cols-3 gap-5">
-                {frames.map((frame) => <ProductCard key={frame._id} frame={frame} />)}
+                {frames.map((frame) => <ProductCard key={frame._id} frame={frame} offer={offerMap.get(frame._id) ?? null} />)}
               </div>
               {pagination && pagination.pages > 1 && (
                 <div className="flex justify-center gap-2 mt-8">

@@ -6,7 +6,7 @@ import { Glasses } from 'lucide-react';
 import type { Frame } from '@/types';
 import { useLanguage } from '@/contexts/LanguageContext';
 
-export default function ProductCard({ frame }: { frame: Frame }) {
+export default function ProductCard({ frame, offer }: { frame: Frame; offer?: { discountType: string; discountValue: number } | null }) {
   const { localize } = useLanguage();
   const img = frame.images?.[0];
   const displayName = localize(frame);
@@ -22,7 +22,12 @@ export default function ProductCard({ frame }: { frame: Frame }) {
             <span className="text-xs">No image</span>
           </div>
         )}
-        {frame.featured && (
+        {offer && (
+          <div className="absolute top-2 left-2 z-10 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-lg">
+            {offer.discountType === 'percentage' ? `${offer.discountValue}% OFF` : `₹${offer.discountValue} OFF`}
+          </div>
+        )}
+        {frame.featured && !offer && (
           <Badge className="absolute top-2 left-2 bg-blue-600 text-white text-xs">Featured</Badge>
         )}
         {frame.inStock === false && (

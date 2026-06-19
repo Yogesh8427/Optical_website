@@ -1,6 +1,8 @@
 import HeroSlider from '@/components/home/HeroSlider';
 import CategoryGrid from '@/components/home/CategoryGrid';
 import FeaturedProducts from '@/components/home/FeaturedProducts';
+import OffersSection from '@/components/home/OffersSection';
+import CouponsSection from '@/components/home/CouponsSection';
 import NewArrivals from '@/components/home/NewArrivals';
 import PopularBrands from '@/components/home/PopularBrands';
 import Testimonials from '@/components/home/Testimonials';
@@ -19,6 +21,8 @@ export default function HomePage() {
       <HeroSlider />
       <CategoryGrid />
       <FeaturedProducts />
+      <OffersSection />
+      <CouponsSection />
       <NewArrivals />
       <PopularBrands />
       <Testimonials />

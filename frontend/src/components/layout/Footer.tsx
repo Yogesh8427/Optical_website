@@ -88,7 +88,7 @@ export default function Footer() {
           <div>
             <h3 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Legal</h3>
             <ul className="space-y-2.5">
-              {([['/privacy-policy', t.footer.privacy], ['/terms', t.footer.terms]] as [string, string][]).map(([href, label]) => (
+              {([['/privacy-policy', t.footer.privacy], ['/terms', t.footer.terms], ['/coupons', '🎟️ Coupons & Offers']] as [string, string][]).map(([href, label]) => (
                 <li key={href}>
                   <Link href={href} className="text-sm text-gray-500 hover:text-white transition-colors">
                     {label}
