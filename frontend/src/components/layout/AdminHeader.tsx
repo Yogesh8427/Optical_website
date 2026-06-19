@@ -2,6 +2,7 @@
 import { usePathname } from 'next/navigation';
 import { Bell, User, Menu } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
+import { useSettings } from '@/hooks/useSettings';
 
 const pageTitles: Record<string, string> = {
   '/admin':              'Dashboard',
@@ -23,8 +24,10 @@ interface Props {
 
 export default function AdminHeader({ onMenuClick }: Props) {
   const pathname = usePathname();
-  const user     = useAuthStore((s) => s.user);
-  const title    = pageTitles[pathname] ?? 'Admin';
+  const user      = useAuthStore((s) => s.user);
+  const title     = pageTitles[pathname] ?? 'Admin';
+  const { data: settingsData } = useSettings();
+  const storeName = settingsData?.data?.storeName || 'OptiVision';
 
   return (
     <header className="h-14 md:h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 md:px-6 shrink-0">
@@ -39,7 +42,7 @@ export default function AdminHeader({ onMenuClick }: Props) {
 
         <div>
           <h1 className="text-base md:text-lg font-semibold text-slate-800 leading-none">{title}</h1>
-          <p className="text-xs text-slate-400 mt-0.5 hidden sm:block">OptiVision Admin Panel</p>
+          <p className="text-xs text-slate-400 mt-0.5 hidden sm:block">{storeName} Admin Panel</p>
         </div>
       </div>
 

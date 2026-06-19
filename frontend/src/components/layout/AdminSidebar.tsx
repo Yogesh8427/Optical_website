@@ -1,11 +1,13 @@
 'use client';
 import Link from 'next/link';
+import NextImage from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   Glasses, LayoutDashboard, Image, Tag, Award, Layers, List,
   MessageSquare, Settings, LogOut, Star, HelpCircle, ChevronRight, X,
 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
+import { useSettings } from '@/hooks/useSettings';
 import { cn } from '@/lib/utils';
 
 const navGroups = [
@@ -55,7 +57,10 @@ interface Props {
 export default function AdminSidebar({ isOpen, onClose }: Props) {
   const pathname = usePathname();
   const router   = useRouter();
-  const logout   = useAuthStore((s) => s.logout);
+  const logout      = useAuthStore((s) => s.logout);
+  const { data: settingsData } = useSettings();
+  const logoUrl   = settingsData?.data?.logo;
+  const storeName = settingsData?.data?.storeName || 'OptiVision';
 
   function isActive(href: string, exact?: boolean) {
     if (exact) return pathname === href;
@@ -71,14 +76,27 @@ export default function AdminSidebar({ isOpen, onClose }: Props) {
     <aside className="w-64 bg-slate-900 text-slate-100 h-full flex flex-col">
       {/* Logo */}
       <div className="flex items-center justify-between gap-3 px-5 py-5 border-b border-slate-800">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/30">
-            <Glasses className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <p className="font-bold text-sm text-white leading-none">OptiVision</p>
-            <p className="text-xs text-slate-500 mt-0.5">Admin Panel</p>
-          </div>
+        <div className="flex items-center gap-3 min-w-0">
+          {logoUrl ? (
+            <NextImage
+              src={logoUrl}
+              alt={storeName}
+              width={110}
+              height={36}
+              className="h-9 w-auto object-contain brightness-0 invert"
+              priority
+            />
+          ) : (
+            <>
+              <div className="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/30 shrink-0">
+                <Glasses className="w-5 h-5 text-white" />
+              </div>
+              <div className="min-w-0">
+                <p className="font-bold text-sm text-white leading-none truncate">{storeName}</p>
+                <p className="text-xs text-slate-500 mt-0.5">Admin Panel</p>
+              </div>
+            </>
+          )}
         </div>
         {/* Close button — mobile only */}
         <button
