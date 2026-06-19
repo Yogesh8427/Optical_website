@@ -2,10 +2,14 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/api';
 import type { Inquiry, ApiResponse } from '@/types';
 
-export function useInquiries(filters: { status?: string; page?: number } = {}) {
+export function useInquiries(
+  filters: { status?: string; page?: number; limit?: number } = {},
+  options: { refetchInterval?: number } = {},
+) {
   return useQuery<ApiResponse<Inquiry[]>>({
     queryKey: ['inquiries', filters],
     queryFn: () => api.get('/inquiries', { params: filters }).then((r) => r.data),
+    ...options,
   });
 }
 
