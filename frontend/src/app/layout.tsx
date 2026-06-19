@@ -13,6 +13,15 @@ export const metadata: Metadata = {
   title: 'OptiVision — Premium Eyewear',
   description: 'Browse our collection of premium eyewear frames. Customize lenses and get a personalized quote.',
   manifest: '/manifest.json',
+  icons: {
+    icon: [
+      { url: '/favicon.ico',  sizes: 'any' },
+      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+    ],
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
