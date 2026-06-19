@@ -16,7 +16,8 @@ export default function SettingsPage() {
 
   const [form, setForm] = useState({
     storeName: '', whatsappNumber: '', phone: '', email: '', address: '',
-    themeColor: 'blue',
+    primaryColor: '#2563eb',
+    secondaryColor: '#64748b',
     businessHours: '', googleMapsUrl: '',
     facebook: '', instagram: '', twitter: '', youtube: '',
     seoTitle: '', seoDescription: '',
@@ -46,7 +47,8 @@ export default function SettingsPage() {
       aboutBody: settings.aboutContent?.body ?? '',
       aboutMission: settings.aboutContent?.mission ?? '',
       aboutVision: settings.aboutContent?.vision ?? '',
-      themeColor: settings.themeColor ?? 'blue',
+      primaryColor: settings.primaryColor ?? '#2563eb',
+      secondaryColor: settings.secondaryColor ?? '#64748b',
     });
     setHighlights(settings.aboutContent?.highlights?.length ? settings.aboutContent.highlights : ['']);
   }, [settings]);
@@ -57,7 +59,8 @@ export default function SettingsPage() {
     e.preventDefault();
     const fd = new FormData();
     fd.append('storeName', form.storeName);
-    fd.append('themeColor', form.themeColor);
+    fd.append('primaryColor', form.primaryColor);
+    fd.append('secondaryColor', form.secondaryColor);
     fd.append('whatsappNumber', form.whatsappNumber);
     fd.append('phone', form.phone);
     fd.append('email', form.email);
@@ -124,31 +127,87 @@ export default function SettingsPage() {
             <div><Label>Address</Label><Textarea value={form.address} onChange={(e) => set('address', e.target.value)} className="mt-1" rows={2} /></div>
             <div><Label>Google Maps URL</Label><Input value={form.googleMapsUrl} onChange={(e) => set('googleMapsUrl', e.target.value)} className="mt-1" placeholder="https://maps.google.com/..." /></div>
 
-            {/* Theme Colour */}
+            {/* Theme Colours */}
             <div>
-              <Label>🎨 Theme Colour</Label>
-              <p className="text-xs text-slate-400 mb-3 mt-1">Changes the primary colour across the entire website</p>
-              <div className="grid grid-cols-3 gap-2">
-                {[
-                  { key: 'blue',   label: 'Blue',   bg: '#2563eb', light: '#eff6ff' },
-                  { key: 'purple', label: 'Purple', bg: '#9333ea', light: '#faf5ff' },
-                  { key: 'green',  label: 'Green',  bg: '#16a34a', light: '#f0fdf4' },
-                  { key: 'orange', label: 'Orange', bg: '#ea580c', light: '#fff7ed' },
-                  { key: 'rose',   label: 'Rose',   bg: '#e11d48', light: '#fff1f2' },
-                  { key: 'teal',   label: 'Teal',   bg: '#0d9488', light: '#f0fdfa' },
-                ].map((theme) => (
-                  <button
-                    key={theme.key}
-                    type="button"
-                    onClick={() => set('themeColor', theme.key)}
-                    style={{ borderColor: form.themeColor === theme.key ? theme.bg : 'transparent', backgroundColor: form.themeColor === theme.key ? theme.light : '#f8fafc' }}
-                    className="flex items-center gap-2 px-3 py-2.5 rounded-xl border-2 transition-all text-left"
-                  >
-                    <span className="w-5 h-5 rounded-full shrink-0 shadow-sm" style={{ backgroundColor: theme.bg }} />
-                    <span className="text-xs font-medium text-slate-700">{theme.label}</span>
-                    {form.themeColor === theme.key && <span className="ml-auto text-xs font-bold" style={{ color: theme.bg }}>✓</span>}
-                  </button>
-                ))}
+              <Label>🎨 Theme Colours</Label>
+              <p className="text-xs text-slate-400 mt-1 mb-3">Pick any colour — the entire website updates instantly after saving</p>
+              <div className="grid grid-cols-2 gap-4">
+                {/* Primary */}
+                <div className="rounded-xl border border-slate-200 p-3 space-y-2">
+                  <p className="text-xs font-semibold text-slate-600">Primary Colour</p>
+                  <p className="text-xs text-slate-400">Buttons, links, active states</p>
+                  <div className="flex items-center gap-3 mt-2">
+                    <div className="relative w-12 h-10 rounded-lg overflow-hidden border border-slate-200 shrink-0 cursor-pointer">
+                      <input
+                        type="color"
+                        value={form.primaryColor}
+                        onChange={(e) => set('primaryColor', e.target.value)}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      />
+                      <div className="w-full h-full rounded-lg" style={{ backgroundColor: form.primaryColor }} />
+                    </div>
+                    <input
+                      type="text"
+                      value={form.primaryColor}
+                      onChange={(e) => { if (/^#[0-9a-fA-F]{0,6}$/.test(e.target.value)) set('primaryColor', e.target.value); }}
+                      className="flex-1 border border-slate-200 rounded-lg px-2 py-1.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      maxLength={7}
+                      placeholder="#2563eb"
+                    />
+                  </div>
+                  {/* Quick picks */}
+                  <div className="flex gap-1.5 flex-wrap mt-1">
+                    {['#2563eb','#9333ea','#16a34a','#ea580c','#e11d48','#0d9488','#dc2626','#d97706'].map((c) => (
+                      <button key={c} type="button" onClick={() => set('primaryColor', c)}
+                        className="w-6 h-6 rounded-full border-2 transition-all hover:scale-110"
+                        style={{ backgroundColor: c, borderColor: form.primaryColor === c ? '#1e293b' : 'transparent' }}
+                        title={c}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Secondary */}
+                <div className="rounded-xl border border-slate-200 p-3 space-y-2">
+                  <p className="text-xs font-semibold text-slate-600">Secondary Colour</p>
+                  <p className="text-xs text-slate-400">Accents, badges, subtle elements</p>
+                  <div className="flex items-center gap-3 mt-2">
+                    <div className="relative w-12 h-10 rounded-lg overflow-hidden border border-slate-200 shrink-0 cursor-pointer">
+                      <input
+                        type="color"
+                        value={form.secondaryColor}
+                        onChange={(e) => set('secondaryColor', e.target.value)}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      />
+                      <div className="w-full h-full rounded-lg" style={{ backgroundColor: form.secondaryColor }} />
+                    </div>
+                    <input
+                      type="text"
+                      value={form.secondaryColor}
+                      onChange={(e) => { if (/^#[0-9a-fA-F]{0,6}$/.test(e.target.value)) set('secondaryColor', e.target.value); }}
+                      className="flex-1 border border-slate-200 rounded-lg px-2 py-1.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      maxLength={7}
+                      placeholder="#64748b"
+                    />
+                  </div>
+                  {/* Quick picks */}
+                  <div className="flex gap-1.5 flex-wrap mt-1">
+                    {['#64748b','#6b7280','#78716c','#854d0e','#166534','#1e3a5f','#7c3aed','#be185d'].map((c) => (
+                      <button key={c} type="button" onClick={() => set('secondaryColor', c)}
+                        className="w-6 h-6 rounded-full border-2 transition-all hover:scale-110"
+                        style={{ backgroundColor: c, borderColor: form.secondaryColor === c ? '#1e293b' : 'transparent' }}
+                        title={c}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Live preview bar */}
+              <div className="mt-3 rounded-xl overflow-hidden border border-slate-100 flex h-10">
+                <div className="flex-1 flex items-center justify-center text-white text-xs font-semibold" style={{ backgroundColor: form.primaryColor }}>Primary</div>
+                <div className="flex-1 flex items-center justify-center text-white text-xs font-semibold" style={{ backgroundColor: form.secondaryColor }}>Secondary</div>
+                <div className="flex-1 flex items-center justify-center text-xs font-semibold" style={{ backgroundColor: form.primaryColor + '18', color: form.primaryColor }}>Light BG</div>
               </div>
             </div>
           </div>

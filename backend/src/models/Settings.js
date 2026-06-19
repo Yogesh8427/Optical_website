@@ -29,7 +29,8 @@ const settingsSchema = new mongoose.Schema(
       description: { type: String, default: '' },
       ogImage: { type: String, default: '' },
     },
-    themeColor: { type: String, default: 'blue' },
+    primaryColor: { type: String, default: "#2563eb" },
+    secondaryColor: { type: String, default: "#64748b" },
   },
   { timestamps: true }
 );

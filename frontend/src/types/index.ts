@@ -114,7 +114,8 @@ export interface Settings {
     youtube: string;
   };
   googleMapsUrl: string;
-  themeColor: string;
+  primaryColor: string;
+  secondaryColor: string;
   aboutContent: {
     heading: string;
     subheading: string;
