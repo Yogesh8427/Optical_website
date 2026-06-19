@@ -90,7 +90,7 @@ exports.getBySlug = async (req, res, next) => {
 
 exports.create = async (req, res, next) => {
   try {
-    const { name, description, categoryId, brandId, framePrice, material, gender, colors, sizes, featured, active, requiresLens, hi_name, hi_description } = req.body;
+    const { name, description, categoryId, brandId, framePrice, material, gender, colors, sizes, featured, active, requiresLens, inStock, hi_name, hi_description } = req.body;
 
     const images = [];
     if (req.files?.length) {
@@ -107,6 +107,7 @@ exports.create = async (req, res, next) => {
       colors: parseArray(colors),
       sizes: parseArray(sizes),
       images, featured, active, requiresLens: requiresLens !== undefined ? requiresLens : true,
+      inStock: inStock !== undefined ? (inStock === 'true' || inStock === true) : true,
       translations: { hi: { name: hi_name || '', description: hi_description || '' } },
     });
     res.status(201).json({ success: true, data: frame });
@@ -117,9 +118,10 @@ exports.create = async (req, res, next) => {
 
 exports.update = async (req, res, next) => {
   try {
-    const { name, description, categoryId, brandId, framePrice, material, gender, colors, sizes, featured, active, requiresLens, hi_name, hi_description } = req.body;
+    const { name, description, categoryId, brandId, framePrice, material, gender, colors, sizes, featured, active, requiresLens, inStock, hi_name, hi_description } = req.body;
     const updates = {
       description, categoryId, brandId, framePrice, material, gender, featured, active, requiresLens,
+      inStock: inStock !== undefined ? (inStock === 'true' || inStock === true) : undefined,
       'translations.hi.name': hi_name || '',
       'translations.hi.description': hi_description || '',
     };

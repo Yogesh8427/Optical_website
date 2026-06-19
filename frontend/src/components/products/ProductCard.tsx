@@ -25,6 +25,9 @@ export default function ProductCard({ frame }: { frame: Frame }) {
         {frame.featured && (
           <Badge className="absolute top-2 left-2 bg-blue-600 text-white text-xs">Featured</Badge>
         )}
+        {frame.inStock === false && (
+          <Badge className="absolute top-2 right-2 bg-red-100 text-red-700 text-xs border-0">Out of Stock</Badge>
+        )}
       </div>
       <div className="p-4">
         <p className="text-xs text-gray-400 mb-1 font-medium uppercase tracking-wide">{frame.brandId?.name}</p>

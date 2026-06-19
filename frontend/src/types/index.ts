@@ -39,6 +39,7 @@ export interface Frame {
   featured: boolean;
   active: boolean;
   requiresLens: boolean;
+  inStock: boolean;
   translations?: Translations;
   createdAt: string;
 }

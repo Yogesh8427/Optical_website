@@ -5,7 +5,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import StatusBadge from '@/components/admin/StatusBadge';
-import { Eye, FileText, ExternalLink } from 'lucide-react';
+import { Eye, FileText, ExternalLink, Download, Printer } from 'lucide-react';
+import api from '@/lib/api';
 import { toast } from 'sonner';
 import type { Inquiry } from '@/types';
 
@@ -17,6 +18,41 @@ export default function InquiriesPage() {
   const { data, isLoading } = useInquiries({ status: statusFilter || undefined, page });
   const updateStatus = useUpdateInquiryStatus();
   const [selected, setSelected] = useState<Inquiry | null>(null);
+
+  async function exportCsv() {
+    try {
+      const res = await api.get('/inquiries', { params: { limit: 1000 } });
+      const all: Inquiry[] = res.data?.data ?? [];
+      const headers = ['ID', 'Customer', 'Phone', 'Email', 'City', 'Frame', 'Color', 'Size', 'Power Required', 'Lens Brand', 'Lens Types', 'Status', 'Date'];
+      const rows = all.map((inq) => [
+        inq._id,
+        inq.customerName,
+        inq.phone,
+        inq.email || '',
+        inq.city || '',
+        inq.frameId?.name ?? '',
+        inq.selectedColor || '',
+        inq.selectedSize || '',
+        inq.powerRequired ? 'Yes' : 'No',
+        inq.lensBrandId?.name ?? '',
+        (inq.lensTypes ?? []).map((t) => t.name).join('; '),
+        inq.status,
+        new Date(inq.createdAt).toLocaleDateString(),
+      ]);
+      const escape = (val: string) => `"${String(val).replace(/"/g, '""')}"`;
+      const csv = [headers, ...rows].map((row) => row.map(escape).join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      const today = new Date().toISOString().slice(0, 10);
+      a.download = `inquiries-${today}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      toast.error('Export failed');
+    }
+  }
 
   function handleStatusChange(id: string, status: string) {
     updateStatus.mutate({ id, status }, {
@@ -31,6 +67,9 @@ export default function InquiriesPage() {
     <div className="space-y-4 max-w-7xl mx-auto">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h1 className="text-xl md:text-2xl font-bold text-slate-800">Inquiries</h1>
+        <Button variant="outline" size="sm" onClick={exportCsv} className="gap-1.5">
+          <Download className="w-3.5 h-3.5" /> Export CSV
+        </Button>
         <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v === 'all' ? '' : (v ?? '')); setPage(1); }}>
           <SelectTrigger className="w-40"><SelectValue placeholder="All Statuses" /></SelectTrigger>
           <SelectContent>
@@ -127,7 +166,14 @@ export default function InquiriesPage() {
       {/* Detail modal */}
       <Dialog open={!!selected} onOpenChange={() => setSelected(null)}>
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
-          <DialogHeader><DialogTitle>Inquiry Detail</DialogTitle></DialogHeader>
+          <DialogHeader className="pr-8">
+            <div className="flex items-center gap-3">
+              <DialogTitle className="flex-1">Inquiry Detail</DialogTitle>
+              <Button variant="outline" size="sm" onClick={() => window.print()} className="gap-1.5 no-print shrink-0">
+                <Printer className="w-3.5 h-3.5" /> Print
+              </Button>
+            </div>
+          </DialogHeader>
           {selected && (
             <div className="space-y-3 text-sm">
 

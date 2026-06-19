@@ -17,7 +17,7 @@ import { toast } from 'sonner';
 import type { Frame } from '@/types';
 
 interface ColorRow { color: string; file: File | null; existingUrl: string }
-const emptyForm = { name: '', description: '', categoryId: '', brandId: '', framePrice: '', material: '', gender: 'unisex', featured: false, active: true, requiresLens: true, hi_name: '', hi_description: '' };
+const emptyForm = { name: '', description: '', categoryId: '', brandId: '', framePrice: '', material: '', gender: 'unisex', featured: false, active: true, requiresLens: true, inStock: true, hi_name: '', hi_description: '' };
 
 function emptyColor(): ColorRow { return { color: '', file: null, existingUrl: '' }; }
 
@@ -71,6 +71,7 @@ export default function ProductsPage() {
       framePrice: String(f.framePrice), material: f.material, gender: f.gender,
       featured: f.featured, active: f.active,
       requiresLens: f.requiresLens !== false,
+      inStock: f.inStock !== false,
       hi_name: f.translations?.hi?.name ?? '',
       hi_description: f.translations?.hi?.description ?? '',
     });
@@ -151,6 +152,7 @@ export default function ProductsPage() {
                 <p className="text-xs text-slate-400">{f.brandId?.name} · <span className="text-blue-600 font-medium">₹{f.framePrice.toLocaleString()}</span></p>
               </div>
               <Badge variant={f.active ? 'default' : 'secondary'} className="shrink-0 text-xs">{f.active ? 'Active' : 'Inactive'}</Badge>
+              {f.inStock === false && <Badge className="shrink-0 text-xs bg-red-100 text-red-700 border-0">Out of Stock</Badge>}
               <div className="flex gap-1 shrink-0">
                 <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(f)}><Pencil className="w-3.5 h-3.5" /></Button>
                 <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDelete(f._id)}><Trash2 className="w-3.5 h-3.5 text-red-500" /></Button>
@@ -201,7 +203,10 @@ export default function ProductsPage() {
                       {(f.colors?.length ?? 0) > 3 && <span className="text-xs text-slate-400">+{f.colors.length - 3}</span>}
                     </div>
                   </td>
-                  <td className="px-4 py-3"><Badge variant={f.active ? 'default' : 'secondary'}>{f.active ? 'Active' : 'Inactive'}</Badge></td>
+                  <td className="px-4 py-3 space-x-1">
+                    <Badge variant={f.active ? 'default' : 'secondary'}>{f.active ? 'Active' : 'Inactive'}</Badge>
+                    {f.inStock === false && <Badge className="bg-red-100 text-red-700 border-0">Out of Stock</Badge>}
+                  </td>
                   <td className="px-4 py-3 text-right">
                     <Button variant="ghost" size="icon" onClick={() => openEdit(f)}><Pencil className="w-4 h-4" /></Button>
                     <Button variant="ghost" size="icon" onClick={() => handleDelete(f._id)}><Trash2 className="w-4 h-4 text-red-500" /></Button>
@@ -418,7 +423,7 @@ export default function ProductsPage() {
               <p className="text-xs text-slate-400 mt-1">e.g. S, M, L  or  50mm, 52mm  or  100ml, 200ml</p>
             </div>
 
-            {/* Featured / Active */}
+            {/* Featured / Active / In Stock */}
             <div className="flex gap-6">
               <div className="flex items-center gap-2">
                 <input type="checkbox" id="featured" checked={form.featured} onChange={(e) => set('featured', e.target.checked)} />
@@ -427,6 +432,10 @@ export default function ProductsPage() {
               <div className="flex items-center gap-2">
                 <input type="checkbox" id="active" checked={form.active} onChange={(e) => set('active', e.target.checked)} />
                 <Label htmlFor="active">Active</Label>
+              </div>
+              <div className="flex items-center gap-2">
+                <input type="checkbox" id="inStock" checked={form.inStock} onChange={(e) => set('inStock', e.target.checked)} />
+                <Label htmlFor="inStock">In Stock</Label>
               </div>
             </div>
 

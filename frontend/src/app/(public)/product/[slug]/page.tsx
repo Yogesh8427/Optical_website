@@ -7,7 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import ProductCard from '@/components/products/ProductCard';
 import LensWizard from '@/components/lens-wizard/LensWizard';
-import { Check, MessageCircle, X } from 'lucide-react';
+import { Check, MessageCircle, X, ZoomIn } from 'lucide-react';
+import ImageZoom from '@/components/ui/ImageZoom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import type { Frame } from '@/types';
 
@@ -127,6 +128,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   const [activeSize, setActiveSize] = useState(0);
   const [wizardOpen, setWizardOpen] = useState(false);
   const [quickOpen, setQuickOpen] = useState(false);
+  const [zoomOpen, setZoomOpen] = useState(false);
 
   const whatsappNumber = settingsData?.data?.whatsappNumber
     ?? process.env.NEXT_PUBLIC_WHATSAPP_NUMBER
@@ -168,11 +170,19 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
 
         {/* Images */}
         <div className="space-y-3">
-          <div className="relative h-80 md:h-96 rounded-2xl overflow-hidden bg-gray-100 border border-gray-100">
+          <div
+            className="relative h-80 md:h-96 rounded-2xl overflow-hidden bg-gray-100 border border-gray-100 cursor-zoom-in"
+            onClick={() => displayImage && setZoomOpen(true)}
+          >
             {displayImage ? (
               <Image src={displayImage} alt={frame.name} fill className="object-cover" priority />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-gray-300 text-sm">No image</div>
+            )}
+            {displayImage && (
+              <div className="absolute bottom-2 right-2 bg-black/40 text-white text-xs px-2 py-1 rounded-lg flex items-center gap-1">
+                <ZoomIn className="w-3 h-3" /> Zoom
+              </div>
             )}
           </div>
           {images.length > 1 && (
@@ -190,6 +200,15 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
               ))}
             </div>
           )}
+          {zoomOpen && images.length > 0 && (
+            <ImageZoom
+              images={images}
+              activeIndex={activeImg}
+              onClose={() => setZoomOpen(false)}
+              onPrev={() => setActiveImg((i) => (i - 1 + images.length) % images.length)}
+              onNext={() => setActiveImg((i) => (i + 1) % images.length)}
+            />
+          )}
         </div>
 
         {/* Details */}
@@ -205,6 +224,12 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
             {frame.featured && <Badge className="bg-blue-600 text-white text-xs">Featured</Badge>}
             {!needsLens && (
               <Badge className="bg-green-100 text-green-700 text-xs border-0">No Prescription Needed</Badge>
+            )}
+            {frame.inStock === false && (
+              <Badge className="bg-red-100 text-red-700 text-xs border-0">Out of Stock</Badge>
+            )}
+            {frame.inStock !== false && (
+              <Badge className="bg-green-100 text-green-700 text-xs border-0">In Stock</Badge>
             )}
           </div>
 
