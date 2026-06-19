@@ -43,12 +43,14 @@ exports.update = async (req, res, next) => {
   try {
     const { name, description, active, parentId, hi_name, hi_description } = req.body;
     const updates = {
-      description,
-      active,
-      parentId: parentId || null,
       'translations.hi.name': hi_name || '',
       'translations.hi.description': hi_description || '',
     };
+    // Only update these fields if explicitly sent in the request
+    if (description !== undefined) updates.description = description;
+    if (active !== undefined) updates.active = active;
+    // Only update parentId if it was explicitly sent (avoids wiping it when only updating translations/image)
+    if (parentId !== undefined) updates.parentId = parentId || null;
     if (name) {
       updates.name = name;
       const base = generateSlug(name);
