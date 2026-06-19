@@ -1,6 +1,22 @@
+const Category = require('../models/Category');
 const Frame = require('../models/Frame');
 const generateSlug = require('../utils/generateSlug');
 const { uploadToCloudinary } = require('../middleware/upload');
+const cloudinary = require('../config/cloudinary');
+
+// Extract Cloudinary public_id from a secure_url
+function extractPublicId(url) {
+  try {
+    const parts = url.split('/');
+    const uploadIdx = parts.indexOf('upload');
+    if (uploadIdx === -1) return null;
+    // skip version segment if present (v1234567890)
+    let start = uploadIdx + 1;
+    if (/^v\d+$/.test(parts[start])) start++;
+    const withExt = parts.slice(start).join('/');
+    return withExt.replace(/\.[^/.]+$/, ''); // remove extension
+  } catch { return null; }
+}
 
 exports.getAll = async (req, res, next) => {
   try {
@@ -10,7 +26,15 @@ exports.getAll = async (req, res, next) => {
     } = req.query;
 
     const filter = { active: true };
-    if (category) filter.categoryId = category;
+    if (category) {
+      // If this is a parent category, include all its sub-categories too
+      const subCats = await Category.find({ parentId: category }).select('_id');
+      if (subCats.length > 0) {
+        filter.categoryId = { $in: [category, ...subCats.map((c) => c._id)] };
+      } else {
+        filter.categoryId = category;
+      }
+    }
     if (brand) filter.brandId = brand;
     if (gender) filter.gender = gender;
     if (material) filter.material = new RegExp(material, 'i');
@@ -119,6 +143,13 @@ exports.remove = async (req, res, next) => {
   try {
     const frame = await Frame.findByIdAndDelete(req.params.id);
     if (!frame) return res.status(404).json({ success: false, message: 'Frame not found' });
+    // Delete images from Cloudinary
+    if (frame.images && frame.images.length > 0) {
+      const ids = frame.images.map(extractPublicId).filter(Boolean);
+      if (ids.length > 0) {
+        await cloudinary.api.delete_resources(ids).catch(() => {}); // don't fail if Cloudinary errors
+      }
+    }
     res.json({ success: true, message: 'Frame deleted' });
   } catch (err) {
     next(err);

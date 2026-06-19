@@ -243,7 +243,35 @@ export default function ProductsPage() {
                       {form.categoryId ? (categories.find((c) => c._id === form.categoryId)?.name ?? 'Select category') : 'Select category'}
                     </span>
                   </SelectTrigger>
-                  <SelectContent>{categories.map((c) => <SelectItem key={c._id} value={c._id}>{c.name}</SelectItem>)}</SelectContent>
+                  <SelectContent>
+                    {(() => {
+                      const parents = categories.filter((c) => !c.parentId);
+                      const children = (pid: string) => categories.filter((c) => {
+                        const p = c.parentId; return p && (typeof p === 'string' ? p : p._id) === pid;
+                      });
+                      const orphans = categories.filter((c) => {
+                        if (!c.parentId) return false;
+                        const pid = typeof c.parentId === 'string' ? c.parentId : c.parentId._id;
+                        return !parents.find((p) => p._id === pid);
+                      });
+                      return (
+                        <>
+                          {parents.map((p) => {
+                            const subs = children(p._id);
+                            return subs.length > 0 ? (
+                              <div key={p._id}>
+                                <div className="px-2 py-1 text-xs font-bold text-slate-400 uppercase tracking-wide">{p.name}</div>
+                                {subs.map((s) => <SelectItem key={s._id} value={s._id} className="pl-6">↳ {s.name}</SelectItem>)}
+                              </div>
+                            ) : (
+                              <SelectItem key={p._id} value={p._id}>{p.name}</SelectItem>
+                            );
+                          })}
+                          {orphans.map((c) => <SelectItem key={c._id} value={c._id}>{c.name}</SelectItem>)}
+                        </>
+                      );
+                    })()}
+                  </SelectContent>
                 </Select>
               </div>
 

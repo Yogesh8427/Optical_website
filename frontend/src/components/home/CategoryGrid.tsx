@@ -16,16 +16,17 @@ const fallbackIcon = { icon: Glasses, color: 'text-gray-400' };
 
 export default function CategoryGrid() {
   const { data, isLoading } = useCategories();
-  const categories = data?.data?.filter((c) => c.active) ?? [];
+  // Only show top-level (parent) categories on home screen
+  const categories = data?.data?.filter((c) => c.active && !c.parentId) ?? [];
 
   if (isLoading) {
     return (
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 text-center mb-10">Shop by Category</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="h-36 bg-gray-200 rounded-2xl animate-pulse" />
+              <div key={i} className="h-48 bg-gray-200 rounded-2xl animate-pulse" />
             ))}
           </div>
         </div>
@@ -38,7 +39,7 @@ export default function CategoryGrid() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-3xl font-bold text-gray-900 text-center mb-2">Shop by Category</h2>
         <p className="text-center text-gray-500 mb-10">Find the perfect frames for every occasion</p>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
           {categories.map((cat) => {
             const { icon: Icon, color } = categoryIcons[cat.slug] ?? fallbackIcon;
             return (
@@ -48,7 +49,7 @@ export default function CategoryGrid() {
                 className="group relative flex flex-col items-center overflow-hidden rounded-2xl border border-gray-100 bg-white hover:shadow-lg hover:-translate-y-1 transition-all duration-200"
               >
                 {/* Image or icon fallback */}
-                <div className="relative w-full h-32 bg-gray-100">
+                <div className="relative w-full h-48 bg-gray-100">
                   {cat.image ? (
                     <Image
                       src={cat.image}

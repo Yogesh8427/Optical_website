@@ -5,6 +5,7 @@ export interface Category {
   description: string;
   image: string;
   active: boolean;
+  parentId: Category | null;
   createdAt: string;
 }
 
