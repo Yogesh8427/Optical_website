@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { Plus, X } from 'lucide-react';
+import Image from 'next/image';
 
 export default function SettingsPage() {
   const { data } = useSettings();
@@ -91,7 +92,32 @@ export default function SettingsPage() {
           <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-4">
             <h2 className="font-semibold text-slate-800 text-base">🏪 Store Info</h2>
             <div><Label>Store Name</Label><Input value={form.storeName} onChange={(e) => set('storeName', e.target.value)} className="mt-1" /></div>
-            <div><Label>Logo</Label><Input type="file" accept="image/*" onChange={(e) => setLogoFile(e.target.files?.[0] ?? null)} className="mt-1" /></div>
+            <div>
+              <Label>Logo</Label>
+              {/* Current logo preview */}
+              {settings?.logo && !logoFile && (
+                <div className="mt-2 mb-2 flex items-center gap-3">
+                  <div className="border border-slate-200 rounded-xl p-2 bg-slate-50">
+                    <Image src={settings.logo} alt="Current logo" width={120} height={40} className="h-10 w-auto object-contain" />
+                  </div>
+                  <span className="text-xs text-slate-400">Current logo</span>
+                </div>
+              )}
+              {/* New file selected preview */}
+              {logoFile && (
+                <div className="mt-2 mb-2 flex items-center gap-3">
+                  <div className="border border-blue-200 rounded-xl p-2 bg-blue-50">
+                    <img src={URL.createObjectURL(logoFile)} alt="New logo" className="h-10 w-auto object-contain max-w-[120px]" />
+                  </div>
+                  <div>
+                    <span className="text-xs text-blue-600 font-medium">New logo selected</span>
+                    <button type="button" onClick={() => setLogoFile(null)} className="block text-xs text-slate-400 hover:text-red-500 underline mt-0.5">Remove</button>
+                  </div>
+                </div>
+              )}
+              <Input type="file" accept="image/*" onChange={(e) => setLogoFile(e.target.files?.[0] ?? null)} className="mt-1" />
+              <p className="text-xs text-slate-400 mt-1">Recommended: PNG with transparent background, max 500×200px</p>
+            </div>
             <div><Label>Address</Label><Textarea value={form.address} onChange={(e) => set('address', e.target.value)} className="mt-1" rows={2} /></div>
             <div><Label>Google Maps URL</Label><Input value={form.googleMapsUrl} onChange={(e) => set('googleMapsUrl', e.target.value)} className="mt-1" placeholder="https://maps.google.com/..." /></div>
           </div>

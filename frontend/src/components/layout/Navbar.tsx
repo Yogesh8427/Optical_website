@@ -1,16 +1,22 @@
 'use client';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { Menu, X, Eye, Search, ShoppingBag } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useSettings } from '@/hooks/useSettings';
 
 export default function Navbar() {
   const [open, setOpen]         = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname                = usePathname();
   const { lang, setLang, t }    = useLanguage();
+  const { data: settingsData }  = useSettings();
+  const settings                = settingsData?.data;
+  const logoUrl                 = settings?.logo;
+  const storeName               = settings?.storeName || 'OptiVision';
 
   const links = [
     { href: '/',         label: t.nav.home     },
@@ -40,11 +46,24 @@ export default function Navbar() {
           <div className="flex items-center justify-between h-16">
 
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <Eye className="w-5 h-5 text-white" />
-              </div>
-              <span className="font-bold text-xl text-gray-900 tracking-tight">Opti<span className="text-blue-600">Vision</span></span>
+            <Link href="/" className="flex items-center gap-2 shrink-0">
+              {logoUrl ? (
+                <Image
+                  src={logoUrl}
+                  alt={storeName}
+                  width={120}
+                  height={40}
+                  className="h-10 w-auto object-contain"
+                  priority
+                />
+              ) : (
+                <>
+                  <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shrink-0">
+                    <Eye className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="font-bold text-xl text-gray-900 tracking-tight">{storeName}</span>
+                </>
+              )}
             </Link>
 
             {/* Desktop links */}
