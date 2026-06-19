@@ -24,7 +24,7 @@ interface Props {
 }
 
 export default function ProductFilters({ filters, onChange, onReset }: Props) {
-  const { t } = useLanguage();
+  const { t, localize } = useLanguage();
   const { data: catData } = useCategories();
   const { data: brandData } = useBrands();
 
@@ -98,7 +98,7 @@ export default function ProductFilters({ filters, onChange, onReset }: Props) {
                   : 'bg-white text-slate-600 border-slate-200 hover:border-blue-300'
               }`}
             >
-              {p.name}
+              {localize(p)}
             </button>
           ))}
         </div>
@@ -107,7 +107,7 @@ export default function ProductFilters({ filters, onChange, onReset }: Props) {
         {activeParent && activeSubs.length > 0 && (
           <div className="mt-3 pl-3 border-l-2 border-blue-200">
             <p className="text-xs text-slate-400 mb-2 flex items-center gap-1">
-              <ChevronRight className="w-3 h-3" /> Filter inside <strong>{activeParent.name}</strong>
+              <ChevronRight className="w-3 h-3" /> Filter inside <strong>{localize(activeParent)}</strong>
             </p>
             <div className="flex flex-wrap gap-2">
               {/* "All Men/Women/Kids" chip */}
@@ -119,7 +119,7 @@ export default function ProductFilters({ filters, onChange, onReset }: Props) {
                     : 'bg-white text-slate-500 border-slate-200 hover:border-blue-200'
                 }`}
               >
-                All {activeParent.name}
+                All {localize(activeParent)}
               </button>
               {activeSubs.map((s) => (
                 <button
@@ -131,7 +131,7 @@ export default function ProductFilters({ filters, onChange, onReset }: Props) {
                       : 'bg-white text-slate-500 border-slate-200 hover:border-blue-200'
                   }`}
                 >
-                  {s.name}
+                  {localize(s)}
                 </button>
               ))}
             </div>

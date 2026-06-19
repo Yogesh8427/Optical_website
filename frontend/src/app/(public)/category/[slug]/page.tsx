@@ -56,7 +56,7 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
   }
 
   const activeSubName = selectedSubId
-    ? (subCategories.find((s) => s._id === selectedSubId)?.name ?? '')
+    ? (subCategories.find((s) => s._id === selectedSubId) ? localize(subCategories.find((s) => s._id === selectedSubId)!) : '')
     : '';
 
   return (
@@ -79,7 +79,7 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
                   : 'bg-white text-slate-600 border-slate-200 hover:border-blue-300 hover:text-blue-600'
               }`}
             >
-              All {category.name}
+              All {localize(category)}
             </button>
 
             {/* Sub-category chips */}
@@ -93,7 +93,7 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
                     : 'bg-white text-slate-600 border-slate-200 hover:border-blue-300 hover:text-blue-600'
                 }`}
               >
-                {sub.name}
+                {localize(sub)}
               </button>
             ))}
           </div>
@@ -101,7 +101,7 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
           {/* Active sub breadcrumb */}
           {activeSubName && (
             <p className="mt-2 text-xs text-blue-600">
-              Showing: <strong>{category.name}</strong> → <strong>{activeSubName}</strong>
+              Showing: <strong>{localize(category)}</strong> → <strong>{activeSubName}</strong>
               <button onClick={() => pickSub('')} className="ml-2 text-gray-400 hover:text-red-500 underline">clear</button>
             </p>
           )}
