@@ -5,6 +5,7 @@ import Providers from '@/components/Providers';
 import { Toaster } from '@/components/ui/sonner';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import ThemeProvider from '@/components/ThemeProvider';
+import DynamicTitle from '@/components/DynamicTitle';
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-geist' });
 
@@ -32,6 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <LanguageProvider>
           <Providers>
             <ThemeProvider />
+            <DynamicTitle />
             {children}
             <Toaster richColors position="top-right" />
           </Providers>

@@ -11,6 +11,18 @@ export default function Footer() {
   const settings  = settingsData?.data;
   const logoUrl   = settings?.logo;
   const storeName = settings?.storeName || 'OptiVision';
+  const phone     = settings?.phone || '';
+  const email     = settings?.email || '';
+  const address   = settings?.address || '';
+  const whatsapp  = settings?.whatsappNumber || '';
+  const social    = settings?.socialLinks;
+
+  const socialLinks = [
+    { label: 'FB',  title: 'Facebook',  href: social?.facebook  },
+    { label: 'IG',  title: 'Instagram', href: social?.instagram },
+    { label: 'YT',  title: 'Youtube',   href: social?.youtube   },
+    { label: 'TW',  title: 'Twitter',   href: social?.twitter   },
+  ].filter((s) => s.href?.trim());
 
   return (
     <footer className="bg-gray-950 text-gray-400 mt-auto mb-16 md:mb-0">
@@ -39,17 +51,23 @@ export default function Footer() {
               {t.footer.tagline}
             </p>
             {/* Social */}
-            <div className="flex gap-2">
-              {[
-                { label: 'FB',  href: '#' },
-                { label: 'IG',  href: '#' },
-                { label: 'YT',  href: '#' },
-              ].map((s) => (
-                <a key={s.label} href={s.href} className="w-8 h-8 rounded-lg bg-gray-800 hover:bg-blue-600 flex items-center justify-center text-xs font-bold text-gray-400 hover:text-white transition-all">
-                  {s.label}
-                </a>
-              ))}
-            </div>
+            {socialLinks.length > 0 && (
+              <div className="flex gap-2 flex-wrap">
+                {socialLinks.map((s) => (
+                  <a
+                    key={s.label}
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={s.title}
+                    title={s.title}
+                    className="w-8 h-8 rounded-lg bg-gray-800 hover:bg-blue-600 flex items-center justify-center text-xs font-bold text-gray-400 hover:text-white transition-all"
+                  >
+                    {s.label}
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Quick Links */}
@@ -84,22 +102,50 @@ export default function Footer() {
           <div>
             <h3 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">{t.contact.title}</h3>
             <ul className="space-y-3">
-              <li className="flex items-start gap-2 text-sm text-gray-500">
-                <MessageCircle className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
-                <span>WhatsApp Us</span>
-              </li>
-              <li className="flex items-start gap-2 text-sm text-gray-500">
-                <Phone className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
-                <span>{t.contact.callUs}</span>
-              </li>
-              <li className="flex items-start gap-2 text-sm text-gray-500">
-                <Mail className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
-                <span>{t.contact.emailUs}</span>
-              </li>
-              <li className="flex items-start gap-2 text-sm text-gray-500">
-                <MapPin className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
-                <span>{t.contact.address}</span>
-              </li>
+              {whatsapp && (
+                <li>
+                  <a
+                    href={`https://wa.me/${whatsapp}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-start gap-2 text-sm text-gray-500 hover:text-green-400 transition-colors"
+                  >
+                    <MessageCircle className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
+                    <span>WhatsApp Us</span>
+                  </a>
+                </li>
+              )}
+              {phone && (
+                <li>
+                  <a
+                    href={`tel:${phone}`}
+                    className="flex items-start gap-2 text-sm text-gray-500 hover:text-blue-400 transition-colors"
+                  >
+                    <Phone className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
+                    <span>{phone}</span>
+                  </a>
+                </li>
+              )}
+              {email && (
+                <li>
+                  <a
+                    href={`mailto:${email}`}
+                    className="flex items-start gap-2 text-sm text-gray-500 hover:text-purple-400 transition-colors"
+                  >
+                    <Mail className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
+                    <span className="break-all">{email}</span>
+                  </a>
+                </li>
+              )}
+              {address && (
+                <li className="flex items-start gap-2 text-sm text-gray-500">
+                  <MapPin className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                  <span>{address}</span>
+                </li>
+              )}
+              {!whatsapp && !phone && !email && !address && (
+                <li className="text-sm text-gray-600 italic">Contact info not set</li>
+              )}
             </ul>
           </div>
         </div>
