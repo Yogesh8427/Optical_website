@@ -4,7 +4,7 @@ import NextImage from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   Glasses, LayoutDashboard, Image, Tag, Award, Layers, List,
-  MessageSquare, Settings, LogOut, Star, HelpCircle, ChevronRight, X,
+  MessageSquare, Settings, LogOut, Star, HelpCircle, ChevronRight, X, ScrollText, ShieldCheck,
 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { useSettings } from '@/hooks/useSettings';
@@ -45,6 +45,8 @@ const navGroups = [
     label: 'Configuration',
     items: [
       { href: '/admin/settings', label: 'Settings', icon: Settings },
+      { href: '/admin/terms', label: 'Terms & Conditions', icon: ScrollText },
+      { href: '/admin/privacy', label: 'Privacy Policy', icon: ShieldCheck },
     ],
   },
 ];

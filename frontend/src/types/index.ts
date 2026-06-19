@@ -117,6 +117,8 @@ export interface Settings {
   googleMapsUrl: string;
   primaryColor: string;
   secondaryColor: string;
+  termsContent: string;
+  privacyContent: string;
   aboutContent: {
     heading: string;
     subheading: string;
