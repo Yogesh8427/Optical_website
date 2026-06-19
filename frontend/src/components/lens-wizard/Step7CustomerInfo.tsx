@@ -61,6 +61,21 @@ export default function Step7CustomerInfo({ data, onBack, onClose }: Props) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-2">
+
+      {/* Summary pill — shows what they chose */}
+      <div className={`rounded-xl px-4 py-3 text-sm flex items-center gap-2 ${
+        data.powerRequired
+          ? 'bg-blue-50 text-blue-700'
+          : 'bg-green-50 text-green-700'
+      }`}>
+        <span className="text-base">{data.powerRequired ? '👓' : '✅'}</span>
+        <span>
+          {data.powerRequired
+            ? 'With powered lenses — prescription included'
+            : 'Plain lenses (zero power) — no prescription needed'}
+        </span>
+      </div>
+
       <div>
         <Label>Full Name *</Label>
         <Input {...register('customerName')} className="mt-1" />

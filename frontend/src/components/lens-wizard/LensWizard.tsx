@@ -53,7 +53,11 @@ export default function LensWizard({ frameId, frameName, selectedColor = '', sel
   function next() { setStep((s) => s + 1); }
   function back() { setStep((s) => s - 1); }
 
+  // When user picks "No lens" in Step 1 — skip all lens steps, go straight to contact info
+  function skipToContact() { setStep(7); }
+
   function getStepTitle() {
+    if (step === 7 && !data.powerRequired) return 'Your Contact Information';
     const titles: Record<number, string> = {
       1: 'Do you need powered lenses?',
       2: 'Provide your prescription',
@@ -64,6 +68,17 @@ export default function LensWizard({ frameId, frameName, selectedColor = '', sel
       7: 'Your Contact Information',
     };
     return titles[step] ?? 'Customize Lens';
+  }
+
+  // Progress: if no lens selected, only 2 steps total (Step1 + Contact)
+  function getProgress() {
+    if (step === 7 && !data.powerRequired) return 100;
+    return (step / 7) * 100;
+  }
+
+  function getStepLabel() {
+    if (step === 7 && !data.powerRequired) return 'Step 2 of 2';
+    return `Step ${step} of 7`;
   }
 
   function handleClose() {
@@ -77,20 +92,27 @@ export default function LensWizard({ frameId, frameName, selectedColor = '', sel
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         <DialogHeader>
           <DialogTitle className="text-lg">{getStepTitle()}</DialogTitle>
-          <p className="text-sm text-gray-500">Step {step} of 7</p>
+          <p className="text-sm text-gray-500">{getStepLabel()}</p>
           <div className="w-full bg-gray-100 rounded-full h-1.5 mt-2">
-            <div className="bg-blue-600 h-1.5 rounded-full transition-all" style={{ width: `${(step / 7) * 100}%` }} />
+            <div className="bg-blue-600 h-1.5 rounded-full transition-all" style={{ width: `${getProgress()}%` }} />
           </div>
         </DialogHeader>
 
-        {step === 1 && <Step1Power data={data} onUpdate={update} onNext={next} />}
+        {step === 1 && <Step1Power data={data} onUpdate={update} onNext={next} onSkipToContact={skipToContact} />}
         {step === 2 && <Step2PrescriptionMethod data={data} onUpdate={update} onNext={next} onBack={back} />}
         {step === 3 && data.prescriptionMethod === 'upload' && <Step3aUpload data={data} onUpdate={update} onNext={next} onBack={back} />}
         {step === 3 && data.prescriptionMethod === 'manual' && <Step3bManual data={data} onUpdate={update} onNext={next} onBack={back} />}
         {step === 4 && <Step4LensBrand data={data} onUpdate={update} onNext={next} onBack={back} />}
         {step === 5 && <Step5LensType data={data} onUpdate={update} onNext={next} onBack={back} />}
         {step === 6 && <Step6Notes data={data} onUpdate={update} onNext={next} onBack={back} />}
-        {step === 7 && <Step7CustomerInfo data={data} onUpdate={update} onBack={back} onClose={handleClose} />}
+        {step === 7 && (
+          <Step7CustomerInfo
+            data={data}
+            onUpdate={update}
+            onBack={() => data.powerRequired ? back() : setStep(1)}
+            onClose={handleClose}
+          />
+        )}
       </DialogContent>
     </Dialog>
   );

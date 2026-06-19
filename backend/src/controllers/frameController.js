@@ -66,7 +66,7 @@ exports.getBySlug = async (req, res, next) => {
 
 exports.create = async (req, res, next) => {
   try {
-    const { name, description, categoryId, brandId, framePrice, material, gender, colors, sizes, featured, active } = req.body;
+    const { name, description, categoryId, brandId, framePrice, material, gender, colors, sizes, featured, active, requiresLens } = req.body;
 
     const images = [];
     if (req.files?.length) {
@@ -82,7 +82,7 @@ exports.create = async (req, res, next) => {
       material, gender,
       colors: parseArray(colors),
       sizes: parseArray(sizes),
-      images, featured, active,
+      images, featured, active, requiresLens: requiresLens !== undefined ? requiresLens : true,
     });
     res.status(201).json({ success: true, data: frame });
   } catch (err) {
@@ -92,8 +92,8 @@ exports.create = async (req, res, next) => {
 
 exports.update = async (req, res, next) => {
   try {
-    const { name, description, categoryId, brandId, framePrice, material, gender, colors, sizes, featured, active } = req.body;
-    const updates = { description, categoryId, brandId, framePrice, material, gender, featured, active };
+    const { name, description, categoryId, brandId, framePrice, material, gender, colors, sizes, featured, active, requiresLens } = req.body;
+    const updates = { description, categoryId, brandId, framePrice, material, gender, featured, active, requiresLens };
     if (name) {
       updates.name = name;
       updates.slug = generateSlug(name);

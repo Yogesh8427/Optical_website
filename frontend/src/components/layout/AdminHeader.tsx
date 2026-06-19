@@ -8,7 +8,7 @@ const pageTitles: Record<string, string> = {
   '/admin/banners':      'Banners',
   '/admin/categories':   'Categories',
   '/admin/brands':       'Brands',
-  '/admin/frames':       'Frames',
+  '/admin/frames':       'Products',
   '/admin/lens-brands':  'Lens Brands',
   '/admin/lens-types':   'Lens Types',
   '/admin/inquiries':    'Inquiries',

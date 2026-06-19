@@ -32,6 +32,7 @@ export interface Frame {
   images: string[];
   featured: boolean;
   active: boolean;
+  requiresLens: boolean;
   createdAt: string;
 }
 

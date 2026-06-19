@@ -2,9 +2,17 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-/* Hide scrollbar globally for wizard dialogs */
-.scrollbar-hide::-webkit-scrollbar {
+/* Hide scrollbar — wizard dialogs and all modal content */
+.scrollbar-hide::-webkit-scrollbar,
+[data-slot="dialog-content"]::-webkit-scrollbar,
+[data-slot="dialog-content"] *::-webkit-scrollbar {
   display: none;
+}
+.scrollbar-hide,
+[data-slot="dialog-content"],
+[data-slot="dialog-content"] * {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 /* Safe area padding for iPhone notch / home indicator */

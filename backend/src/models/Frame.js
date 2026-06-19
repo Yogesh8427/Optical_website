@@ -15,6 +15,7 @@ const frameSchema = new mongoose.Schema(
     images: [{ type: String }],
     featured: { type: Boolean, default: false },
     active: { type: Boolean, default: true },
+    requiresLens: { type: Boolean, default: true },
   },
   { timestamps: true }
 );

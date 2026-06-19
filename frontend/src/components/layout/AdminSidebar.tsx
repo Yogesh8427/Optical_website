@@ -21,7 +21,7 @@ const navGroups = [
       { href: '/admin/banners',    label: 'Banners',    icon: Image },
       { href: '/admin/categories', label: 'Categories', icon: Tag },
       { href: '/admin/brands',     label: 'Brands',     icon: Award },
-      { href: '/admin/frames',     label: 'Frames',     icon: Glasses },
+      { href: '/admin/frames',     label: 'Products',   icon: Glasses },
     ],
   },
   {
