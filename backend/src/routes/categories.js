@@ -4,6 +4,7 @@ const { protect } = require('../middleware/auth');
 const { upload } = require('../middleware/upload');
 
 router.get('/', ctrl.getAll);
+router.post('/import', protect, ctrl.bulkImport);
 router.post('/', protect, upload.single('image'), ctrl.create);
 router.put('/:id', protect, upload.single('image'), ctrl.update);
 router.delete('/:id', protect, ctrl.remove);

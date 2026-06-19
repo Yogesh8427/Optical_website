@@ -54,3 +54,12 @@ export function useDeleteFrame() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['frames'] }),
   });
 }
+
+export function useBulkImportFrames() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (rows: Record<string, string>[]) =>
+      api.post('/frames/import', { rows }).then((r) => r.data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['frames'] }),
+  });
+}

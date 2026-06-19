@@ -166,3 +166,92 @@ function parseArray(value) {
   if (Array.isArray(value)) return value;
   try { return JSON.parse(value); } catch { return value.split(',').map((s) => s.trim()); }
 }
+
+/**
+ * POST /api/frames/import
+ * Body: { rows: [{ name, category, brand, price, material, gender, colors, sizes, description, featured, requires_lens }] }
+ * colors & sizes separated by | e.g. "Black|Gold|Silver"
+ * No image upload — images can be added later via the edit screen
+ */
+exports.bulkImport = async (req, res, next) => {
+  try {
+    const { rows } = req.body;
+    if (!Array.isArray(rows) || rows.length === 0) {
+      return res.status(400).json({ success: false, message: 'No rows provided' });
+    }
+
+    const Brand    = require('../models/Brand');
+    const created  = [];
+    const errors   = [];
+
+    // Cache DB lookups
+    const allCategories = await Category.find();
+    const allBrands     = await Brand.find();
+
+    const findCat   = (n) => allCategories.find((c) => c.name.toLowerCase() === n?.trim().toLowerCase());
+    const findBrand = (n) => allBrands.find((b) => b.name.toLowerCase() === n?.trim().toLowerCase());
+
+    for (const row of rows) {
+      if (!row.name?.trim()) { errors.push({ row: '(empty name)', reason: 'Name is required' }); continue; }
+
+      // Resolve category
+      const cat = findCat(row.category);
+      if (!cat) { errors.push({ row: row.name, reason: `Category "${row.category}" not found` }); continue; }
+
+      // Resolve brand (optional — if blank, we skip brand)
+      let brandId = null;
+      if (row.brand?.trim()) {
+        const brand = findBrand(row.brand);
+        if (!brand) { errors.push({ row: row.name, reason: `Brand "${row.brand}" not found` }); continue; }
+        brandId = brand._id;
+      }
+
+      const gender = row.gender?.trim().toLowerCase();
+      const validGenders = ['men', 'women', 'unisex', 'kids'];
+      if (!validGenders.includes(gender)) {
+        errors.push({ row: row.name, reason: `Gender must be one of: ${validGenders.join(', ')}` }); continue;
+      }
+
+      const price = Number(row.price);
+      if (isNaN(price) || price < 0) {
+        errors.push({ row: row.name, reason: 'Price must be a valid number' }); continue;
+      }
+
+      try {
+        // Unique slug
+        const baseSlug = generateSlug(row.name.trim());
+        let slug = baseSlug;
+        let counter = 1;
+        while (await Frame.findOne({ slug })) { slug = `${baseSlug}-${counter++}`; }
+
+        // Split arrays by pipe character
+        const colors = row.colors ? row.colors.split('|').map((s) => s.trim()).filter(Boolean) : [];
+        const sizes  = row.sizes  ? row.sizes.split('|').map((s) => s.trim()).filter(Boolean)  : [];
+
+        const frame = await Frame.create({
+          name: row.name.trim(),
+          slug,
+          description: row.description?.trim() || '',
+          categoryId: cat._id,
+          brandId,
+          framePrice: price,
+          material: row.material?.trim() || '',
+          gender,
+          colors,
+          sizes,
+          images: [],
+          featured: row.featured?.toString().toLowerCase() === 'true',
+          active: row.active?.toString().toLowerCase() !== 'false',
+          requiresLens: row.requires_lens?.toString().toLowerCase() !== 'false',
+        });
+        created.push(frame.name);
+      } catch (e) {
+        errors.push({ row: row.name, reason: e.message });
+      }
+    }
+
+    res.json({ success: true, created: created.length, errors });
+  } catch (err) {
+    next(err);
+  }
+};

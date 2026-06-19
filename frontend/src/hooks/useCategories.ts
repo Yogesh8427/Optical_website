@@ -33,3 +33,12 @@ export function useDeleteCategory() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['categories'] }),
   });
 }
+
+export function useBulkImportCategories() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (rows: Record<string, string>[]) =>
+      api.post('/categories/import', { rows }).then((r) => r.data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['categories'] }),
+  });
+}

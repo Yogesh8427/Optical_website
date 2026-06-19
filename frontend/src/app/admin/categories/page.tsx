@@ -1,7 +1,8 @@
 'use client';
 import { useState } from 'react';
 import Image from 'next/image';
-import { useCategories, useCreateCategory, useUpdateCategory, useDeleteCategory } from '@/hooks/useCategories';
+import { useCategories, useCreateCategory, useUpdateCategory, useDeleteCategory, useBulkImportCategories } from '@/hooks/useCategories';
+import CsvImportButton from '@/components/admin/CsvImportButton';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -16,6 +17,7 @@ export default function CategoriesPage() {
   const create = useCreateCategory();
   const update = useUpdateCategory();
   const remove = useDeleteCategory();
+  const bulkImport = useBulkImportCategories();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Category | null>(null);
@@ -79,9 +81,25 @@ export default function CategoriesPage() {
     <div className="space-y-4 max-w-7xl mx-auto">
       <div className="flex items-center justify-between">
         <h1 className="text-xl md:text-2xl font-bold text-slate-800">Categories</h1>
-        <Button onClick={() => openCreate()} size="sm">
-          <Plus className="w-4 h-4 md:mr-2" /><span className="hidden md:inline">Add Category</span>
-        </Button>
+        <div className="flex items-center gap-2">
+          <CsvImportButton
+            label="Import CSV"
+            templateColumns={['name', 'parent_category', 'description', 'active']}
+            templateRows={[
+              ['Men', '', "Men's eyewear collection", 'true'],
+              ['Women', '', "Women's eyewear collection", 'true'],
+              ['Kids', '', "Kids eyewear", 'true'],
+              ['Metal Frames', 'Men', 'Metal frame styles for men', 'true'],
+              ['Sunglasses', 'Men', 'Sunglasses for men', 'true'],
+              ['Cat Eye Frames', 'Women', 'Cat eye styles for women', 'true'],
+            ]}
+            tip='Leave parent_category blank for top-level categories. For sub-categories, put the exact parent name.'
+            onImport={(rows) => bulkImport.mutateAsync(rows)}
+          />
+          <Button onClick={() => openCreate()} size="sm">
+            <Plus className="w-4 h-4 md:mr-2" /><span className="hidden md:inline">Add Category</span>
+          </Button>
+        </div>
       </div>
 
       {/* Info banner */}

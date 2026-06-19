@@ -1,7 +1,8 @@
 'use client';
 import { useState } from 'react';
 import Image from 'next/image';
-import { useFrames, useCreateFrame, useUpdateFrame, useDeleteFrame } from '@/hooks/useFrames';
+import { useFrames, useCreateFrame, useUpdateFrame, useDeleteFrame, useBulkImportFrames } from '@/hooks/useFrames';
+import CsvImportButton from '@/components/admin/CsvImportButton';
 import { useCategories } from '@/hooks/useCategories';
 import { useBrands } from '@/hooks/useBrands';
 import { Button } from '@/components/ui/button';
@@ -27,6 +28,7 @@ export default function ProductsPage() {
   const create = useCreateFrame();
   const update = useUpdateFrame();
   const remove = useDeleteFrame();
+  const bulkImport = useBulkImportFrames();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Frame | null>(null);
@@ -109,9 +111,22 @@ export default function ProductsPage() {
     <div className="space-y-4 max-w-7xl mx-auto">
       <div className="flex items-center justify-between">
         <h1 className="text-xl md:text-2xl font-bold text-slate-800">Products</h1>
-        <Button onClick={openCreate} size="sm">
-          <Plus className="w-4 h-4 md:mr-2" /><span className="hidden md:inline">Add Product</span>
-        </Button>
+        <div className="flex items-center gap-2">
+          <CsvImportButton
+            label="Import CSV"
+            templateColumns={['name', 'category', 'brand', 'price', 'material', 'gender', 'colors', 'sizes', 'description', 'featured', 'requires_lens', 'active']}
+            templateRows={[
+              ['Ray-Ban Aviator Classic', 'Metal Frames', 'Ray-Ban', '2999', 'Metal', 'men', 'Gold|Silver|Black', 'Small|Medium|Large', 'Timeless aviator style with UV protection', 'true', 'true', 'true'],
+              ['Titan EyePlus Round', 'Metal Frames', 'Titan', '1899', 'Metal', 'women', 'Brown|Rose Gold', 'Small|Medium', 'Elegant round frames in lightweight metal', 'false', 'true', 'true'],
+              ['Fastrack Wraparound', 'Sunglasses', 'Fastrack', '1299', 'Plastic', 'men', 'Black|Blue', 'One Size', 'Sporty wraparound sunglasses', 'false', 'false', 'true'],
+            ]}
+            tip='colors and sizes use | to separate values e.g. "Black|Gold|Silver". brand must already exist in Admin → Brands. category must already exist in Admin → Categories.'
+            onImport={(rows) => bulkImport.mutateAsync(rows)}
+          />
+          <Button onClick={openCreate} size="sm">
+            <Plus className="w-4 h-4 md:mr-2" /><span className="hidden md:inline">Add Product</span>
+          </Button>
+        </div>
       </div>
 
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
