@@ -1,10 +1,16 @@
 'use client';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Eye, MapPin, Phone, Mail, MessageCircle } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useSettings } from '@/hooks/useSettings';
 
 export default function Footer() {
   const { t } = useLanguage();
+  const { data: settingsData } = useSettings();
+  const settings  = settingsData?.data;
+  const logoUrl   = settings?.logo;
+  const storeName = settings?.storeName || 'OptiVision';
 
   return (
     <footer className="bg-gray-950 text-gray-400 mt-auto mb-16 md:mb-0">
@@ -13,11 +19,21 @@ export default function Footer() {
 
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <Eye className="w-5 h-5 text-white" />
-              </div>
-              <span className="font-bold text-lg text-white">Opti<span className="text-blue-400">Vision</span></span>
+            <div className="flex items-center gap-2.5 mb-4">
+              {logoUrl ? (
+                <Image
+                  src={logoUrl}
+                  alt={storeName}
+                  width={36}
+                  height={36}
+                  className="h-9 w-9 object-contain rounded-lg shrink-0"
+                />
+              ) : (
+                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shrink-0">
+                  <Eye className="w-5 h-5 text-white" />
+                </div>
+              )}
+              <span className="font-bold text-lg text-white">{storeName}</span>
             </div>
             <p className="text-sm text-gray-500 leading-relaxed mb-4">
               {t.footer.tagline}
@@ -91,7 +107,7 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="border-t border-gray-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-2">
           <p className="text-xs text-gray-600">
-            &copy; {new Date().getFullYear()} OptiVision. {t.footer.rights}
+            &copy; {new Date().getFullYear()} {storeName}. {t.footer.rights}
           </p>
           <p className="text-xs text-gray-700">
             Crafted with ❤️ for perfect vision
