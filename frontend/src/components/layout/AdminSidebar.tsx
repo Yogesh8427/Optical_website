@@ -78,14 +78,20 @@ export default function AdminSidebar({ isOpen, onClose }: Props) {
       <div className="flex items-center justify-between gap-3 px-5 py-5 border-b border-slate-800">
         <div className="flex items-center gap-3 min-w-0">
           {logoUrl ? (
-            <NextImage
-              src={logoUrl}
-              alt={storeName}
-              width={110}
-              height={36}
-              className="h-9 w-auto object-contain brightness-0 invert"
-              priority
-            />
+            <div className="flex items-center gap-2.5 min-w-0">
+              <NextImage
+                src={logoUrl}
+                alt={storeName}
+                width={36}
+                height={36}
+                className="h-9 w-9 object-contain rounded-lg shrink-0"
+                priority
+              />
+              <div className="min-w-0">
+                <p className="font-bold text-sm text-white leading-none truncate">{storeName}</p>
+                <p className="text-xs text-slate-500 mt-0.5">Admin Panel</p>
+              </div>
+            </div>
           ) : (
             <>
               <div className="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/30 shrink-0">

@@ -48,14 +48,17 @@ export default function Navbar() {
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2 shrink-0">
               {logoUrl ? (
-                <Image
-                  src={logoUrl}
-                  alt={storeName}
-                  width={120}
-                  height={40}
-                  className="h-10 w-auto object-contain"
-                  priority
-                />
+                <>
+                  <Image
+                    src={logoUrl}
+                    alt={storeName}
+                    width={40}
+                    height={40}
+                    className="h-10 w-10 object-contain rounded-lg shrink-0"
+                    priority
+                  />
+                  <span className="font-bold text-xl text-gray-900 tracking-tight">{storeName}</span>
+                </>
               ) : (
                 <>
                   <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shrink-0">
