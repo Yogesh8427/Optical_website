@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import StatusBadge from '@/components/admin/StatusBadge';
-import { Eye } from 'lucide-react';
+import { Eye, FileText, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Inquiry } from '@/types';
 
@@ -150,6 +150,44 @@ export default function InquiriesPage() {
                 {selected.notes && <div className="col-span-2"><p className="text-slate-500">Notes</p><p className="font-medium">{selected.notes}</p></div>}
                 <div><p className="text-slate-500">Status</p><StatusBadge status={selected.status} /></div>
               </div>
+
+              {/* Prescription File */}
+              {selected.prescriptionFile && (
+                <div className="border border-slate-100 rounded-xl p-3 space-y-2">
+                  <p className="text-slate-500 text-xs font-semibold uppercase tracking-wide">Prescription File</p>
+                  {selected.prescriptionFile.match(/\.(jpg|jpeg|png|webp)($|\?)/i) ? (
+                    /* image — show inline preview */
+                    <div className="space-y-2">
+                      <img
+                        src={selected.prescriptionFile}
+                        alt="Prescription"
+                        className="w-full max-h-72 object-contain rounded-lg border border-slate-100 bg-slate-50"
+                      />
+                      <a
+                        href={selected.prescriptionFile}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-xs text-blue-600 hover:underline"
+                      >
+                        <ExternalLink className="w-3 h-3" /> Open full size
+                      </a>
+                    </div>
+                  ) : (
+                    /* PDF — show link */
+                    <a
+                      href={selected.prescriptionFile}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-3 py-2.5 bg-slate-50 hover:bg-slate-100 rounded-lg text-sm text-slate-700 transition-colors"
+                    >
+                      <FileText className="w-4 h-4 text-red-500 shrink-0" />
+                      <span className="flex-1 truncate">View Prescription PDF</span>
+                      <ExternalLink className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                    </a>
+                  )}
+                </div>
+              )}
+
             </div>
           )}
         </DialogContent>

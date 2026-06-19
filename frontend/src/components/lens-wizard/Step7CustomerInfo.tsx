@@ -40,7 +40,7 @@ export default function Step7CustomerInfo({ data, onBack, onClose }: Props) {
       if (data.add) form.append('add', data.add);
     }
     if (data.lensBrandId) form.append('lensBrandId', data.lensBrandId);
-    data.lensTypes.forEach((t) => form.append('lensTypes[]', t));
+    data.lensTypes.forEach((t) => form.append('lensTypes', t));
     if (data.notes) form.append('notes', data.notes);
     form.append('customerName', values.customerName);
     form.append('phone', values.phone);
