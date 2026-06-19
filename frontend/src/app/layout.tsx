@@ -4,6 +4,7 @@ import './globals.css';
 import Providers from '@/components/Providers';
 import { Toaster } from '@/components/ui/sonner';
 import { LanguageProvider } from '@/contexts/LanguageContext';
+import ThemeProvider from '@/components/ThemeProvider';
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-geist' });
 
@@ -30,6 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen flex flex-col" suppressHydrationWarning>
         <LanguageProvider>
           <Providers>
+            <ThemeProvider />
             {children}
             <Toaster richColors position="top-right" />
           </Providers>

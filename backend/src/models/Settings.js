@@ -29,6 +29,7 @@ const settingsSchema = new mongoose.Schema(
       description: { type: String, default: '' },
       ogImage: { type: String, default: '' },
     },
+    themeColor: { type: String, default: 'blue' },
   },
   { timestamps: true }
 );

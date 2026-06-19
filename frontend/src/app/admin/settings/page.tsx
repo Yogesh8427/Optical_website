@@ -16,6 +16,7 @@ export default function SettingsPage() {
 
   const [form, setForm] = useState({
     storeName: '', whatsappNumber: '', phone: '', email: '', address: '',
+    themeColor: 'blue',
     businessHours: '', googleMapsUrl: '',
     facebook: '', instagram: '', twitter: '', youtube: '',
     seoTitle: '', seoDescription: '',
@@ -45,6 +46,7 @@ export default function SettingsPage() {
       aboutBody: settings.aboutContent?.body ?? '',
       aboutMission: settings.aboutContent?.mission ?? '',
       aboutVision: settings.aboutContent?.vision ?? '',
+      themeColor: settings.themeColor ?? 'blue',
     });
     setHighlights(settings.aboutContent?.highlights?.length ? settings.aboutContent.highlights : ['']);
   }, [settings]);
@@ -55,6 +57,7 @@ export default function SettingsPage() {
     e.preventDefault();
     const fd = new FormData();
     fd.append('storeName', form.storeName);
+    fd.append('themeColor', form.themeColor);
     fd.append('whatsappNumber', form.whatsappNumber);
     fd.append('phone', form.phone);
     fd.append('email', form.email);
@@ -120,6 +123,34 @@ export default function SettingsPage() {
             </div>
             <div><Label>Address</Label><Textarea value={form.address} onChange={(e) => set('address', e.target.value)} className="mt-1" rows={2} /></div>
             <div><Label>Google Maps URL</Label><Input value={form.googleMapsUrl} onChange={(e) => set('googleMapsUrl', e.target.value)} className="mt-1" placeholder="https://maps.google.com/..." /></div>
+
+            {/* Theme Colour */}
+            <div>
+              <Label>🎨 Theme Colour</Label>
+              <p className="text-xs text-slate-400 mb-3 mt-1">Changes the primary colour across the entire website</p>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { key: 'blue',   label: 'Blue',   bg: '#2563eb', light: '#eff6ff' },
+                  { key: 'purple', label: 'Purple', bg: '#9333ea', light: '#faf5ff' },
+                  { key: 'green',  label: 'Green',  bg: '#16a34a', light: '#f0fdf4' },
+                  { key: 'orange', label: 'Orange', bg: '#ea580c', light: '#fff7ed' },
+                  { key: 'rose',   label: 'Rose',   bg: '#e11d48', light: '#fff1f2' },
+                  { key: 'teal',   label: 'Teal',   bg: '#0d9488', light: '#f0fdfa' },
+                ].map((theme) => (
+                  <button
+                    key={theme.key}
+                    type="button"
+                    onClick={() => set('themeColor', theme.key)}
+                    style={{ borderColor: form.themeColor === theme.key ? theme.bg : 'transparent', backgroundColor: form.themeColor === theme.key ? theme.light : '#f8fafc' }}
+                    className="flex items-center gap-2 px-3 py-2.5 rounded-xl border-2 transition-all text-left"
+                  >
+                    <span className="w-5 h-5 rounded-full shrink-0 shadow-sm" style={{ backgroundColor: theme.bg }} />
+                    <span className="text-xs font-medium text-slate-700">{theme.label}</span>
+                    {form.themeColor === theme.key && <span className="ml-auto text-xs font-bold" style={{ color: theme.bg }}>✓</span>}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
 
           {/* Contact Details */}
