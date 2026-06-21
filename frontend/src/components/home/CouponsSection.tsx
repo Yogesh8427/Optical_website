@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Gift, Eye, Tag, CheckCircle, Clock, Users, ArrowRight } from 'lucide-react';
+import ClaimQrCode from '@/components/ui/ClaimQrCode';
 
 interface PublicCoupon {
   _id: string;
@@ -188,8 +189,9 @@ export default function CouponsSection() {
             <h2 className="text-xl font-bold text-slate-800 mb-1">Coupon Claimed!</h2>
             <p className="text-slate-500 text-sm mb-5">Show this code at our store</p>
             <div className="bg-slate-50 rounded-xl p-4 mb-2">
-              <p className="text-xs text-slate-400 mb-1">Your unique claim ID — show this at the store</p>
-              <code className="text-2xl font-black text-slate-800 tracking-widest">{claimed.claimId}</code>
+              <p className="text-xs text-slate-400 mb-2">Scan this QR at the store — or show the code</p>
+              <ClaimQrCode value={claimed.claimId} size={140} />
+              <code className="block text-xl font-black text-slate-800 tracking-widest mt-2">{claimed.claimId}</code>
             </div>
             <p className="text-xs text-slate-400 mb-4">Coupon: {claimed.code} · {claimed.title}</p>
             <div className="flex flex-col gap-2">

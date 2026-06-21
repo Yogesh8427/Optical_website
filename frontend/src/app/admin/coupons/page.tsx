@@ -1,5 +1,5 @@
 'use client';
-import { useState, Fragment } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCoupons, useCreateCoupon, useUpdateCoupon, useDeleteCoupon } from '@/hooks/useCoupons';
 import api from '@/lib/api';
@@ -11,8 +11,10 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Pencil, Trash2, Plus, RefreshCw, Users, UserPlus, ChevronDown, ChevronUp, ScanLine, XCircle, CheckCircle2 } from 'lucide-react';
+import { Pencil, Trash2, Plus, RefreshCw, Users, UserPlus, ChevronDown, ChevronUp, ScanLine, XCircle, CheckCircle2, Camera } from 'lucide-react';
 import { toast } from 'sonner';
+import dynamic from 'next/dynamic';
+const QrScanner = dynamic(() => import('@/components/admin/QrScanner'), { ssr: false });
 
 type CouponWithClaims = Coupon & {
   claims?: { claimId: string; name: string; phone: string; claimedAt: string; redeemed: boolean; redeemedAt?: string }[];
@@ -45,6 +47,14 @@ export default function AdminCouponsPage() {
   const [verifyId, setVerifyId] = useState('');
   const [verifyResult, setVerifyResult] = useState<null | { alreadyRedeemed: boolean; data: { claimId: string; name: string; phone: string; redeemedAt?: string; couponTitle: string; couponCode: string } }>(null);
   const [verifying, setVerifying] = useState(false);
+  const [scannerOpen, setScannerOpen] = useState(false);
+  const [hasCamera, setHasCamera] = useState(false);
+
+  useEffect(() => {
+    navigator.mediaDevices?.enumerateDevices().then(devices => {
+      setHasCamera(devices.some(d => d.kind === 'videoinput'));
+    }).catch(() => {});
+  }, []);
 
   const [open, setOpen]         = useState(false);
   const [editing, setEditing]   = useState<Coupon | null>(null);
@@ -92,17 +102,27 @@ export default function AdminCouponsPage() {
     catch { toast.error('Error deleting'); }
   }
 
-  async function handleVerify(e: React.FormEvent) {
-    e.preventDefault();
+  async function doVerify(id: string) {
     setVerifying(true);
     setVerifyResult(null);
     try {
-      const res = await api.post('/coupons/verify', { claimId: verifyId.trim().toUpperCase() });
+      const res = await api.post('/coupons/verify', { claimId: id.trim().toUpperCase() });
       setVerifyResult(res.data);
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message ?? 'Not found';
       toast.error(msg);
     } finally { setVerifying(false); }
+  }
+
+  async function handleVerify(e: React.FormEvent) {
+    e.preventDefault();
+    doVerify(verifyId);
+  }
+
+  function handleScan(scanned: string) {
+    setScannerOpen(false);
+    setVerifyId(scanned);
+    doVerify(scanned);
   }
 
   async function handleForceGive(e: React.FormEvent) {
@@ -141,10 +161,18 @@ export default function AdminCouponsPage() {
             placeholder="Enter claim ID (e.g. CLM-A1B2C3D4)"
             className="font-mono flex-1"
           />
+          {hasCamera && (
+            <Button type="button" variant="outline" onClick={() => setScannerOpen(true)} title="Scan QR code with camera">
+              <Camera className="w-4 h-4" />
+            </Button>
+          )}
           <Button type="submit" disabled={verifying || !verifyId.trim()}>
             {verifying ? 'Checking…' : 'Verify'}
           </Button>
         </form>
+        <p className="text-xs text-slate-400 mt-2">
+          {hasCamera ? 'Type the Claim ID manually — or click 📷 to scan the customer\'s QR code' : 'Type the Claim ID from the customer\'s screen (e.g. CLM-A1B2C3D4)'}
+        </p>
         {verifyResult && (
           <div className={`mt-3 rounded-xl p-4 ${verifyResult.alreadyRedeemed ? 'bg-red-50 border border-red-200' : 'bg-green-50 border border-green-200'}`}>
             {verifyResult.alreadyRedeemed ? (
@@ -356,6 +384,8 @@ export default function AdminCouponsPage() {
           </form>
         </DialogContent>
       </Dialog>
+
+      {scannerOpen && <QrScanner onScan={handleScan} onClose={() => setScannerOpen(false)} />}
     </div>
   );
 }

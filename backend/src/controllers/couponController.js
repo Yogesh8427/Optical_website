@@ -40,19 +40,32 @@ exports.claim = async (req, res, next) => {
   try {
     const { name, phone } = req.body;
     if (!name || !phone) return res.status(400).json({ success: false, message: 'Name and phone are required' });
-    // support claim by _id or by code
+
+    // Get real IP (works behind proxies/Vercel/Nginx)
+    const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').toString().split(',')[0].trim();
+
     const query = req.params.id.match(/^[a-f\d]{24}$/i)
       ? { _id: req.params.id, active: true }
       : { code: req.params.id.toUpperCase(), active: true };
     const coupon = await Coupon.findOne(query);
     if (!coupon) return res.status(404).json({ success: false, message: 'Invalid or expired coupon' });
+
     const now = new Date();
     if (coupon.validUntil && coupon.validUntil < now) return res.status(400).json({ success: false, message: 'This coupon has expired' });
     if (coupon.usedCount >= coupon.maxUses) return res.status(400).json({ success: false, message: 'This coupon has reached its usage limit' });
-    const alreadyClaimed = coupon.claims.find(c => c.phone === phone);
-    if (alreadyClaimed) return res.status(400).json({ success: false, message: 'This phone number has already claimed this coupon' });
+
+    // Block same phone
+    if (coupon.claims.find(c => c.phone === phone)) {
+      return res.status(400).json({ success: false, message: 'This phone number has already claimed this coupon' });
+    }
+    // Block same IP (Option 3) — skip for localhost/private IPs
+    const isPrivateIp = !ip || ip === '::1' || ip.startsWith('127.') || ip.startsWith('192.168.') || ip.startsWith('10.');
+    if (!isPrivateIp && coupon.claims.find(c => c.ip === ip)) {
+      return res.status(400).json({ success: false, message: 'A coupon has already been claimed from your device/network. Visit our store for assistance.' });
+    }
+
     const claimId = 'CLM-' + Math.random().toString(36).substring(2, 10).toUpperCase();
-    coupon.claims.push({ claimId, name, phone });
+    coupon.claims.push({ claimId, name, phone, ip });
     coupon.usedCount += 1;
     await coupon.save();
     res.json({ success: true, data: { claimId, code: coupon.code, title: coupon.title, description: coupon.description }, message: 'Coupon claimed successfully!' });

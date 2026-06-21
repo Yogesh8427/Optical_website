@@ -13,6 +13,7 @@ const couponSchema = new mongoose.Schema({
     claimId:    { type: String, required: true },
     name:       { type: String },
     phone:      { type: String },
+    ip:         { type: String, default: '' },  // for abuse detection
     claimedAt:  { type: Date, default: Date.now },
     redeemed:   { type: Boolean, default: false },
     redeemedAt: { type: Date },
