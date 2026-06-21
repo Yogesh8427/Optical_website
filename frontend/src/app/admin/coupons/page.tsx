@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Pencil, Trash2, Plus, RefreshCw, Users, UserPlus, ChevronDown, ChevronUp, ScanLine, XCircle, CheckCircle2, Camera } from 'lucide-react';
+import { Pencil, Trash2, Plus, RefreshCw, Users, UserPlus, ChevronDown, ChevronUp, ScanLine, XCircle, CheckCircle2, Camera, X } from 'lucide-react';
 import { toast } from 'sonner';
 import dynamic from 'next/dynamic';
 const QrScanner = dynamic(() => import('@/components/admin/QrScanner'), { ssr: false });
@@ -23,6 +23,7 @@ type CouponWithClaims = Coupon & {
 const emptyForm = {
   code: '', title: '', description: '', type: 'eye_checkup',
   discountType: 'free_service', discountValue: '0', validUntil: '', maxUses: '100', active: true,
+  bgColor: '', bannerImage: '',
 };
 
 function generateCode() {
@@ -59,6 +60,7 @@ export default function AdminCouponsPage() {
   const [open, setOpen]         = useState(false);
   const [editing, setEditing]   = useState<Coupon | null>(null);
   const [form, setForm]         = useState({ ...emptyForm });
+  const [bannerFile, setBannerFile] = useState<File | null>(null);
   const [expanded, setExpanded] = useState<string | null>(null); // expanded claims row
   const [giveOpen, setGiveOpen] = useState<CouponWithClaims | null>(null);
   const [giveName, setGiveName] = useState('');
@@ -70,26 +72,30 @@ export default function AdminCouponsPage() {
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['coupons'] }); },
   });
 
-  function openCreate() { setEditing(null); setForm({ ...emptyForm, code: generateCode() }); setOpen(true); }
+  function openCreate() { setEditing(null); setForm({ ...emptyForm, code: generateCode() }); setBannerFile(null); setOpen(true); }
   function openEdit(c: Coupon) {
     setEditing(c);
     setForm({ code: c.code, title: c.title, description: c.description, type: c.type,
       discountType: c.discountType, discountValue: String(c.discountValue),
-      validUntil: c.validUntil ? c.validUntil.slice(0, 10) : '', maxUses: String(c.maxUses), active: c.active });
+      validUntil: c.validUntil ? c.validUntil.slice(0, 10) : '', maxUses: String(c.maxUses), active: c.active,
+      bgColor: (c as Coupon & { bgColor?: string }).bgColor ?? '', bannerImage: (c as Coupon & { bannerImage?: string }).bannerImage ?? '' });
+    setBannerFile(null);
     setOpen(true);
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const payload = { ...form, discountValue: Number(form.discountValue), maxUses: Number(form.maxUses) };
+    const fd = new FormData();
+    const fields = { ...form, discountValue: Number(form.discountValue), maxUses: Number(form.maxUses) };
+    Object.entries(fields).forEach(([k, v]) => { if (k !== 'bannerImage') fd.append(k, String(v)); });
+    if (bannerFile) fd.append('bannerImage', bannerFile);
     try {
       if (editing) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { code: _c, ...rest } = payload;
-        await updateCoupon.mutateAsync({ id: editing._id, data: rest });
+        fd.delete('code');
+        await updateCoupon.mutateAsync({ id: editing._id, data: fd });
         toast.success('Coupon updated');
       } else {
-        await createCoupon.mutateAsync(payload);
+        await createCoupon.mutateAsync(fd as unknown as Record<string, unknown>);
         toast.success('Coupon created');
       }
       setOpen(false);
@@ -343,6 +349,52 @@ export default function AdminCouponsPage() {
                 <Input type="number" min="1" value={form.maxUses} onChange={e => setForm(f => ({ ...f, maxUses: e.target.value }))} />
               </div>
             </div>
+            {/* Banner image */}
+            <div className="space-y-1.5">
+              <Label>Banner Image <span className="text-slate-400 font-normal">(optional — shown on coupon card &amp; popup)</span></Label>
+              <div className="flex items-center gap-3">
+                <label className="flex-1 cursor-pointer">
+                  <div className="border-2 border-dashed border-slate-200 hover:border-blue-400 rounded-xl p-4 text-center transition-colors">
+                    {bannerFile ? (
+                      <p className="text-sm text-blue-600 font-medium truncate">{bannerFile.name}</p>
+                    ) : form.bannerImage ? (
+                      <img src={form.bannerImage} alt="banner" className="h-16 object-cover rounded-lg mx-auto" />
+                    ) : (
+                      <p className="text-slate-400 text-sm">Click to upload image</p>
+                    )}
+                  </div>
+                  <input type="file" accept="image/*" className="hidden" onChange={e => setBannerFile(e.target.files?.[0] ?? null)} />
+                </label>
+                {(bannerFile || form.bannerImage) && (
+                  <Button type="button" variant="outline" size="icon" onClick={() => { setBannerFile(null); setForm(f => ({ ...f, bannerImage: '' })); }}>
+                    <X className="w-4 h-4" />
+                  </Button>
+                )}
+              </div>
+            </div>
+
+            {/* Background color */}
+            <div className="space-y-1.5">
+              <Label>Card Background Color <span className="text-slate-400 font-normal">(optional — used when no banner image)</span></Label>
+              <div className="flex items-center gap-3">
+                <input
+                  type="color"
+                  value={form.bgColor || '#f1f5f9'}
+                  onChange={e => setForm(f => ({ ...f, bgColor: e.target.value }))}
+                  className="w-10 h-10 rounded-lg cursor-pointer border border-slate-200 p-0.5"
+                />
+                <div className="flex gap-1.5 flex-wrap">
+                  {['#dbeafe','#d1fae5','#ede9fe','#fee2e2','#fef3c7','#f1f5f9'].map(c => (
+                    <button key={c} type="button" onClick={() => setForm(f => ({ ...f, bgColor: c }))}
+                      className="w-7 h-7 rounded-full border-2 transition-transform hover:scale-110"
+                      style={{ background: c, borderColor: form.bgColor === c ? '#3b82f6' : 'transparent' }}
+                    />
+                  ))}
+                </div>
+                {form.bgColor && <Button type="button" variant="ghost" size="sm" className="text-slate-400 text-xs" onClick={() => setForm(f => ({ ...f, bgColor: '' }))}>Clear</Button>}
+              </div>
+            </div>
+
             <div className="flex items-center gap-2">
               <input type="checkbox" id="couponActive" checked={form.active} onChange={e => setForm(f => ({ ...f, active: e.target.checked }))} className="rounded" />
               <Label htmlFor="couponActive">Active</Label>

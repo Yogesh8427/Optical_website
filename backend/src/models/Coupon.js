@@ -18,6 +18,8 @@ const couponSchema = new mongoose.Schema({
     redeemed:   { type: Boolean, default: false },
     redeemedAt: { type: Date },
   }],
+  bannerImage: { type: String, default: '' },
+  bgColor: { type: String, default: '' },
   active: { type: Boolean, default: true },
 }, { timestamps: true });
 module.exports = mongoose.model('Coupon', couponSchema);

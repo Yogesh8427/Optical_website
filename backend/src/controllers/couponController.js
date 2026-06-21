@@ -1,4 +1,5 @@
 const Coupon = require('../models/Coupon');
+const { uploadToCloudinary } = require('../middleware/upload');
 
 // Admin — full list with claims
 exports.getAll = async (req, res, next) => {
@@ -16,8 +17,8 @@ exports.getPublic = async (req, res, next) => {
       active: true,
       $or: [{ validUntil: null }, { validUntil: { $gte: now } }],
     }).sort({ createdAt: -1 });
-    const safe = coupons.map(({ _id, code, title, description, type, discountType, discountValue, validUntil, maxUses, usedCount }) => ({
-      _id, code, title, description, type, discountType, discountValue, validUntil, maxUses, usedCount,
+    const safe = coupons.map(({ _id, code, title, description, type, discountType, discountValue, validUntil, maxUses, usedCount, bannerImage, bgColor }) => ({
+      _id, code, title, description, type, discountType, discountValue, validUntil, maxUses, usedCount, bannerImage, bgColor,
       remaining: maxUses - usedCount,
     }));
     res.json({ success: true, data: safe });
@@ -107,16 +108,20 @@ exports.forceClaim = async (req, res, next) => {
 
 exports.create = async (req, res, next) => {
   try {
-    const { code, title, description, type, discountType, discountValue, validUntil, maxUses, active } = req.body;
-    const coupon = await Coupon.create({ code: code.toUpperCase(), title, description, type, discountType, discountValue, validUntil, maxUses, active });
+    const { code, title, description, type, discountType, discountValue, validUntil, maxUses, active, bgColor } = req.body;
+    let bannerImage = '';
+    if (req.file) bannerImage = await uploadToCloudinary(req.file.buffer, 'coupons');
+    const coupon = await Coupon.create({ code: code.toUpperCase(), title, description, type, discountType, discountValue, validUntil, maxUses, active, bannerImage, bgColor });
     res.status(201).json({ success: true, data: coupon });
   } catch (err) { next(err); }
 };
 
 exports.update = async (req, res, next) => {
   try {
-    const { title, description, type, discountType, discountValue, validUntil, maxUses, active } = req.body;
-    const coupon = await Coupon.findByIdAndUpdate(req.params.id, { title, description, type, discountType, discountValue, validUntil, maxUses, active }, { new: true });
+    const { title, description, type, discountType, discountValue, validUntil, maxUses, active, bgColor } = req.body;
+    const updates = { title, description, type, discountType, discountValue, validUntil, maxUses, active, bgColor };
+    if (req.file) updates.bannerImage = await uploadToCloudinary(req.file.buffer, 'coupons');
+    const coupon = await Coupon.findByIdAndUpdate(req.params.id, updates, { new: true });
     if (!coupon) return res.status(404).json({ success: false, message: 'Coupon not found' });
     res.json({ success: true, data: coupon });
   } catch (err) { next(err); }

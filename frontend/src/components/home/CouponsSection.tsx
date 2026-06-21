@@ -22,6 +22,8 @@ interface PublicCoupon {
   maxUses: number;
   usedCount: number;
   remaining: number;
+  bannerImage?: string;
+  bgColor?: string;
 }
 
 const typeConfig = {
@@ -98,49 +100,64 @@ export default function CouponsSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.06 * coupons.indexOf(c), duration: 0.45, ease: [0.22,1,0.36,1] }}
-                whileHover={{ y: -4, boxShadow: '0 16px 40px rgba(0,0,0,0.10)' }}
-                className="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col gap-3 shadow-sm cursor-pointer">
-                {/* Icon + badge */}
-                <div className="flex items-center justify-between">
-                  <div className={`w-10 h-10 rounded-xl ${tc.iconBg} flex items-center justify-center`}>
-                    <Icon className={`w-5 h-5 ${tc.iconColor}`} />
+                whileHover={{ y: -4, boxShadow: '0 16px 40px rgba(0,0,0,0.12)' }}
+                className="rounded-2xl overflow-hidden shadow-sm cursor-pointer flex flex-col border border-slate-200"
+                style={{ background: c.bgColor || '#ffffff' }}
+              >
+                {/* Banner image */}
+                {c.bannerImage && (
+                  <div className="relative h-32 w-full shrink-0">
+                    <img src={c.bannerImage} alt={c.title} className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                    <Badge className={`absolute top-2 right-2 ${tc.color} border-0 text-xs`}>{tc.label}</Badge>
                   </div>
-                  <Badge className={`${tc.color} border-0 text-xs`}>{tc.label}</Badge>
-                </div>
+                )}
 
-                {/* Benefit */}
-                <div>
-                  <p className="text-2xl font-black text-slate-800">{benefitText(c)}</p>
-                  <p className="font-semibold text-slate-700 text-sm mt-0.5">{c.title}</p>
-                  {c.description && <p className="text-slate-400 text-xs mt-1 line-clamp-2">{c.description}</p>}
-                </div>
-
-                {/* Meta */}
-                <div className="flex items-center gap-3 text-xs text-slate-400 mt-auto">
-                  {c.validUntil && (
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
-                      Till {new Date(c.validUntil).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
-                    </span>
+                <div className="p-5 flex flex-col gap-3 flex-1">
+                  {/* Icon + badge (only when no banner) */}
+                  {!c.bannerImage && (
+                    <div className="flex items-center justify-between">
+                      <div className={`w-10 h-10 rounded-xl ${tc.iconBg} flex items-center justify-center`}>
+                        <Icon className={`w-5 h-5 ${tc.iconColor}`} />
+                      </div>
+                      <Badge className={`${tc.color} border-0 text-xs`}>{tc.label}</Badge>
+                    </div>
                   )}
-                  <span className="flex items-center gap-1">
-                    <Users className="w-3 h-3" />
-                    {isFull ? 'Full' : `${c.remaining} left`}
-                  </span>
-                </div>
 
-                {/* CTA */}
-                <button
-                  disabled={isFull}
-                  onClick={() => { setSelected(c); setClaimed(null); }}
-                  className={`w-full py-2 rounded-xl text-sm font-semibold transition-colors ${
-                    isFull
-                      ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                      : 'bg-blue-600 hover:bg-blue-700 text-white'
-                  }`}
-                >
-                  {isFull ? 'Fully Claimed' : 'Claim Now'}
-                </button>
+                  {/* Benefit */}
+                  <div>
+                    <p className={`text-2xl font-black ${c.bannerImage ? 'text-slate-800' : 'text-slate-800'}`}>{benefitText(c)}</p>
+                    <p className="font-semibold text-slate-700 text-sm mt-0.5">{c.title}</p>
+                    {c.description && <p className="text-slate-400 text-xs mt-1 line-clamp-2">{c.description}</p>}
+                  </div>
+
+                  {/* Meta */}
+                  <div className="flex items-center gap-3 text-xs text-slate-400 mt-auto">
+                    {c.validUntil && (
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-3 h-3" />
+                        Till {new Date(c.validUntil).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
+                      </span>
+                    )}
+                    <span className="flex items-center gap-1">
+                      <Users className="w-3 h-3" />
+                      {isFull ? 'Full' : `${c.remaining} left`}
+                    </span>
+                  </div>
+
+                  {/* CTA */}
+                  <button
+                    disabled={isFull}
+                    onClick={() => { setSelected(c); setClaimed(null); }}
+                    className={`w-full py-2 rounded-xl text-sm font-semibold transition-colors ${
+                      isFull
+                        ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                        : 'bg-blue-600 hover:bg-blue-700 text-white'
+                    }`}
+                  >
+                    {isFull ? 'Fully Claimed' : 'Claim Now'}
+                  </button>
+                </div>
               </motion.div>
             );
           })}

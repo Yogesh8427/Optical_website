@@ -14,6 +14,7 @@ interface PublicCoupon {
   type: 'eye_checkup' | 'discount' | 'gift';
   discountType: string; discountValue: number;
   validUntil?: string; maxUses: number; usedCount: number; remaining: number;
+  bannerImage?: string; bgColor?: string;
 }
 
 const typeConfig = {
@@ -136,27 +137,41 @@ export default function WelcomePopup() {
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: i * 0.08 }}
                           onClick={() => { setSelected(c); setStep('claim'); }}
-                          className="w-full text-left flex items-center gap-4 p-4 rounded-2xl border border-slate-100 hover:border-blue-200 hover:bg-blue-50/50 active:scale-[0.98] transition-all group"
+                          className="w-full text-left rounded-2xl border border-slate-100 hover:border-blue-200 active:scale-[0.98] transition-all group overflow-hidden"
+                          style={{ background: c.bgColor || undefined }}
                         >
-                          <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${tc.gradient} flex items-center justify-center shrink-0 shadow-md`}>
-                            <Icon className="w-6 h-6 text-white" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="font-bold text-slate-800 text-base leading-tight">{benefitText(c)}</p>
-                            <p className="text-slate-600 text-sm truncate">{c.title}</p>
-                            <div className="flex items-center gap-3 mt-1">
-                              {c.validUntil && (
-                                <span className="flex items-center gap-1 text-xs text-slate-400">
-                                  <Clock className="w-3 h-3" />
-                                  Till {new Date(c.validUntil).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
-                                </span>
-                              )}
-                              <span className="flex items-center gap-1 text-xs text-slate-400">
-                                <Users className="w-3 h-3" /> {c.remaining} left
-                              </span>
+                          {/* Banner image row */}
+                          {c.bannerImage && (
+                            <div className="relative h-28 w-full">
+                              <img src={c.bannerImage} alt={c.title} className="w-full h-full object-cover" />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                              <span className="absolute bottom-2 left-3 text-white font-black text-lg drop-shadow">{benefitText(c)}</span>
+                              <span className="absolute bottom-2 right-3 text-white/80 text-xs">{c.title}</span>
                             </div>
+                          )}
+                          <div className="flex items-center gap-4 p-4">
+                            {!c.bannerImage && (
+                              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${tc.gradient} flex items-center justify-center shrink-0 shadow-md`}>
+                                <Icon className="w-6 h-6 text-white" />
+                              </div>
+                            )}
+                            <div className="flex-1 min-w-0">
+                              {!c.bannerImage && <p className="font-bold text-slate-800 text-base leading-tight">{benefitText(c)}</p>}
+                              <p className={`text-slate-600 text-sm truncate ${c.bannerImage ? 'font-semibold' : ''}`}>{c.title}</p>
+                              <div className="flex items-center gap-3 mt-1">
+                                {c.validUntil && (
+                                  <span className="flex items-center gap-1 text-xs text-slate-400">
+                                    <Clock className="w-3 h-3" />
+                                    Till {new Date(c.validUntil).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
+                                  </span>
+                                )}
+                                <span className="flex items-center gap-1 text-xs text-slate-400">
+                                  <Users className="w-3 h-3" /> {c.remaining} left
+                                </span>
+                              </div>
+                            </div>
+                            <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-blue-500 group-hover:translate-x-1 transition-all shrink-0" />
                           </div>
-                          <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-blue-500 group-hover:translate-x-1 transition-all shrink-0" />
                         </motion.button>
                       );
                     })}
