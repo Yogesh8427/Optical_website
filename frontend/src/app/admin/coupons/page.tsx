@@ -92,7 +92,7 @@ export default function AdminCouponsPage() {
     try {
       if (editing) {
         fd.delete('code');
-        await updateCoupon.mutateAsync({ id: editing._id, data: fd });
+        await updateCoupon.mutateAsync({ id: editing._id, data: fd as unknown as Record<string, unknown> });
         toast.success('Coupon updated');
       } else {
         await createCoupon.mutateAsync(fd as unknown as Record<string, unknown>);

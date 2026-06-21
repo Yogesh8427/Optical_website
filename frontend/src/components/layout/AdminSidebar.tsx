@@ -1,4 +1,5 @@
 'use client';
+import React from 'react';
 import Link from 'next/link';
 import NextImage from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
@@ -10,7 +11,10 @@ import { useAuthStore } from '@/store/authStore';
 import { useSettings } from '@/hooks/useSettings';
 import { cn } from '@/lib/utils';
 
-const navGroups = [
+type NavItem = { href: string; label: string; icon: React.ComponentType<{ className?: string }>; exact?: boolean };
+type NavGroup = { label: string; items: NavItem[] };
+
+const navGroups: NavGroup[] = [
   {
     label: 'Overview',
     items: [

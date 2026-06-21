@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useFrames } from '@/hooks/useFrames';
 import ProductCard from '@/components/products/ProductCard';
@@ -7,7 +7,7 @@ import ProductFilters from '@/components/products/ProductFilters';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Search, SearchX } from 'lucide-react';
+import { Search, SearchX, SlidersHorizontal, X } from 'lucide-react';
 import { useCategories } from '@/hooks/useCategories';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useOffers } from '@/hooks/useOffers';
@@ -16,12 +16,13 @@ import { motion } from 'framer-motion';
 interface Filters { category: string; brand: string; gender: string; material: string; minPrice: string; maxPrice: string; }
 const EMPTY: Filters = { category: '', brand: '', gender: '', material: '', minPrice: '', maxPrice: '' };
 
-export default function ProductsPage() {
+function ProductsPageInner() {
   const { t } = useLanguage();
   const searchParams = useSearchParams();
   const { data: catData } = useCategories();
 
   const [filters, setFilters] = useState<Filters>(EMPTY);
+  const [filterOpen, setFilterOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
 
@@ -120,10 +121,50 @@ export default function ProductsPage() {
         </div>
       </section>
 
+      {/* ── Mobile filter drawer backdrop ── */}
+      {filterOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 md:hidden"
+          onClick={() => setFilterOpen(false)}
+        />
+      )}
+
+      {/* ── Mobile filter drawer ── */}
+      <div
+        className={`fixed inset-x-0 bottom-0 z-50 md:hidden bg-white rounded-t-3xl shadow-2xl transition-transform duration-300 ${
+          filterOpen ? 'translate-y-0' : 'translate-y-full'
+        }`}
+        style={{ maxHeight: '85vh' }}
+      >
+        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+          <p className="font-black text-slate-800 text-base">Filters</p>
+          <button
+            onClick={() => setFilterOpen(false)}
+            className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 transition-colors"
+          >
+            <X className="w-4 h-4 text-slate-600" />
+          </button>
+        </div>
+        <div className="overflow-y-auto px-5 py-4" style={{ maxHeight: 'calc(85vh - 64px)' }}>
+          <ProductFilters
+            filters={filters}
+            onChange={(f) => { setFilters(f); setPage(1); }}
+            onReset={() => { setFilters(EMPTY); setPage(1); }}
+          />
+          <button
+            onClick={() => setFilterOpen(false)}
+            className="w-full mt-4 py-3 rounded-xl text-white font-black text-sm btn-glow"
+            style={{ background: 'var(--theme-primary, #2563eb)' }}
+          >
+            Show Results
+          </button>
+        </div>
+      </div>
+
       {/* ── Main Content ── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex gap-6">
-          {/* Sidebar filters */}
+          {/* Sidebar filters — desktop only */}
           <aside className="hidden md:block w-64 shrink-0">
             <div className="sticky top-6 bg-white rounded-2xl shadow-md border-t-4 p-5" style={{ borderTopColor: 'var(--theme-primary)' }}>
               <ProductFilters
@@ -157,14 +198,31 @@ export default function ProductsPage() {
               </motion.div>
             ) : (
               <>
-                {/* Count bar */}
-                <div className="flex items-center mb-5">
+                {/* Count bar + mobile filter button */}
+                <div className="flex items-center justify-between mb-5">
                   <p className="text-sm font-bold text-slate-500">
                     <span className="text-lg font-black" style={{ color: 'var(--theme-primary)' }}>
                       {pagination?.total ?? frames.length}
                     </span>{' '}
                     {t.products.found}
                   </p>
+                  {/* Mobile filter trigger */}
+                  <button
+                    onClick={() => setFilterOpen(true)}
+                    className="md:hidden flex items-center gap-2 px-4 py-2 rounded-xl border-2 font-bold text-sm transition-colors relative"
+                    style={{ borderColor: 'var(--theme-primary, #2563eb)', color: 'var(--theme-primary, #2563eb)' }}
+                  >
+                    <SlidersHorizontal className="w-4 h-4" />
+                    Filter
+                    {Object.values(filters).some(Boolean) && (
+                      <span
+                        className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full text-white text-[10px] font-black flex items-center justify-center"
+                        style={{ background: 'var(--theme-primary, #2563eb)' }}
+                      >
+                        {Object.values(filters).filter(Boolean).length}
+                      </span>
+                    )}
+                  </button>
                 </div>
 
                 <div className="grid grid-cols-2 lg:grid-cols-3 gap-5 items-stretch">
@@ -225,5 +283,13 @@ export default function ProductsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ProductsPage() {
+  return (
+    <Suspense>
+      <ProductsPageInner />
+    </Suspense>
   );
 }

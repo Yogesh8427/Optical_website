@@ -24,7 +24,7 @@ export default function QrScanner({ onScan, onClose }: Props) {
         await html5QrCode.start(
           { facingMode: 'environment' },
           { fps: 10, qrbox: { width: 250, height: 250 } },
-          (text) => {
+          (text: string) => {
             // Extract CLM- code if full URL scanned
             const match = text.match(/CLM-[A-Z0-9]+/);
             onScan(match ? match[0] : text);
