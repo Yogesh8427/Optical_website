@@ -9,7 +9,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function ProductCard({ frame, offer }: { frame: Frame; offer?: { discountType: string; discountValue: number } | null }) {
   const { localize } = useLanguage();
-  const img = frame.images?.[0];
+  const img = frame.images?.[0] ? frame.images[0].split(',')[0].trim() : null;
   const displayName = localize(frame);
 
   return (
@@ -17,11 +17,11 @@ export default function ProductCard({ frame, offer }: { frame: Frame; offer?: { 
       whileHover={{ y: -6, boxShadow: '0 24px 48px rgba(0,0,0,0.13)' }}
       whileTap={{ scale: 0.97 }}
       transition={{ type: 'spring', stiffness: 340, damping: 24 }}
-      className="group rounded-2xl"
+      className="group rounded-2xl h-full"
     >
-      <Link href={`/product/${frame.slug}`} className="block rounded-2xl overflow-hidden bg-white shadow-md hover:shadow-xl transition-shadow duration-300">
-        {/* Image area */}
-        <div className="relative h-36 sm:h-56 bg-slate-50 overflow-hidden">
+      <Link href={`/product/${frame.slug}`} className="card-shimmer flex flex-col h-full rounded-2xl overflow-hidden bg-white shadow-md hover:shadow-2xl transition-all duration-300">
+        {/* Image area — fixed height so all cards align */}
+        <div className="relative h-36 sm:h-52 shrink-0 bg-slate-50 overflow-hidden">
           {img ? (
             <Image
               src={img}
@@ -61,11 +61,11 @@ export default function ProductCard({ frame, offer }: { frame: Frame; offer?: { 
           )}
         </div>
 
-        {/* Content area */}
-        <div className="p-2.5 sm:p-4 bg-white">
+        {/* Content area — flex-1 pushes price to bottom so all cards are same height */}
+        <div className="flex flex-col flex-1 p-2.5 sm:p-4 bg-white">
           <p className="text-[10px] uppercase tracking-widest text-slate-400 mb-0.5 font-medium hidden sm:block">{frame.brandId?.name}</p>
-          <h3 className="font-bold text-slate-900 text-xs sm:text-sm leading-snug mb-2 line-clamp-2">{displayName}</h3>
-          <div className="flex items-center justify-between">
+          <h3 className="font-bold text-slate-900 text-xs sm:text-sm leading-snug mb-2 line-clamp-2 flex-1">{displayName}</h3>
+          <div className="flex items-center justify-between mt-auto">
             <span className="font-black text-sm sm:text-base" style={{ color: 'var(--theme-primary, #2563eb)' }}>
               ₹{frame.framePrice.toLocaleString()}
             </span>

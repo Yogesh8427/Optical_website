@@ -154,3 +154,69 @@ html {
     @apply font-sans;
   }
 }
+
+/* ── Site-wide "alive" animations ───────────────────────────────────────── */
+
+/* Breathing pulse — for decorative blobs */
+@keyframes breathe {
+  0%, 100% { transform: scale(1);    opacity: 0.12; }
+  50%       { transform: scale(1.15); opacity: 0.22; }
+}
+
+/* Gentle float — vertical drift */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-20px); }
+}
+
+/* Slow orbit float — diagonal drift */
+@keyframes float-drift {
+  0%   { transform: translate(0px,   0px); }
+  25%  { transform: translate(10px, -14px); }
+  50%  { transform: translate(0px,  -22px); }
+  75%  { transform: translate(-10px,-10px); }
+  100% { transform: translate(0px,   0px); }
+}
+
+/* Shimmer sweep — for card hover */
+@keyframes shimmer {
+  from { transform: translateX(-100%) skewX(-12deg); }
+  to   { transform: translateX(200%)  skewX(-12deg); }
+}
+
+/* CTA glow pulse */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0   color-mix(in srgb, var(--theme-primary,#2563eb) 45%, transparent); }
+  50%       { box-shadow: 0 0 0 14px color-mix(in srgb, var(--theme-primary,#2563eb) 0%,  transparent); }
+}
+
+/* Spin slow — decorative ring */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.animate-breathe    { animation: breathe    5s ease-in-out infinite; }
+.animate-float      { animation: float      6s ease-in-out infinite; }
+.animate-float-drift{ animation: float-drift 9s ease-in-out infinite; }
+.animate-float-slow { animation: float      9s ease-in-out infinite; }
+.animate-spin-slow  { animation: spin-slow 18s linear        infinite; }
+.animate-pulse-glow { animation: pulse-glow 2.5s ease-in-out  infinite; }
+
+/* Shimmer on card hover */
+.card-shimmer { position: relative; overflow: hidden; }
+.card-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.18) 50%, transparent 60%);
+  transform: translateX(-100%) skewX(-12deg);
+  transition: none;
+  pointer-events: none;
+}
+.card-shimmer:hover::after {
+  animation: shimmer 0.65s ease forwards;
+}
+
+/* Primary CTA glow button */
+.btn-glow { animation: pulse-glow 2.5s ease-in-out infinite; }

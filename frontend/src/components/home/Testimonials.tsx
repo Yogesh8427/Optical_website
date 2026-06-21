@@ -14,8 +14,13 @@ export default function Testimonials() {
   if (!testimonials.length) return null;
 
   return (
-    <section className="py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-20 bg-white relative overflow-hidden">
+      {/* Subtle animated background blobs */}
+      <div className="pointer-events-none select-none absolute inset-0">
+        <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full blur-3xl animate-breathe" style={{ background: 'color-mix(in srgb, var(--theme-primary,#2563eb) 8%, transparent)' }} />
+        <div className="absolute -bottom-24 -left-24 w-80 h-80 rounded-full blur-3xl animate-float-slow" style={{ background: 'color-mix(in srgb, var(--theme-primary,#2563eb) 6%, transparent)', animationDelay: '2s' }} />
+      </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         {/* Section header */}
         <motion.div
           className="mb-12 text-center"
@@ -43,7 +48,7 @@ export default function Testimonials() {
               viewport={{ once: true }}
               transition={{ duration: 0.45, delay: idx * 0.1 }}
             >
-              <div className="h-full flex flex-col border border-slate-200 rounded-2xl p-7 shadow-sm hover:shadow-lg transition-shadow duration-300">
+              <div className="card-shimmer h-full flex flex-col border border-slate-200 rounded-2xl p-7 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                 {/* Large quote mark */}
                 <div
                   className="text-7xl font-black leading-none mb-3 select-none"

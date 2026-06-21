@@ -16,10 +16,10 @@ import { Pencil, Trash2, Plus, X, Eye, Glasses, Check } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Frame } from '@/types';
 
-interface ColorRow { color: string; file: File | null; existingUrl: string }
+interface ColorRow { color: string; files: File[]; existingUrls: string[] }
 const emptyForm = { name: '', description: '', categoryId: '', brandId: '', framePrice: '', material: '', gender: 'unisex', featured: false, active: true, requiresLens: true, inStock: true, hi_name: '', hi_description: '' };
 
-function emptyColor(): ColorRow { return { color: '', file: null, existingUrl: '' }; }
+function emptyColor(): ColorRow { return { color: '', files: [], existingUrls: [] }; }
 
 export default function ProductsPage() {
   const { data, isLoading } = useFrames({ limit: 50 });
@@ -43,8 +43,17 @@ export default function ProductsPage() {
     setForm((f) => ({ ...f, [key]: value ?? '' }));
   }
 
-  function updateColor(i: number, field: keyof ColorRow, value: string | File | null) {
-    setColorRows((rows) => rows.map((r, idx) => idx === i ? { ...r, [field]: value } : r));
+  function updateColorName(i: number, value: string) {
+    setColorRows((rows) => rows.map((r, idx) => idx === i ? { ...r, color: value } : r));
+  }
+  function addColorFiles(i: number, newFiles: File[]) {
+    setColorRows((rows) => rows.map((r, idx) => idx === i ? { ...r, files: [...r.files, ...newFiles] } : r));
+  }
+  function removeColorFile(i: number, fileIdx: number) {
+    setColorRows((rows) => rows.map((r, idx) => idx === i ? { ...r, files: r.files.filter((_, fi) => fi !== fileIdx) } : r));
+  }
+  function removeColorExisting(i: number, urlIdx: number) {
+    setColorRows((rows) => rows.map((r, idx) => idx === i ? { ...r, existingUrls: r.existingUrls.filter((_, ui) => ui !== urlIdx) } : r));
   }
   function addColor() { setColorRows((r) => [...r, emptyColor()]); }
   function removeColor(i: number) { setColorRows((r) => r.filter((_, idx) => idx !== i)); }
@@ -76,7 +85,14 @@ export default function ProductsPage() {
       hi_description: f.translations?.hi?.description ?? '',
     });
     const rows: ColorRow[] = f.colors?.length
-      ? f.colors.map((color, i) => ({ color, file: null, existingUrl: f.images?.[i] ?? '' }))
+      ? f.colors.map((color, i) => {
+          const imgs: string[] = [];
+          // images array may hold multiple urls per color separated by ','
+          // or a single url at index i
+          const raw = f.images?.[i];
+          if (raw) imgs.push(...(raw.includes(',') ? raw.split(',') : [raw]));
+          return { color, files: [], existingUrls: imgs };
+        })
       : [emptyColor()];
     setColorRows(rows);
     setSizes(f.sizes?.length ? f.sizes : ['']);
@@ -91,7 +107,18 @@ export default function ProductsPage() {
     fd.append('colors', colorNames.join(','));
     const sizeList = sizes.map((s) => s.trim()).filter(Boolean);
     fd.append('sizes', sizeList.join(','));
-    colorRows.forEach((row) => { if (row.file) fd.append('images', row.file); });
+    // Send existing URLs so backend knows which to keep (one entry per color)
+    colorRows.forEach((row) => {
+      fd.append('existingImages', row.existingUrls.join(','));
+    });
+    // Send count of new files per color so backend can group them correctly
+    colorRows.forEach((row) => {
+      fd.append('imageCount', String(row.files.length));
+    });
+    // Send all new files sequentially (grouped by color via imageCount)
+    colorRows.forEach((row) => {
+      row.files.forEach((file) => fd.append('images', file));
+    });
 
     const action = editing
       ? update.mutateAsync({ id: editing._id, form: fd })
@@ -140,7 +167,7 @@ export default function ProductsPage() {
           ) : frames.map((f) => (
             <div key={f._id} className="flex items-center gap-3 px-4 py-3">
               {f.images?.[0]
-                ? <Image src={f.images[0]} alt={f.name} width={48} height={40} className="object-cover rounded-lg shrink-0 w-12 h-10" />
+                ? <Image src={f.images[0].split(',')[0].trim()} alt={f.name} width={48} height={40} className="object-cover rounded-lg shrink-0 w-12 h-10" />
                 : <div className="w-12 h-10 bg-slate-100 rounded-lg shrink-0" />}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5">
@@ -183,7 +210,7 @@ export default function ProductsPage() {
                 <tr key={f._id} className="hover:bg-slate-50/50 transition-colors">
                   <td className="px-4 py-3">
                     {f.images?.[0]
-                      ? <Image src={f.images[0]} alt={f.name} width={48} height={40} className="object-cover rounded-lg w-12 h-10" />
+                      ? <Image src={f.images[0].split(',')[0].trim()} alt={f.name} width={48} height={40} className="object-cover rounded-lg w-12 h-10" />
                       : <div className="w-12 h-10 bg-slate-100 rounded-lg" />}
                   </td>
                   <td className="px-4 py-3 font-medium text-slate-800">{f.name}</td>
@@ -363,21 +390,13 @@ export default function ProductsPage() {
               </div>
               <div className="space-y-2">
                 {colorRows.map((row, i) => (
-                  <div key={i} className="bg-slate-50 rounded-xl p-2.5 space-y-2">
+                  <div key={i} className="bg-slate-50 rounded-xl p-3 space-y-3 border border-slate-200">
+                    {/* Color name + delete */}
                     <div className="flex items-center gap-2">
-                      <div className="w-10 h-10 rounded-lg overflow-hidden border bg-white shrink-0">
-                        {row.file ? (
-                          <img src={URL.createObjectURL(row.file)} alt="" className="w-full h-full object-cover" />
-                        ) : row.existingUrl ? (
-                          <img src={row.existingUrl} alt="" className="w-full h-full object-cover" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-slate-300 text-xs">?</div>
-                        )}
-                      </div>
                       <Input
-                        placeholder={`Color ${i + 1} e.g. Gold`}
+                        placeholder={`Color ${i + 1} — e.g. Gold, Black`}
                         value={row.color}
-                        onChange={(e) => updateColor(i, 'color', e.target.value)}
+                        onChange={(e) => updateColorName(i, e.target.value)}
                         className="flex-1 h-9"
                       />
                       {colorRows.length > 1 && (
@@ -386,12 +405,59 @@ export default function ProductsPage() {
                         </Button>
                       )}
                     </div>
-                    <label className="cursor-pointer block">
-                      <span className="text-xs bg-white border rounded-lg px-3 py-2 text-slate-600 hover:bg-slate-100 transition-colors inline-block">
-                        {row.file ? `✓ ${row.file.name}` : row.existingUrl ? 'Replace image' : 'Upload image'}
-                      </span>
-                      <input type="file" accept="image/*" className="hidden" onChange={(e) => updateColor(i, 'file', e.target.files?.[0] ?? null)} />
-                    </label>
+
+                    {/* Image thumbnails grid */}
+                    <div className="flex flex-wrap gap-2">
+                      {/* Existing images */}
+                      {row.existingUrls.map((url, ui) => (
+                        <div key={`ex-${ui}`} className="relative w-16 h-16 rounded-lg overflow-hidden border bg-white group shrink-0">
+                          <img src={url} alt="" className="w-full h-full object-cover" />
+                          <button
+                            type="button"
+                            onClick={() => removeColorExisting(i, ui)}
+                            className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
+                          >
+                            <X className="w-4 h-4 text-white" />
+                          </button>
+                        </div>
+                      ))}
+
+                      {/* New files queued */}
+                      {row.files.map((file, fi) => (
+                        <div key={`new-${fi}`} className="relative w-16 h-16 rounded-lg overflow-hidden border-2 border-blue-300 bg-white group shrink-0">
+                          <img src={URL.createObjectURL(file)} alt="" className="w-full h-full object-cover" />
+                          <button
+                            type="button"
+                            onClick={() => removeColorFile(i, fi)}
+                            className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
+                          >
+                            <X className="w-4 h-4 text-white" />
+                          </button>
+                          <span className="absolute bottom-0 left-0 right-0 text-[9px] text-center bg-blue-500 text-white py-0.5">New</span>
+                        </div>
+                      ))}
+
+                      {/* Add image button */}
+                      <label className="cursor-pointer w-16 h-16 rounded-lg border-2 border-dashed border-slate-300 hover:border-blue-400 bg-white flex flex-col items-center justify-center gap-1 transition-colors shrink-0">
+                        <Plus className="w-4 h-4 text-slate-400" />
+                        <span className="text-[10px] text-slate-400 text-center leading-tight">Add<br/>image</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          className="hidden"
+                          onChange={(e) => {
+                            const picked = Array.from(e.target.files ?? []);
+                            if (picked.length) addColorFiles(i, picked);
+                            e.target.value = '';
+                          }}
+                        />
+                      </label>
+                    </div>
+
+                    <p className="text-xs text-slate-400">
+                      {row.existingUrls.length + row.files.length} image{row.existingUrls.length + row.files.length !== 1 ? 's' : ''} · hover to remove · blue border = newly added
+                    </p>
                   </div>
                 ))}
               </div>

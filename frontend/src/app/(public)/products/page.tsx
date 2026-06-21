@@ -137,7 +137,7 @@ export default function ProductsPage() {
           {/* Product grid */}
           <div className="flex-1 min-w-0">
             {isLoading ? (
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-5">
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-5 items-stretch">
                 {Array.from({ length: 6 }).map((_, i) => (
                   <Skeleton key={i} className="h-72 rounded-2xl" />
                 ))}
@@ -167,7 +167,7 @@ export default function ProductsPage() {
                   </p>
                 </div>
 
-                <div className="grid grid-cols-2 lg:grid-cols-3 gap-5">
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-5 items-stretch">
                   {frames.map((frame, i) => (
                     <motion.div
                       key={frame._id}

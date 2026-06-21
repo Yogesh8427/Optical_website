@@ -21,6 +21,12 @@ export default function FeaturedProducts() {
 
   return (
     <section className="relative overflow-hidden py-20" style={{ background: 'linear-gradient(135deg, var(--theme-primary, #2563eb) 0%, color-mix(in srgb, var(--theme-primary, #2563eb) 60%, #000) 100%)' }}>
+      {/* Floating orbs */}
+      <div className="pointer-events-none select-none absolute inset-0">
+        <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-white/10 blur-3xl animate-breathe" />
+        <div className="absolute top-1/3 -right-24 w-80 h-80 rounded-full bg-white/8 blur-3xl animate-float-drift" style={{ animationDelay: '2s' }} />
+        <div className="absolute -bottom-20 left-1/3 w-72 h-72 rounded-full bg-white/10 blur-3xl animate-float-slow" style={{ animationDelay: '1s' }} />
+      </div>
       {/* Watermark */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
         <span className="text-[10rem] md:text-[16rem] font-black text-white/5 whitespace-nowrap tracking-widest">
@@ -53,7 +59,7 @@ export default function FeaturedProducts() {
         </motion.div>
 
         {/* Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-5 items-stretch">
           {isLoading
             ? Array.from({ length: 4 }).map((_, i) => (
                 <Skeleton key={i} className="h-72 rounded-xl bg-slate-800" />

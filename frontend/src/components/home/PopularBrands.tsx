@@ -38,6 +38,12 @@ export default function PopularBrands() {
 
   return (
     <section className="relative overflow-hidden py-20" style={{ background: 'linear-gradient(135deg, var(--theme-primary, #2563eb) 0%, color-mix(in srgb, var(--theme-primary, #2563eb) 60%, #000) 100%)' }}>
+      {/* Floating orbs */}
+      <div className="pointer-events-none select-none absolute inset-0">
+        <div className="absolute -top-16 right-1/4 w-80 h-80 rounded-full bg-white/10 blur-3xl animate-float" style={{ animationDelay: '0.5s' }} />
+        <div className="absolute bottom-0 -left-20 w-96 h-96 rounded-full bg-white/8 blur-3xl animate-breathe" style={{ animationDelay: '1.5s' }} />
+        <div className="absolute top-1/2 right-0 w-64 h-64 rounded-full bg-white/10 blur-3xl animate-float-drift" style={{ animationDelay: '3s' }} />
+      </div>
       {/* Watermark */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
         <span className="text-[10rem] md:text-[16rem] font-black text-white/5 whitespace-nowrap tracking-widest">

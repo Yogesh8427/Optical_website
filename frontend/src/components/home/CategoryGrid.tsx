@@ -43,8 +43,12 @@ export default function CategoryGrid() {
   }
 
   return (
-    <section className="py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-20 bg-white relative overflow-hidden">
+      <div className="pointer-events-none select-none absolute inset-0">
+        <div className="absolute top-0 right-0 w-64 h-64 rounded-full blur-3xl animate-float-drift" style={{ background: 'color-mix(in srgb, var(--theme-primary,#2563eb) 7%, transparent)', animationDelay: '1s' }} />
+        <div className="absolute bottom-0 left-0 w-72 h-72 rounded-full blur-3xl animate-breathe" style={{ background: 'color-mix(in srgb, var(--theme-primary,#2563eb) 5%, transparent)' }} />
+      </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         {/* Section header */}
         <motion.div
           className="mb-12 text-center"

@@ -17,8 +17,12 @@ export default function FAQSection() {
   if (!faqs.length) return null;
 
   return (
-    <section className="py-20 bg-slate-950">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-20 bg-slate-950 relative overflow-hidden">
+      <div className="pointer-events-none select-none absolute inset-0">
+        <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full blur-3xl animate-breathe" style={{ background: 'color-mix(in srgb, var(--theme-primary,#2563eb) 15%, transparent)' }} />
+        <div className="absolute bottom-0 left-1/4 w-80 h-80 rounded-full blur-3xl animate-float-drift" style={{ background: 'color-mix(in srgb, var(--theme-primary,#2563eb) 10%, transparent)', animationDelay: '2s' }} />
+      </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         {/* Split layout: left heading + CTA | right accordion */}
         <div className="flex flex-col lg:flex-row lg:gap-20">
 

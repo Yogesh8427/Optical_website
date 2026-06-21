@@ -88,23 +88,64 @@ exports.getBySlug = async (req, res, next) => {
   }
 };
 
+/**
+ * Build per-color image arrays.
+ * existingImages: string | string[] — one entry per color, comma-sep URLs already on Cloudinary
+ * imageCount:     string | string[] — one number per color, how many new files belong to it
+ * files:          multer file[] — new uploads in order (color0-files..., color1-files..., ...)
+ * numColors:      fallback if existingImages/imageCount not provided
+ * Returns: string[] where each slot is a comma-separated list of all URLs for that color
+ */
+async function buildColorImages(files, existingImages, imageCount, numColors) {
+  const existing = toArray(existingImages);   // ['url1,url2', '', 'url3']
+  const counts   = toArray(imageCount).map(Number); // [2, 0, 1]
+  const total    = counts.reduce((s, n) => s + n, 0);
+  const len      = Math.max(existing.length, counts.length, numColors);
+
+  // Upload all new files upfront
+  const uploaded = [];
+  for (const file of files) {
+    uploaded.push(await uploadToCloudinary(file.buffer, 'frames'));
+  }
+
+  const result = [];
+  let fileOffset = 0;
+  for (let i = 0; i < len; i++) {
+    const existUrls = existing[i] ? existing[i].split(',').map((u) => u.trim()).filter(Boolean) : [];
+    const newCount  = counts[i] || 0;
+    const newUrls   = uploaded.slice(fileOffset, fileOffset + newCount);
+    fileOffset += newCount;
+    result.push([...existUrls, ...newUrls].join(','));
+  }
+
+  return result;
+}
+
+function toArray(val) {
+  if (!val) return [];
+  return Array.isArray(val) ? val : [val];
+}
+
+// Expand comma-separated image slots into a flat array of individual URLs
+function flattenImageUrls(images) {
+  if (!images || !images.length) return [];
+  return images.flatMap((slot) =>
+    slot ? slot.split(',').map((u) => u.trim()).filter(Boolean) : []
+  );
+}
+
 exports.create = async (req, res, next) => {
   try {
     const { name, description, categoryId, brandId, framePrice, material, gender, colors, sizes, featured, active, requiresLens, inStock, hi_name, hi_description } = req.body;
 
-    const images = [];
-    if (req.files?.length) {
-      for (const file of req.files) {
-        const url = await uploadToCloudinary(file.buffer, 'frames');
-        images.push(url);
-      }
-    }
+    const colorList = parseArray(colors);
+    const images = await buildColorImages(req.files || [], req.body.existingImages, req.body.imageCount, colorList.length);
 
     const slug = generateSlug(name);
     const frame = await Frame.create({
       name, slug, description, categoryId, brandId, framePrice,
       material, gender,
-      colors: parseArray(colors),
+      colors: colorList,
       sizes: parseArray(sizes),
       images, featured, active, requiresLens: requiresLens !== undefined ? requiresLens : true,
       inStock: inStock !== undefined ? (inStock === 'true' || inStock === true) : true,
@@ -131,10 +172,19 @@ exports.update = async (req, res, next) => {
     }
     if (colors !== undefined) updates.colors = parseArray(colors);
     if (sizes !== undefined) updates.sizes = parseArray(sizes);
-    if (req.files?.length) {
-      updates.images = [];
-      for (const file of req.files) {
-        updates.images.push(await uploadToCloudinary(file.buffer, 'frames'));
+
+    const colorList = updates.colors ?? parseArray(colors);
+    updates.images = await buildColorImages(req.files || [], req.body.existingImages, req.body.imageCount, colorList.length);
+
+    // Find and delete from Cloudinary any URLs that were removed
+    const existing = await Frame.findById(req.params.id).select('images');
+    if (existing) {
+      const oldUrls = flattenImageUrls(existing.images);
+      const newUrls = new Set(flattenImageUrls(updates.images));
+      const removed = oldUrls.filter((u) => !newUrls.has(u));
+      if (removed.length > 0) {
+        const ids = removed.map(extractPublicId).filter(Boolean);
+        if (ids.length > 0) cloudinary.api.delete_resources(ids).catch(() => {});
       }
     }
 
@@ -150,12 +200,11 @@ exports.remove = async (req, res, next) => {
   try {
     const frame = await Frame.findByIdAndDelete(req.params.id);
     if (!frame) return res.status(404).json({ success: false, message: 'Frame not found' });
-    // Delete images from Cloudinary
-    if (frame.images && frame.images.length > 0) {
-      const ids = frame.images.map(extractPublicId).filter(Boolean);
-      if (ids.length > 0) {
-        await cloudinary.api.delete_resources(ids).catch(() => {}); // don't fail if Cloudinary errors
-      }
+    // Delete all images from Cloudinary (images[] slots are comma-separated URLs)
+    const allUrls = flattenImageUrls(frame.images);
+    if (allUrls.length > 0) {
+      const ids = allUrls.map(extractPublicId).filter(Boolean);
+      if (ids.length > 0) cloudinary.api.delete_resources(ids).catch(() => {});
     }
     res.json({ success: true, message: 'Frame deleted' });
   } catch (err) {
