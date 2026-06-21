@@ -47,14 +47,16 @@ export default function WelcomePopup() {
       api.post(`/coupons/${id}/claim`, { name, phone }).then(r => r.data),
   });
 
+  const coupons: PublicCoupon[] = (data?.data ?? []).filter((c: PublicCoupon) => c.remaining > 0).slice(0, 3);
+
+  // Wait for coupons to load, then show popup (avoids firing before API response)
   useEffect(() => {
+    if (!coupons.length) return;
     const seen = sessionStorage.getItem('welcome_popup_seen');
     if (seen) return;
-    const t = setTimeout(() => setVisible(true), 1800);
+    const t = setTimeout(() => setVisible(true), 1000);
     return () => clearTimeout(t);
-  }, []);
-
-  const coupons: PublicCoupon[] = (data?.data ?? []).filter((c: PublicCoupon) => c.remaining > 0).slice(0, 3);
+  }, [coupons.length]);
 
   function dismiss() {
     sessionStorage.setItem('welcome_popup_seen', '1');

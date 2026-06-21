@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { buttonVariants } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useOffers } from '@/hooks/useOffers';
+import { motion } from 'framer-motion';
 
 export default function FeaturedProducts() {
   const { t } = useLanguage();
@@ -20,16 +21,49 @@ export default function FeaturedProducts() {
   }, [offersData]);
 
   return (
-    <section className="py-16">
+    <section className="py-20 bg-slate-950">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between mb-10">
-          <h2 className="text-3xl font-bold text-gray-900">{t.home.featuredProducts}</h2>
-          <Link href="/products" className={buttonVariants({ variant: 'outline' })}>{t.home.viewAll}</Link>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        {/* Section header */}
+        <motion.div
+          className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-12"
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          <div>
+            <span className="text-xs font-black uppercase tracking-widest" style={{ color: 'var(--theme-primary)' }}>
+              Featured
+            </span>
+            <h2 className="mt-3 text-4xl md:text-5xl font-black text-white tracking-tight">
+              {t.home.featuredProducts}
+            </h2>
+          </div>
+          <Link
+            href="/products"
+            className={buttonVariants({ variant: 'outline' }) + ' border-white text-white hover:bg-white hover:text-slate-950 font-bold shrink-0'}
+          >
+            {t.home.viewAll} &rarr;
+          </Link>
+        </motion.div>
+
+        {/* Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
           {isLoading
-            ? Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-72 rounded-xl" />)
-            : frames.map((frame) => <ProductCard key={frame._id} frame={frame} offer={offerMap.get(frame._id) ?? null} />)}
+            ? Array.from({ length: 4 }).map((_, i) => (
+                <Skeleton key={i} className="h-72 rounded-xl bg-slate-800" />
+              ))
+            : frames.map((frame, idx) => (
+                <motion.div
+                  key={frame._id}
+                  initial={{ opacity: 0, y: 28 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: idx * 0.06 }}
+                >
+                  <ProductCard frame={frame} offer={offerMap.get(frame._id) ?? null} />
+                </motion.div>
+              ))}
         </div>
       </div>
     </section>

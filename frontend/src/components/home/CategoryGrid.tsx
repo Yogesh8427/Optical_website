@@ -4,16 +4,17 @@ import Image from 'next/image';
 import { useCategories } from '@/hooks/useCategories';
 import { Glasses, Sun, Monitor, Dumbbell, Baby, Sparkles } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { motion } from 'framer-motion';
 
 const categoryIcons: Record<string, { icon: React.ElementType; color: string }> = {
-  'mens-glasses':     { icon: Glasses,  color: 'text-blue-400' },
-  'womens-glasses':   { icon: Sparkles, color: 'text-pink-400' },
-  'kids-glasses':     { icon: Baby,     color: 'text-yellow-400' },
-  'sunglasses':       { icon: Sun,      color: 'text-orange-400' },
-  'computer-glasses': { icon: Monitor,  color: 'text-purple-400' },
-  'sports-eyewear':   { icon: Dumbbell, color: 'text-green-400' },
+  'mens-glasses':     { icon: Glasses,  color: 'text-slate-300' },
+  'womens-glasses':   { icon: Sparkles, color: 'text-slate-300' },
+  'kids-glasses':     { icon: Baby,     color: 'text-slate-300' },
+  'sunglasses':       { icon: Sun,      color: 'text-slate-300' },
+  'computer-glasses': { icon: Monitor,  color: 'text-slate-300' },
+  'sports-eyewear':   { icon: Dumbbell, color: 'text-slate-300' },
 };
-const fallbackIcon = { icon: Glasses, color: 'text-gray-400' };
+const fallbackIcon = { icon: Glasses, color: 'text-slate-300' };
 
 export default function CategoryGrid() {
   const { t, localize } = useLanguage();
@@ -23,12 +24,17 @@ export default function CategoryGrid() {
 
   if (isLoading) {
     return (
-      <section className="py-16 bg-gray-50">
+      <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-gray-900 text-center mb-10">{t.home.shopByCategory}</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
+          <div className="mb-12 text-center">
+            <span className="text-xs font-black uppercase tracking-widest" style={{ color: 'var(--theme-primary)' }}>
+              Collections
+            </span>
+            <h2 className="mt-3 text-4xl md:text-5xl font-black text-slate-900 tracking-tight">Browse Categories</h2>
+          </div>
+          <div className="flex gap-5 overflow-x-auto pb-4 md:grid md:grid-cols-3 md:overflow-visible">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="h-48 bg-gray-200 rounded-2xl animate-pulse" />
+              <div key={i} className="flex-shrink-0 w-56 md:w-auto h-48 md:h-64 bg-slate-100 rounded-2xl animate-pulse" />
             ))}
           </div>
         </div>
@@ -37,44 +43,75 @@ export default function CategoryGrid() {
   }
 
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl font-bold text-gray-900 text-center mb-2">{t.home.shopByCategory}</h2>
-        <p className="text-center text-gray-500 mb-10">{t.home.categorySubtitle}</p>
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
-          {categories.map((cat) => {
-            const { icon: Icon, color } = categoryIcons[cat.slug] ?? fallbackIcon;
-            return (
-              <Link
-                key={cat._id}
-                href={`/category/${cat.slug}`}
-                className="group relative flex flex-col items-center overflow-hidden rounded-2xl border border-gray-100 bg-white hover:shadow-lg hover:-translate-y-1 transition-all duration-200"
-              >
-                {/* Image or icon fallback */}
-                <div className="relative w-full h-48 bg-gray-100">
-                  {cat.image ? (
-                    <Image
-                      src={cat.image}
-                      alt={localize(cat)}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <Icon className={`w-10 h-10 ${color}`} />
-                    </div>
-                  )}
-                  {/* Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                </div>
+        {/* Section header */}
+        <motion.div
+          className="mb-12 text-center"
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          <span className="text-xs font-black uppercase tracking-widest" style={{ color: 'var(--theme-primary)' }}>
+            Collections
+          </span>
+          <h2 className="mt-3 text-4xl md:text-5xl font-black text-slate-900 tracking-tight">
+            Browse Categories
+          </h2>
+          <p className="mt-3 text-slate-500 text-lg">{t.home.categorySubtitle}</p>
+        </motion.div>
 
-                {/* Label */}
-                <div className="absolute bottom-0 left-0 right-0 p-2 text-center">
-                  <span className="text-white text-xs font-semibold drop-shadow leading-tight">
-                    {localize(cat)}
-                  </span>
-                </div>
-              </Link>
+        {/* Horizontal scroll on mobile, 3-col grid on desktop */}
+        <div className="flex gap-5 overflow-x-auto pb-4 snap-x snap-mandatory md:grid md:grid-cols-3 md:overflow-visible md:pb-0">
+          {categories.map((cat, idx) => {
+            const { icon: Icon } = categoryIcons[cat.slug] ?? fallbackIcon;
+            return (
+              <motion.div
+                key={cat._id}
+                className="flex-shrink-0 w-56 md:w-auto snap-start"
+                initial={{ opacity: 0, y: 32 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.45, delay: idx * 0.07 }}
+              >
+                <Link
+                  href={`/category/${cat.slug}`}
+                  className="group relative flex flex-col overflow-hidden rounded-2xl h-48 md:h-64 shadow-md hover:shadow-2xl transition-shadow duration-300"
+                >
+                  {/* Image or icon */}
+                  <div className="absolute inset-0 bg-slate-800">
+                    {cat.image ? (
+                      <Image
+                        src={cat.image}
+                        alt={localize(cat)}
+                        fill
+                        className="object-cover group-hover:scale-110 transition-transform duration-500 opacity-80 group-hover:opacity-90"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Icon className="w-16 h-16 text-slate-500" />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Gradient overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+
+                  {/* Label at bottom */}
+                  <div className="absolute bottom-0 left-0 right-0 p-5">
+                    <span className="text-white text-lg font-black leading-tight drop-shadow-lg">
+                      {localize(cat)}
+                    </span>
+                  </div>
+
+                  {/* Hover accent line */}
+                  <div
+                    className="absolute bottom-0 left-0 right-0 h-1 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"
+                    style={{ background: 'var(--theme-primary)' }}
+                  />
+                </Link>
+              </motion.div>
             );
           })}
         </div>

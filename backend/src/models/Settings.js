@@ -31,6 +31,7 @@ const settingsSchema = new mongoose.Schema(
     },
     primaryColor: { type: String, default: "#2563eb" },
     secondaryColor: { type: String, default: "#64748b" },
+    accentColor: { type: String, default: "#f59e0b" },
     termsContent: { type: String, default: '' },
     privacyContent: { type: String, default: '' },
   },

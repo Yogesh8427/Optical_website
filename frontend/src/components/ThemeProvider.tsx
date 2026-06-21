@@ -99,6 +99,7 @@ export default function ThemeProvider() {
   const { data } = useSettings();
   const primary   = data?.data?.primaryColor   || '#2563eb';
   const secondary = data?.data?.secondaryColor || '#64748b';
+  const accent    = ((data?.data ?? {}) as Record<string, string>)['accentColor'] || '#f59e0b';
 
   useEffect(() => {
     // Remove old injected style
@@ -108,13 +109,16 @@ export default function ThemeProvider() {
     // Blue default — no override needed
     if (primary === '#2563eb' && secondary === '#64748b') return;
 
+    // Also set accent CSS var directly
+    document.documentElement.style.setProperty('--theme-accent', accent);
+
     const style = document.createElement('style');
     style.id = '__theme_override__';
     style.textContent = buildCSS(primary, secondary);
     document.head.appendChild(style);
 
     return () => { document.getElementById('__theme_override__')?.remove(); };
-  }, [primary, secondary]);
+  }, [primary, secondary, accent]);
 
   return null;
 }

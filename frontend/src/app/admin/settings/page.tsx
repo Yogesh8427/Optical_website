@@ -33,7 +33,7 @@ export default function SettingsPage() {
   const [logoFile, setLogoFile] = useState<File | null>(null);
 
   const [theme, setTheme] = useState({
-    primaryColor: '#2563eb', secondaryColor: '#64748b',
+    primaryColor: '#2563eb', secondaryColor: '#64748b', accentColor: '#f59e0b',
   });
 
   const [contact, setContact] = useState({
@@ -69,6 +69,7 @@ export default function SettingsPage() {
     setTheme({
       primaryColor: settings.primaryColor ?? '#2563eb',
       secondaryColor: settings.secondaryColor ?? '#64748b',
+      accentColor: (settings as typeof settings & { accentColor?: string }).accentColor ?? '#f59e0b',
     });
     setContact({
       whatsappNumber: settings.whatsappNumber ?? '',
@@ -136,6 +137,7 @@ export default function SettingsPage() {
     const fd = new FormData();
     fd.append('primaryColor', theme.primaryColor);
     fd.append('secondaryColor', theme.secondaryColor);
+    fd.append('accentColor', theme.accentColor);
     mutate('theme', fd);
   }
 
@@ -343,13 +345,47 @@ export default function SettingsPage() {
               ))}
             </div>
           </div>
+
+          {/* Accent */}
+          <div className="rounded-xl border border-slate-200 p-4 space-y-2">
+            <p className="text-xs font-semibold text-slate-600">Accent Colour</p>
+            <p className="text-xs text-slate-400">Highlights, tags, offer banners</p>
+            <div className="flex items-center gap-3 mt-2">
+              <div className="relative w-12 h-10 rounded-lg overflow-hidden border border-slate-200 shrink-0 cursor-pointer">
+                <input
+                  type="color"
+                  value={theme.accentColor}
+                  onChange={(e) => setT('accentColor', e.target.value)}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                />
+                <div className="w-full h-full rounded-lg" style={{ backgroundColor: theme.accentColor }} />
+              </div>
+              <input
+                type="text"
+                value={theme.accentColor}
+                onChange={(e) => { if (/^#[0-9a-fA-F]{0,6}$/.test(e.target.value)) setT('accentColor', e.target.value); }}
+                className="flex-1 border border-slate-200 rounded-lg px-2 py-1.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
+                maxLength={7}
+                placeholder="#f59e0b"
+              />
+            </div>
+            <div className="flex gap-1.5 flex-wrap mt-1">
+              {['#f59e0b','#ef4444','#8b5cf6','#10b981','#f97316','#ec4899','#06b6d4','#84cc16'].map((c) => (
+                <button key={c} type="button" onClick={() => setT('accentColor', c)}
+                  className="w-6 h-6 rounded-full border-2 transition-all hover:scale-110"
+                  style={{ backgroundColor: c, borderColor: theme.accentColor === c ? '#1e293b' : 'transparent' }}
+                  title={c}
+                />
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Live preview bar */}
         <div className="rounded-xl overflow-hidden border border-slate-100 flex h-10">
           <div className="flex-1 flex items-center justify-center text-white text-xs font-semibold" style={{ backgroundColor: theme.primaryColor }}>Primary</div>
           <div className="flex-1 flex items-center justify-center text-white text-xs font-semibold" style={{ backgroundColor: theme.secondaryColor }}>Secondary</div>
-          <div className="flex-1 flex items-center justify-center text-xs font-semibold" style={{ backgroundColor: theme.primaryColor + '18', color: theme.primaryColor }}>Light BG</div>
+          <div className="flex-1 flex items-center justify-center text-white text-xs font-semibold" style={{ backgroundColor: theme.accentColor }}>Accent</div>
         </div>
 
         <SaveBtn pending={saving.theme} label="Save Theme" />
