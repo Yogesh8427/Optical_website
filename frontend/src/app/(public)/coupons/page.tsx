@@ -22,6 +22,8 @@ interface PublicCoupon {
   maxUses: number;
   usedCount: number;
   remaining: number;
+  bannerImage?: string;
+  bgColor?: string;
 }
 
 const typeConfig = {
@@ -130,44 +132,66 @@ export default function CouponsPage() {
               const Icon = tc.icon;
               const isFull = c.remaining <= 0;
               return (
-                <div key={c._id} className={`bg-gradient-to-br ${tc.bg} border ${tc.border} rounded-2xl p-6 flex flex-col gap-4`}>
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2.5 bg-white rounded-xl shadow-sm">
-                        <Icon className="w-5 h-5 text-slate-700" />
-                      </div>
-                      <div>
-                        <Badge className={`${tc.color} border-0 text-xs mb-1`}>{tc.label}</Badge>
-                        <h3 className="font-bold text-slate-800 text-base leading-tight">{c.title}</h3>
+                <div
+                  key={c._id}
+                  className="rounded-2xl overflow-hidden border border-slate-200 flex flex-col shadow-sm hover:shadow-md transition-shadow"
+                  style={{ background: !c.bannerImage && c.bgColor ? c.bgColor : undefined }}
+                >
+                  {/* Banner image */}
+                  {c.bannerImage && (
+                    <div className="relative h-40 w-full">
+                      <img src={c.bannerImage} alt={c.title} className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                      <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between">
+                        <div>
+                          <Badge className={`${tc.color} border-0 text-xs mb-1`}>{tc.label}</Badge>
+                          <h3 className="font-bold text-white text-base leading-tight drop-shadow">{c.title}</h3>
+                        </div>
+                        <span className="text-2xl font-black text-white drop-shadow">{benefitText(c)}</span>
                       </div>
                     </div>
-                    <div className="text-right shrink-0">
-                      <span className="text-2xl font-black text-slate-800">{benefitText(c)}</span>
-                    </div>
-                  </div>
+                  )}
 
-                  {c.description && <p className="text-slate-600 text-sm">{c.description}</p>}
-
-                  <div className="flex items-center gap-4 text-xs text-slate-500">
-                    {c.validUntil && (
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-3 h-3" />
-                        Valid till {new Date(c.validUntil).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
-                      </span>
+                  <div className={`p-5 flex flex-col gap-4 flex-1 ${!c.bannerImage ? `bg-gradient-to-br ${tc.bg}` : 'bg-white'}`}>
+                    {/* Header row — only when no banner */}
+                    {!c.bannerImage && (
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2.5 bg-white rounded-xl shadow-sm">
+                            <Icon className="w-5 h-5 text-slate-700" />
+                          </div>
+                          <div>
+                            <Badge className={`${tc.color} border-0 text-xs mb-1`}>{tc.label}</Badge>
+                            <h3 className="font-bold text-slate-800 text-base leading-tight">{c.title}</h3>
+                          </div>
+                        </div>
+                        <span className="text-2xl font-black text-slate-800 shrink-0">{benefitText(c)}</span>
+                      </div>
                     )}
-                    <span className="flex items-center gap-1">
-                      <Users className="w-3 h-3" />
-                      {isFull ? 'Fully claimed' : `${c.remaining} left`}
-                    </span>
-                  </div>
 
-                  <button
-                    disabled={isFull}
-                    onClick={() => setSelected(c)}
-                    className={`w-full text-white font-semibold py-2.5 rounded-xl text-sm transition-colors ${isFull ? 'bg-slate-300 cursor-not-allowed' : `${tc.btn} cursor-pointer`}`}
-                  >
-                    {isFull ? 'Fully Claimed' : 'Claim This Coupon'}
-                  </button>
+                    {c.description && <p className="text-slate-600 text-sm">{c.description}</p>}
+
+                    <div className="flex items-center gap-4 text-xs text-slate-500">
+                      {c.validUntil && (
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          Valid till {new Date(c.validUntil).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        </span>
+                      )}
+                      <span className="flex items-center gap-1">
+                        <Users className="w-3 h-3" />
+                        {isFull ? 'Fully claimed' : `${c.remaining} left`}
+                      </span>
+                    </div>
+
+                    <button
+                      disabled={isFull}
+                      onClick={() => setSelected(c)}
+                      className={`w-full text-white font-semibold py-2.5 rounded-xl text-sm transition-colors ${isFull ? 'bg-slate-300 cursor-not-allowed' : `${tc.btn} cursor-pointer`}`}
+                    >
+                      {isFull ? 'Fully Claimed' : 'Claim This Coupon'}
+                    </button>
+                  </div>
                 </div>
               );
             })}
