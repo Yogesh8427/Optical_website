@@ -1,48 +1,52 @@
 'use client';
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Grid2x2, Phone, Info } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
+import { Home, Grid2x2, Tag, Phone } from 'lucide-react';
 
 const tabs = [
-  { href: '/',         label: 'Home',     icon: Home      },
-  { href: '/products', label: 'Products', icon: Grid2x2   },
-  { href: '/about',    label: 'About',    icon: Info      },
-  { href: '/contact',  label: 'Contact',  icon: Phone     },
+  { href: '/',         label: 'Home',     icon: Home },
+  { href: '/products', label: 'Products', icon: Grid2x2 },
+  { href: '/coupons',  label: 'Offers',   icon: Tag },
+  { href: '/contact',  label: 'Contact',  icon: Phone },
 ];
 
 export default function MobileBottomNav() {
   const pathname = usePathname();
+  if (pathname.startsWith('/admin')) return null;
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-100 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
-      <div className="flex items-center justify-around px-2 py-1 safe-area-pb">
-        {tabs.map(({ href, label, icon: Icon }) => {
-          const active = pathname === href;
-          return (
-            <Link
-              key={href}
-              href={href}
-              className="flex flex-col items-center gap-0.5 px-4 py-2 rounded-xl transition-all min-w-[60px]"
-            >
-              <div className={cn(
-                'w-10 h-6 flex items-center justify-center rounded-full transition-all',
-                active ? 'bg-blue-100' : ''
-              )}>
-                <Icon className={cn(
-                  'w-5 h-5 transition-all',
-                  active ? 'text-blue-600' : 'text-gray-400'
-                )} />
-              </div>
-              <span className={cn(
-                'text-[10px] font-medium transition-all',
-                active ? 'text-blue-600' : 'text-gray-400'
-              )}>
-                {label}
-              </span>
-            </Link>
-          );
-        })}
+    <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
+      <div className="bg-white/85 backdrop-blur-xl border-t border-slate-200/80 px-2 pb-safe">
+        <div className="flex items-center justify-around h-16">
+          {tabs.map(({ href, label, icon: Icon }) => {
+            const active = href === '/' ? pathname === '/' : pathname.startsWith(href);
+            return (
+              <Link key={href} href={href} className="flex-1 flex flex-col items-center justify-center gap-1 relative py-2">
+                {active && (
+                  <motion.div
+                    layoutId="mobile-nav-pill"
+                    className="absolute inset-x-1 inset-y-0 bg-blue-50 rounded-xl"
+                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                  />
+                )}
+                <motion.div
+                  animate={{ scale: active ? 1.1 : 1, y: active ? -1 : 0 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                  className="relative"
+                >
+                  <Icon
+                    className={`w-5 h-5 transition-colors ${active ? 'text-blue-600' : 'text-slate-400'}`}
+                    strokeWidth={active ? 2.5 : 1.8}
+                  />
+                </motion.div>
+                <span className={`text-[10px] font-semibold relative transition-colors ${active ? 'text-blue-600' : 'text-slate-400'}`}>
+                  {label}
+                </span>
+              </Link>
+            );
+          })}
+        </div>
       </div>
     </nav>
   );

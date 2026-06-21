@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { Glasses } from 'lucide-react';
 import type { Frame } from '@/types';
@@ -12,7 +13,12 @@ export default function ProductCard({ frame, offer }: { frame: Frame; offer?: { 
   const displayName = localize(frame);
 
   return (
-    <Link href={`/product/${frame.slug}`} className="group block rounded-2xl overflow-hidden border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 bg-white">
+    <motion.div
+      whileHover={{ y: -6, boxShadow: '0 20px 48px rgba(0,0,0,0.12)' }}
+      whileTap={{ scale: 0.97 }}
+      transition={{ type: 'spring', stiffness: 340, damping: 24 }}
+    >
+    <Link href={`/product/${frame.slug}`} className="group block rounded-2xl overflow-hidden border border-gray-100 bg-white">
       <div className="relative h-52 bg-gray-50">
         {img ? (
           <Image src={img} alt={frame.name} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
@@ -43,5 +49,6 @@ export default function ProductCard({ frame, offer }: { frame: Frame; offer?: { 
         </div>
       </div>
     </Link>
+    </motion.div>
   );
 }

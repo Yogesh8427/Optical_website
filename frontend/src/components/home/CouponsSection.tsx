@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
+import { motion } from 'framer-motion';
 import api from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -91,7 +92,14 @@ export default function CouponsSection() {
             const Icon = tc.icon;
             const isFull = c.remaining <= 0;
             return (
-              <div key={c._id} className="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col gap-3 shadow-sm hover:shadow-md transition-shadow">
+              <motion.div
+                key={c._id}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.06 * coupons.indexOf(c), duration: 0.45, ease: [0.22,1,0.36,1] }}
+                whileHover={{ y: -4, boxShadow: '0 16px 40px rgba(0,0,0,0.10)' }}
+                className="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col gap-3 shadow-sm cursor-pointer">
                 {/* Icon + badge */}
                 <div className="flex items-center justify-between">
                   <div className={`w-10 h-10 rounded-xl ${tc.iconBg} flex items-center justify-center`}>
@@ -133,7 +141,7 @@ export default function CouponsSection() {
                 >
                   {isFull ? 'Fully Claimed' : 'Claim Now'}
                 </button>
-              </div>
+              </motion.div>
             );
           })}
         </div>
