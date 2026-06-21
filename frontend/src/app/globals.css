@@ -2,15 +2,18 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-/* Hide scrollbar — wizard dialogs and all modal content */
-.scrollbar-hide::-webkit-scrollbar,
-[data-slot="dialog-content"]::-webkit-scrollbar,
-[data-slot="dialog-content"] *::-webkit-scrollbar {
+/* Default theme vars — overridden by ThemeProvider once settings load */
+:root {
+  --theme-primary: #2563eb;
+  --theme-secondary: #1e40af;
+  --theme-accent: #f59e0b;
+}
+
+/* Hide all scrollbars globally */
+*::-webkit-scrollbar {
   display: none;
 }
-.scrollbar-hide,
-[data-slot="dialog-content"],
-[data-slot="dialog-content"] * {
+* {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }

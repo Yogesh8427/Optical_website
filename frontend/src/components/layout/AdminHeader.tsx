@@ -78,7 +78,7 @@ export default function AdminHeader({ onMenuClick }: Props) {
   }
 
   return (
-    <header className="h-14 md:h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 md:px-6 shrink-0">
+    <header className="h-14 md:h-16 bg-white border-b border-slate-100 flex items-center justify-between px-4 md:px-6 shrink-0">
       <div className="flex items-center gap-3">
         {/* Hamburger — mobile only */}
         <button
@@ -88,7 +88,7 @@ export default function AdminHeader({ onMenuClick }: Props) {
           <Menu className="w-5 h-5 text-slate-600" />
         </button>
         <div>
-          <h1 className="text-base md:text-lg font-semibold text-slate-800 leading-none">{title}</h1>
+          <h1 className="text-base md:text-lg font-black text-slate-900 leading-none">{title}</h1>
           <p className="text-xs text-slate-400 mt-0.5 hidden sm:block">{storeName} Admin Panel</p>
         </div>
       </div>
@@ -110,15 +110,18 @@ export default function AdminHeader({ onMenuClick }: Props) {
           </button>
 
           {open && (
-            <div className="absolute right-0 top-11 w-80 bg-white rounded-2xl shadow-xl border border-slate-100 z-50 overflow-hidden">
+            <div className="absolute right-0 top-11 w-[calc(100vw-2rem)] sm:w-80 max-w-xs sm:max-w-none bg-white rounded-2xl shadow-2xl border border-slate-100 z-50 overflow-hidden">
               {/* Header */}
               <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Bell className="w-4 h-4 text-slate-500" />
-                  <p className="text-sm font-semibold text-slate-800">Notifications</p>
+                  <p className="text-sm font-black text-slate-900">Notifications</p>
                 </div>
                 {count > 0 && (
-                  <span className="text-xs bg-red-100 text-red-600 font-semibold px-2 py-0.5 rounded-full">
+                  <span
+                    className="text-xs text-white font-semibold px-2 py-0.5 rounded-full"
+                    style={{ background: 'var(--theme-primary, #2563eb)' }}
+                  >
                     {count} new
                   </span>
                 )}
@@ -140,8 +143,14 @@ export default function AdminHeader({ onMenuClick }: Props) {
                       className="w-full text-left px-4 py-3 hover:bg-slate-50 transition-colors flex items-start gap-3 group"
                     >
                       {/* Avatar */}
-                      <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0 mt-0.5">
-                        <span className="text-xs font-bold text-blue-600">
+                      <div
+                        className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5"
+                        style={{ background: 'color-mix(in srgb, var(--theme-primary, #2563eb) 15%, white)' }}
+                      >
+                        <span
+                          className="text-xs font-bold"
+                          style={{ color: 'var(--theme-primary, #2563eb)' }}
+                        >
                           {inq.customerName?.charAt(0)?.toUpperCase() ?? '?'}
                         </span>
                       </div>
@@ -164,7 +173,8 @@ export default function AdminHeader({ onMenuClick }: Props) {
               <div className="px-4 py-2.5 border-t border-slate-100">
                 <button
                   onClick={handleViewAll}
-                  className="w-full text-xs font-semibold text-blue-600 hover:text-blue-700 text-center py-1 rounded-lg hover:bg-blue-50 transition-colors"
+                  className="w-full text-xs font-semibold text-center py-1 rounded-lg hover:bg-slate-50 transition-colors"
+                  style={{ color: 'var(--theme-primary, #2563eb)' }}
                 >
                   View all inquiries →
                 </button>
@@ -175,11 +185,14 @@ export default function AdminHeader({ onMenuClick }: Props) {
 
         {/* ── User ──────────────────────────────────────── */}
         <div className="flex items-center gap-2 pl-2 md:pl-3 border-l border-slate-200">
-          <div className="w-8 h-8 md:w-9 md:h-9 bg-blue-600 rounded-xl flex items-center justify-center">
+          <div
+            className="w-8 h-8 md:w-9 md:h-9 rounded-xl flex items-center justify-center"
+            style={{ background: 'var(--theme-primary, #2563eb)' }}
+          >
             <User className="w-4 h-4 text-white" />
           </div>
           <div className="hidden sm:block">
-            <p className="text-sm font-medium text-slate-800 leading-none">{user?.name ?? 'Admin'}</p>
+            <p className="text-sm font-black text-slate-900 leading-none">{user?.name ?? 'Admin'}</p>
             <p className="text-xs text-slate-400 mt-0.5 capitalize">{user?.role ?? 'admin'}</p>
           </div>
         </div>

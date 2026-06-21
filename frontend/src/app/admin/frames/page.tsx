@@ -12,7 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { Pencil, Trash2, Plus, X, Eye } from 'lucide-react';
+import { Pencil, Trash2, Plus, X, Eye, Glasses, Check } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Frame } from '@/types';
 
@@ -191,7 +191,7 @@ export default function ProductsPage() {
                   <td className="px-4 py-3 font-medium text-blue-700">₹{f.framePrice.toLocaleString()}</td>
                   <td className="px-4 py-3">
                     {f.requiresLens !== false
-                      ? <span className="inline-flex items-center gap-1 text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full font-medium">👓 Yes</span>
+                      ? <span className="inline-flex items-center gap-1 text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full font-medium"><Glasses className="w-3 h-3" /> Yes</span>
                       : <span className="inline-flex items-center gap-1 text-xs bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">No</span>
                     }
                   </td>
@@ -220,7 +220,7 @@ export default function ProductsPage() {
 
       {/* Modal */}
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="w-[calc(100vw-1.5rem)] sm:max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader><DialogTitle>{editing ? 'Edit Product' : 'New Product'}</DialogTitle></DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-5">
 
@@ -237,21 +237,21 @@ export default function ProductsPage() {
                 <div className={`w-5 h-5 mt-0.5 rounded border-2 flex items-center justify-center shrink-0 transition-colors ${
                   form.requiresLens ? 'bg-blue-600 border-blue-600' : 'border-slate-300'
                 }`}>
-                  {form.requiresLens && <span className="text-white text-xs font-bold">✓</span>}
+                  {form.requiresLens && <Check className="w-3 h-3 text-white" />}
                 </div>
                 <div>
                   <p className="font-semibold text-slate-800 text-sm">Requires Lens / Prescription</p>
                   <p className="text-xs text-slate-500 mt-0.5">
                     {form.requiresLens
-                      ? '👓 Customer will go through the 8-step Lens Wizard to choose lens type, brand, and upload prescription.'
-                      : '🛍️ Customer will get a simple WhatsApp inquiry button — no lens wizard needed. Good for sunglasses, contact lens solutions, accessories, etc.'}
+                      ? 'Customer will go through the 8-step Lens Wizard to choose lens type, brand, and upload prescription.'
+                      : 'Customer will get a simple WhatsApp inquiry button — no lens wizard needed. Good for sunglasses, accessories, etc.'}
                   </p>
                 </div>
               </div>
             </div>
 
             {/* Basic info */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="col-span-2">
                 <Label>Product Name *</Label>
                 <Input value={form.name} onChange={(e) => set('name', e.target.value)} required className="mt-1" placeholder="e.g. Ray-Ban Aviator, Lens Solution 100ml…" />
@@ -363,33 +363,35 @@ export default function ProductsPage() {
               </div>
               <div className="space-y-2">
                 {colorRows.map((row, i) => (
-                  <div key={i} className="flex items-center gap-2 bg-slate-50 rounded-xl p-2">
-                    <div className="w-12 h-12 rounded-lg overflow-hidden border bg-white shrink-0">
-                      {row.file ? (
-                        <img src={URL.createObjectURL(row.file)} alt="" className="w-full h-full object-cover" />
-                      ) : row.existingUrl ? (
-                        <img src={row.existingUrl} alt="" className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-slate-300 text-xs">No img</div>
+                  <div key={i} className="bg-slate-50 rounded-xl p-2.5 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <div className="w-10 h-10 rounded-lg overflow-hidden border bg-white shrink-0">
+                        {row.file ? (
+                          <img src={URL.createObjectURL(row.file)} alt="" className="w-full h-full object-cover" />
+                        ) : row.existingUrl ? (
+                          <img src={row.existingUrl} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-slate-300 text-xs">?</div>
+                        )}
+                      </div>
+                      <Input
+                        placeholder={`Color ${i + 1} e.g. Gold`}
+                        value={row.color}
+                        onChange={(e) => updateColor(i, 'color', e.target.value)}
+                        className="flex-1 h-9"
+                      />
+                      {colorRows.length > 1 && (
+                        <Button type="button" variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => removeColor(i)}>
+                          <X className="w-4 h-4 text-red-400" />
+                        </Button>
                       )}
                     </div>
-                    <Input
-                      placeholder={`Color ${i + 1} e.g. Gold`}
-                      value={row.color}
-                      onChange={(e) => updateColor(i, 'color', e.target.value)}
-                      className="flex-1 h-9"
-                    />
-                    <label className="cursor-pointer shrink-0">
-                      <span className="text-xs bg-white border rounded-lg px-3 py-2 text-slate-600 hover:bg-slate-100 transition-colors whitespace-nowrap">
-                        {row.file ? '✓ Changed' : row.existingUrl ? 'Replace' : 'Upload'}
+                    <label className="cursor-pointer block">
+                      <span className="text-xs bg-white border rounded-lg px-3 py-2 text-slate-600 hover:bg-slate-100 transition-colors inline-block">
+                        {row.file ? `✓ ${row.file.name}` : row.existingUrl ? 'Replace image' : 'Upload image'}
                       </span>
                       <input type="file" accept="image/*" className="hidden" onChange={(e) => updateColor(i, 'file', e.target.files?.[0] ?? null)} />
                     </label>
-                    {colorRows.length > 1 && (
-                      <Button type="button" variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => removeColor(i)}>
-                        <X className="w-4 h-4 text-red-400" />
-                      </Button>
-                    )}
                   </div>
                 ))}
               </div>
@@ -424,7 +426,7 @@ export default function ProductsPage() {
             </div>
 
             {/* Featured / Active / In Stock */}
-            <div className="flex gap-6">
+            <div className="flex flex-wrap gap-4 sm:gap-6">
               <div className="flex items-center gap-2">
                 <input type="checkbox" id="featured" checked={form.featured} onChange={(e) => set('featured', e.target.checked)} />
                 <Label htmlFor="featured">Featured</Label>

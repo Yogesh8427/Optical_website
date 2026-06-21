@@ -34,7 +34,7 @@ export default function CategoryGrid() {
           </div>
           <div className="flex gap-5 overflow-x-auto pb-4 md:grid md:grid-cols-3 md:overflow-visible">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="flex-shrink-0 w-56 md:w-auto h-48 md:h-64 bg-slate-100 rounded-2xl animate-pulse" />
+              <div key={i} className="flex-shrink-0 w-36 sm:w-44 md:w-auto h-32 sm:h-40 md:h-64 bg-slate-100 rounded-2xl animate-pulse" />
             ))}
           </div>
         </div>
@@ -69,7 +69,7 @@ export default function CategoryGrid() {
             return (
               <motion.div
                 key={cat._id}
-                className="flex-shrink-0 w-56 md:w-auto snap-start"
+                className="flex-shrink-0 w-36 sm:w-44 md:w-auto snap-start"
                 initial={{ opacity: 0, y: 32 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -77,7 +77,7 @@ export default function CategoryGrid() {
               >
                 <Link
                   href={`/category/${cat.slug}`}
-                  className="group relative flex flex-col overflow-hidden rounded-2xl h-48 md:h-64 shadow-md hover:shadow-2xl transition-shadow duration-300"
+                  className="group relative flex flex-col overflow-hidden rounded-2xl h-32 sm:h-40 md:h-64 shadow-md hover:shadow-2xl transition-shadow duration-300"
                 >
                   {/* Image or icon */}
                   <div className="absolute inset-0 bg-slate-800">
@@ -99,8 +99,8 @@ export default function CategoryGrid() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
 
                   {/* Label at bottom */}
-                  <div className="absolute bottom-0 left-0 right-0 p-5">
-                    <span className="text-white text-lg font-black leading-tight drop-shadow-lg">
+                  <div className="absolute bottom-0 left-0 right-0 p-3 md:p-5">
+                    <span className="text-white text-sm md:text-lg font-black leading-tight drop-shadow-lg">
                       {localize(cat)}
                     </span>
                   </div>

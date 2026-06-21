@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { Upload } from 'lucide-react';
+import { Upload, CheckCircle } from 'lucide-react';
 import type { WizardFormData } from '@/types';
 
 interface Props { data: WizardFormData; onUpdate: (p: Partial<WizardFormData>) => void; onNext: () => void; onBack: () => void; }
@@ -23,7 +23,7 @@ export default function Step3aUpload({ data, onUpdate, onNext, onBack }: Props) 
         <p className="text-sm text-gray-600">Click to upload prescription</p>
         <p className="text-xs text-gray-400 mt-1">JPG, PNG, or PDF — max 5 MB</p>
         {data.prescriptionFile && (
-          <p className="text-sm text-blue-600 mt-2 font-medium">✓ {data.prescriptionFile.name}</p>
+          <p className="text-sm text-blue-600 mt-2 font-medium flex items-center gap-1"><CheckCircle className="w-4 h-4" /> {data.prescriptionFile.name}</p>
         )}
       </div>
       <input ref={ref} type="file" accept=".jpg,.jpeg,.png,.pdf" className="hidden" onChange={handleFile} />

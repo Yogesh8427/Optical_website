@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
+import { Glasses, CheckCircle } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useCreateInquiry } from '@/hooks/useInquiries';
@@ -68,7 +69,7 @@ export default function Step7CustomerInfo({ data, onBack, onClose }: Props) {
           ? 'bg-blue-50 text-blue-700'
           : 'bg-green-50 text-green-700'
       }`}>
-        <span className="text-base">{data.powerRequired ? '👓' : '✅'}</span>
+        {data.powerRequired ? <Glasses className="w-4 h-4 shrink-0" /> : <CheckCircle className="w-4 h-4 shrink-0" />}
         <span>
           {data.powerRequired
             ? 'With powered lenses — prescription included'

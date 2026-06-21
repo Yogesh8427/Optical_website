@@ -6,7 +6,7 @@ import ProductCard from '@/components/products/ProductCard';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-react';
+import { Search, Glasses } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -126,7 +126,7 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
         </div>
       ) : frames.length === 0 ? (
         <div className="text-center py-20 text-gray-400">
-          <p className="text-4xl mb-3">👓</p>
+          <Glasses className="w-12 h-12 mx-auto mb-3 text-slate-300" />
           <p className="font-medium">No products found{activeSubName ? ` in "${activeSubName}"` : ''}.</p>
           {selectedSubId && (
             <button onClick={() => pickSub('')} className="mt-2 text-sm text-blue-600 underline">

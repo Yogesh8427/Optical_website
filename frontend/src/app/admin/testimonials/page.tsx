@@ -151,7 +151,7 @@ export default function TestimonialsPage() {
       </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="w-[calc(100vw-1.5rem)] sm:max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader><DialogTitle>{editing ? 'Edit Testimonial' : 'New Testimonial'}</DialogTitle></DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div><Label>Customer Name *</Label><Input value={name} onChange={(e) => setName(e.target.value)} required className="mt-1" /></div>

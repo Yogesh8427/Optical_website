@@ -110,7 +110,7 @@ export default function AdminLoginPage() {
           {/* Card */}
           <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/60 border border-slate-100 p-8">
             <div className="mb-7">
-              <h2 className="text-2xl font-bold text-slate-900">Welcome back 👋</h2>
+              <h2 className="text-2xl font-bold text-slate-900">Welcome back</h2>
               <p className="text-slate-400 text-sm mt-1">Sign in to your admin account</p>
             </div>
 

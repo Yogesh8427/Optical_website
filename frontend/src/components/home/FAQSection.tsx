@@ -30,7 +30,7 @@ export default function FAQSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.55 }}
           >
-            <span className="text-xs font-black uppercase tracking-widest" style={{ color: 'var(--theme-primary)' }}>
+            <span className="text-xs font-black uppercase tracking-widest" style={{ color: 'var(--theme-primary, #2563eb)' }}>
               FAQ
             </span>
             <h2 className="mt-3 text-4xl md:text-5xl font-black text-white tracking-tight leading-tight">

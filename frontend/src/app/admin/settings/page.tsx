@@ -198,7 +198,7 @@ export default function SettingsPage() {
 
         {/* Store Info */}
         <form onSubmit={saveStore} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-4">
-          <h2 className="font-semibold text-slate-800 text-base">🏪 Store Info</h2>
+          <h2 className="font-semibold text-slate-800 text-base">Store Info</h2>
 
           <div>
             <Label>Store Name</Label>
@@ -408,7 +408,7 @@ export default function SettingsPage() {
 
         {/* SEO */}
         <form onSubmit={saveSEO} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-4">
-          <h2 className="font-semibold text-slate-800 text-base">🔍 SEO Defaults</h2>
+          <h2 className="font-semibold text-slate-800 text-base">SEO Defaults</h2>
           <div>
             <Label>Default Title</Label>
             <Input value={seo.seoTitle} onChange={(e) => setSeo((p) => ({ ...p, seoTitle: e.target.value }))} className="mt-1" />

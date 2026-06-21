@@ -109,7 +109,7 @@ export default function HeroSlider() {
               fill
               className="object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10" />
           </div>
         )}
 
@@ -122,19 +122,21 @@ export default function HeroSlider() {
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10" />
 
           {/* Content */}
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-center text-white px-6 max-w-3xl">
-              <p key={`tag-${current}`} className="animate-fade-up text-blue-300 uppercase tracking-widest text-xs font-semibold mb-3">
-                New Collection
+              <p key={`tag-${current}`} className="animate-fade-up inline-flex items-center gap-2 uppercase tracking-widest text-xs font-black mb-4">
+                <span className="inline-block w-6 h-px bg-white/60" />
+                <span className="text-white/80">New Collection</span>
+                <span className="inline-block w-6 h-px bg-white/60" />
               </p>
-              <h1 key={`title-${current}`} className="animate-fade-up-delay text-4xl md:text-6xl font-extrabold mb-4 leading-tight drop-shadow-lg">
+              <h1 key={`title-${current}`} className="animate-fade-up-delay text-4xl md:text-6xl font-black mb-4 leading-tight drop-shadow-2xl [text-shadow:0_2px_20px_rgba(0,0,0,0.6)]">
                 {banners[current].title}
               </h1>
               {banners[current].subtitle && (
-                <p key={`sub-${current}`} className="animate-fade-up-delay text-lg md:text-xl text-gray-200 mb-8">
+                <p key={`sub-${current}`} className="animate-fade-up-delay text-base md:text-xl text-white/80 mb-8 drop-shadow-lg">
                   {banners[current].subtitle}
                 </p>
               )}
@@ -142,7 +144,7 @@ export default function HeroSlider() {
                 <div key={`btn-${current}`} className="animate-fade-up-delay2">
                   <Link
                     href={banners[current].buttonUrl}
-                    className={cn(buttonVariants({ size: 'lg' }), 'bg-white text-gray-900 hover:bg-gray-100 border-0 px-8 text-base font-semibold shadow-lg')}
+                    className={cn(buttonVariants({ size: 'lg' }), 'bg-white text-gray-900 hover:bg-gray-100 border-0 px-8 text-base font-semibold shadow-xl')}
                   >
                     {banners[current].buttonText}
                   </Link>

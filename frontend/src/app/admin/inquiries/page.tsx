@@ -165,7 +165,7 @@ export default function InquiriesPage() {
 
       {/* Detail modal */}
       <Dialog open={!!selected} onOpenChange={() => setSelected(null)}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="w-[calc(100vw-1.5rem)] sm:max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader className="pr-8">
             <div className="flex items-center gap-3">
               <DialogTitle className="flex-1">Inquiry Detail</DialogTitle>

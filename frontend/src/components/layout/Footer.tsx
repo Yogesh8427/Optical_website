@@ -25,7 +25,10 @@ export default function Footer() {
   ].filter((s) => s.href?.trim());
 
   return (
-    <footer className="bg-gray-950 text-gray-400 mt-auto mb-16 md:mb-0">
+    <footer className="bg-slate-950 text-slate-400 mt-auto mb-16 md:mb-0">
+      {/* Top accent bar */}
+      <div className="h-1 w-full" style={{ background: 'var(--theme-primary)' }} />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-10">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
 
@@ -38,16 +41,16 @@ export default function Footer() {
                   alt={storeName}
                   width={36}
                   height={36}
-                  className="h-9 w-9 object-contain rounded-lg shrink-0"
+                  className="h-9 w-9 object-contain rounded-xl shrink-0"
                 />
               ) : (
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shrink-0">
+                <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style={{ background: 'var(--theme-primary)' }}>
                   <Eye className="w-5 h-5 text-white" />
                 </div>
               )}
-              <span className="font-bold text-lg text-white">{storeName}</span>
+              <span className="font-black text-lg text-white tracking-tight">{storeName}</span>
             </div>
-            <p className="text-sm text-gray-500 leading-relaxed mb-4">
+            <p className="text-sm text-slate-500 leading-relaxed mb-5">
               {t.footer.tagline}
             </p>
             {/* Social */}
@@ -61,7 +64,9 @@ export default function Footer() {
                     rel="noopener noreferrer"
                     aria-label={s.title}
                     title={s.title}
-                    className="w-8 h-8 rounded-lg bg-gray-800 hover:bg-blue-600 flex items-center justify-center text-xs font-bold text-gray-400 hover:text-white transition-all"
+                    className="w-9 h-9 rounded-xl bg-slate-800 flex items-center justify-center text-xs font-black text-slate-400 hover:text-white transition-all"
+                    onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--theme-primary)')}
+                    onMouseLeave={(e) => (e.currentTarget.style.background = '')}
                   >
                     {s.label}
                   </a>
@@ -72,11 +77,11 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">{t.footer.quickLinks}</h3>
+            <h3 className="text-white font-black mb-4 text-xs uppercase tracking-widest">{t.footer.quickLinks}</h3>
             <ul className="space-y-2.5">
               {([['/', t.nav.home], ['/products', t.nav.products], ['/about', t.nav.about], ['/contact', t.nav.contact]] as [string, string][]).map(([href, label]) => (
                 <li key={href}>
-                  <Link href={href} className="text-sm text-gray-500 hover:text-white transition-colors">
+                  <Link href={href} className="text-sm text-slate-500 hover:text-white transition-colors">
                     {label}
                   </Link>
                 </li>
@@ -86,11 +91,11 @@ export default function Footer() {
 
           {/* Legal */}
           <div>
-            <h3 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Legal</h3>
+            <h3 className="text-white font-black mb-4 text-xs uppercase tracking-widest">Legal</h3>
             <ul className="space-y-2.5">
-              {([['/privacy-policy', t.footer.privacy], ['/terms', t.footer.terms], ['/coupons', '🎟️ Coupons & Offers']] as [string, string][]).map(([href, label]) => (
+              {([['/privacy-policy', t.footer.privacy], ['/terms', t.footer.terms], ['/coupons', 'Coupons & Offers']] as [string, string][]).map(([href, label]) => (
                 <li key={href}>
-                  <Link href={href} className="text-sm text-gray-500 hover:text-white transition-colors">
+                  <Link href={href} className="text-sm text-slate-500 hover:text-white transition-colors">
                     {label}
                   </Link>
                 </li>
@@ -100,7 +105,7 @@ export default function Footer() {
 
           {/* Contact */}
           <div>
-            <h3 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">{t.contact.title}</h3>
+            <h3 className="text-white font-black mb-4 text-xs uppercase tracking-widest">{t.contact.title}</h3>
             <ul className="space-y-3">
               {whatsapp && (
                 <li>
@@ -108,7 +113,7 @@ export default function Footer() {
                     href={`https://wa.me/${whatsapp}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-start gap-2 text-sm text-gray-500 hover:text-green-400 transition-colors"
+                    className="flex items-start gap-2 text-sm text-slate-500 hover:text-green-400 transition-colors"
                   >
                     <MessageCircle className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
                     <span>WhatsApp Us</span>
@@ -119,9 +124,9 @@ export default function Footer() {
                 <li>
                   <a
                     href={`tel:${phone}`}
-                    className="flex items-start gap-2 text-sm text-gray-500 hover:text-blue-400 transition-colors"
+                    className="flex items-start gap-2 text-sm text-slate-500 hover:text-white transition-colors"
                   >
-                    <Phone className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
+                    <Phone className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
                     <span>{phone}</span>
                   </a>
                 </li>
@@ -130,33 +135,33 @@ export default function Footer() {
                 <li>
                   <a
                     href={`mailto:${email}`}
-                    className="flex items-start gap-2 text-sm text-gray-500 hover:text-purple-400 transition-colors"
+                    className="flex items-start gap-2 text-sm text-slate-500 hover:text-white transition-colors"
                   >
-                    <Mail className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
+                    <Mail className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
                     <span className="break-all">{email}</span>
                   </a>
                 </li>
               )}
               {address && (
-                <li className="flex items-start gap-2 text-sm text-gray-500">
-                  <MapPin className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                <li className="flex items-start gap-2 text-sm text-slate-500">
+                  <MapPin className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
                   <span>{address}</span>
                 </li>
               )}
               {!whatsapp && !phone && !email && !address && (
-                <li className="text-sm text-gray-600 italic">Contact info not set</li>
+                <li className="text-sm text-slate-600 italic">Contact info not set</li>
               )}
             </ul>
           </div>
         </div>
 
         {/* Bottom bar */}
-        <div className="border-t border-gray-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <p className="text-xs text-gray-600">
+        <div className="border-t border-slate-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-2">
+          <p className="text-xs text-slate-600">
             &copy; {new Date().getFullYear()} {storeName}. {t.footer.rights}
           </p>
-          <p className="text-xs text-gray-700">
-            Crafted with ❤️ for perfect vision
+          <p className="text-xs text-slate-700">
+            Crafted with care for perfect vision
           </p>
         </div>
       </div>

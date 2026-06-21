@@ -24,6 +24,11 @@ const emptyForm = {
   active: true,
 };
 
+function fmtDate(d?: string) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
 export default function AdminOffersPage() {
   const { data, isLoading } = useOffers();
   const offers: Offer[] = data?.data ?? [];
@@ -76,98 +81,119 @@ export default function AdminOffersPage() {
       }
       setOpen(false);
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Error saving offer';
-      toast.error(message);
+      toast.error(err instanceof Error ? err.message : 'Error saving offer');
     }
   }
 
   async function handleDelete(id: string) {
     if (!confirm('Delete this offer?')) return;
-    try {
-      await deleteOffer.mutateAsync(id);
-      toast.success('Offer deleted');
-    } catch {
-      toast.error('Error deleting offer');
-    }
+    try { await deleteOffer.mutateAsync(id); toast.success('Offer deleted'); }
+    catch { toast.error('Error deleting offer'); }
   }
 
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-6">
+    <div className="space-y-4 max-w-7xl mx-auto">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Offers</h1>
+          <h1 className="text-xl md:text-2xl font-bold text-slate-800">Offers</h1>
           <p className="text-slate-500 text-sm mt-0.5">Manage promotional offers</p>
         </div>
-        <Button onClick={openCreate} className="flex items-center gap-2">
-          <Plus className="w-4 h-4" /> New Offer
+        <Button onClick={openCreate} size="sm" className="gap-1.5">
+          <Plus className="w-4 h-4 md:mr-1" /><span className="hidden md:inline">New Offer</span>
         </Button>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
         {isLoading ? (
-          <div className="p-8 text-center text-slate-400">Loading...</div>
+          <div className="py-10 text-center text-slate-400 text-sm">Loading...</div>
         ) : offers.length === 0 ? (
-          <div className="p-8 text-center text-slate-400">No offers yet. Create your first offer.</div>
+          <div className="py-10 text-center text-slate-400 text-sm">No offers yet. Create your first offer.</div>
         ) : (
-          <table className="w-full">
-            <thead className="bg-slate-50 border-b border-slate-200">
-              <tr>
-                <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">Title</th>
-                <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">Occasion</th>
-                <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">Discount</th>
-                <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">Dates</th>
-                <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">Status</th>
-                <th className="text-right text-xs font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
+          <>
+            {/* ── Mobile cards ── */}
+            <div className="divide-y divide-slate-50 md:hidden">
               {offers.map((o) => (
-                <tr key={o._id} className="hover:bg-slate-50 transition-colors">
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: o.bgColor || '#2563eb' }} />
-                      <span className="font-medium text-slate-800">{o.title}</span>
+                <div key={o._id} className="px-4 py-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: o.bgColor || '#2563eb' }} />
+                      <p className="font-semibold text-slate-800 text-sm truncate">{o.title}</p>
                     </div>
-                  </td>
-                  <td className="px-4 py-3 text-slate-600 text-sm">{o.occasionName || '—'}</td>
-                  <td className="px-4 py-3">
-                    <Badge className="bg-orange-100 text-orange-700 border-0 font-semibold">
+                    <div className="flex gap-1 shrink-0">
+                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(o)}><Pencil className="w-3.5 h-3.5" /></Button>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-red-400" onClick={() => handleDelete(o._id)}><Trash2 className="w-3.5 h-3.5" /></Button>
+                    </div>
+                  </div>
+                  <div className="mt-2 flex flex-wrap gap-2 items-center">
+                    <Badge className="bg-orange-100 text-orange-700 border-0 font-semibold text-xs">
                       {o.discountType === 'percentage' ? `${o.discountValue}% OFF` : `₹${o.discountValue} OFF`}
                     </Badge>
-                  </td>
-                  <td className="px-4 py-3 text-slate-500 text-xs">
-                    {o.startDate || o.endDate ? (
-                      <span>
-                        {o.startDate ? new Date(o.startDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : '—'}
-                        {' → '}
-                        {o.endDate ? new Date(o.endDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'No end'}
-                      </span>
-                    ) : '—'}
-                  </td>
-                  <td className="px-4 py-3">
-                    <Badge className={o.active ? 'bg-green-100 text-green-700 border-0' : 'bg-slate-100 text-slate-500 border-0'}>
+                    <Badge className={o.active ? 'bg-green-100 text-green-700 border-0 text-xs' : 'bg-slate-100 text-slate-500 border-0 text-xs'}>
                       {o.active ? 'Active' : 'Inactive'}
                     </Badge>
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <Button size="sm" variant="ghost" onClick={() => openEdit(o)} className="h-8 w-8 p-0">
-                        <Pencil className="w-3.5 h-3.5" />
-                      </Button>
-                      <Button size="sm" variant="ghost" onClick={() => handleDelete(o._id)} className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50">
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
+                    {o.occasionName && <span className="text-xs text-slate-400">{o.occasionName}</span>}
+                  </div>
+                  {(o.startDate || o.endDate) && (
+                    <p className="text-xs text-slate-400 mt-1">{fmtDate(o.startDate)} → {fmtDate(o.endDate)}</p>
+                  )}
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
+
+            {/* ── Desktop table ── */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-slate-50 border-b text-xs text-slate-500 uppercase tracking-wider">
+                  <tr>
+                    <th className="px-4 py-3 text-left font-medium">Title</th>
+                    <th className="px-4 py-3 text-left font-medium">Occasion</th>
+                    <th className="px-4 py-3 text-left font-medium">Discount</th>
+                    <th className="px-4 py-3 text-left font-medium">Dates</th>
+                    <th className="px-4 py-3 text-left font-medium">Status</th>
+                    <th className="px-4 py-3 text-right font-medium">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-50">
+                  {offers.map((o) => (
+                    <tr key={o._id} className="hover:bg-slate-50/50 transition-colors">
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: o.bgColor || '#2563eb' }} />
+                          <span className="font-medium text-slate-800">{o.title}</span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-slate-500">{o.occasionName || '—'}</td>
+                      <td className="px-4 py-3">
+                        <Badge className="bg-orange-100 text-orange-700 border-0 font-semibold">
+                          {o.discountType === 'percentage' ? `${o.discountValue}% OFF` : `₹${o.discountValue} OFF`}
+                        </Badge>
+                      </td>
+                      <td className="px-4 py-3 text-slate-500 text-xs">
+                        {o.startDate || o.endDate ? `${fmtDate(o.startDate)} → ${fmtDate(o.endDate)}` : '—'}
+                      </td>
+                      <td className="px-4 py-3">
+                        <Badge className={o.active ? 'bg-green-100 text-green-700 border-0' : 'bg-slate-100 text-slate-500 border-0'}>
+                          {o.active ? 'Active' : 'Inactive'}
+                        </Badge>
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          <Button size="sm" variant="ghost" onClick={() => openEdit(o)} className="h-8 w-8 p-0"><Pencil className="w-3.5 h-3.5" /></Button>
+                          <Button size="sm" variant="ghost" onClick={() => handleDelete(o._id)} className="h-8 w-8 p-0 text-red-400 hover:text-red-600 hover:bg-red-50"><Trash2 className="w-3.5 h-3.5" /></Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </div>
 
+      {/* ── Create / Edit dialog ── */}
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="w-[calc(100vw-1.5rem)] sm:max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editing ? 'Edit Offer' : 'Create Offer'}</DialogTitle>
           </DialogHeader>
@@ -184,7 +210,7 @@ export default function AdminOffersPage() {
               <Label>Occasion Name</Label>
               <Input value={form.occasionName} onChange={e => setForm(f => ({ ...f, occasionName: e.target.value }))} placeholder="e.g. Diwali Sale" />
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label>Discount Type</Label>
                 <Select value={form.discountType} onValueChange={v => setForm(f => ({ ...f, discountType: v ?? f.discountType }))}>
@@ -200,7 +226,7 @@ export default function AdminOffersPage() {
                 <Input type="number" min="0" value={form.discountValue} onChange={e => setForm(f => ({ ...f, discountValue: e.target.value }))} />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label>Start Date</Label>
                 <Input type="date" value={form.startDate} onChange={e => setForm(f => ({ ...f, startDate: e.target.value }))} />
@@ -213,27 +239,29 @@ export default function AdminOffersPage() {
             <div className="space-y-1.5">
               <Label>Background Color</Label>
               <div className="flex items-center gap-2">
-                <input type="color" value={form.bgColor} onChange={e => setForm(f => ({ ...f, bgColor: e.target.value }))} className="h-9 w-14 rounded border border-slate-200 cursor-pointer" />
+                <input type="color" value={form.bgColor} onChange={e => setForm(f => ({ ...f, bgColor: e.target.value }))} className="h-9 w-14 rounded border border-slate-200 cursor-pointer shrink-0" />
                 <Input value={form.bgColor} onChange={e => setForm(f => ({ ...f, bgColor: e.target.value }))} className="flex-1" />
               </div>
             </div>
             <div className="space-y-1.5">
               <Label>Banner Image</Label>
               <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={e => setBannerFile(e.target.files?.[0] ?? null)} />
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <Button type="button" variant="outline" size="sm" onClick={() => fileRef.current?.click()}>
                   Choose File
                 </Button>
-                <span className="text-sm text-slate-500">{bannerFile ? bannerFile.name : editing?.bannerImage ? 'Current image set' : 'No file chosen'}</span>
+                <span className="text-sm text-slate-500 break-all">
+                  {bannerFile ? bannerFile.name : editing?.bannerImage ? 'Current image set' : 'No file chosen'}
+                </span>
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <input type="checkbox" id="active" checked={form.active} onChange={e => setForm(f => ({ ...f, active: e.target.checked }))} className="rounded" />
-              <Label htmlFor="active">Active</Label>
+              <input type="checkbox" id="offerActive" checked={form.active} onChange={e => setForm(f => ({ ...f, active: e.target.checked }))} className="rounded" />
+              <Label htmlFor="offerActive">Active</Label>
             </div>
-            <div className="flex justify-end gap-2 pt-2">
-              <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-              <Button type="submit" disabled={createOffer.isPending || updateOffer.isPending}>
+            <div className="flex gap-3 pt-2">
+              <Button type="button" variant="outline" className="flex-1" onClick={() => setOpen(false)}>Cancel</Button>
+              <Button type="submit" className="flex-1" disabled={createOffer.isPending || updateOffer.isPending}>
                 {editing ? 'Update Offer' : 'Create Offer'}
               </Button>
             </div>

@@ -177,7 +177,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
         {/* Images */}
         <div className="space-y-3">
           <div
-            className="relative h-80 md:h-96 rounded-2xl overflow-hidden bg-gray-100 border border-gray-100 cursor-zoom-in"
+            className="relative h-80 md:h-96 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 cursor-zoom-in"
             onClick={() => displayImage && setZoomOpen(true)}
           >
             {displayImage ? (
@@ -198,8 +198,11 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                   key={i}
                   onClick={() => { setActiveImg(i); setActiveColor(i); }}
                   className={`relative w-14 h-14 md:w-16 md:h-16 rounded-xl overflow-hidden border-2 transition-all ${
-                    i === activeImg ? 'border-blue-500 shadow-md' : 'border-transparent hover:border-gray-300'
+                    i === activeImg
+                      ? 'shadow-md'
+                      : 'border-transparent hover:border-gray-300'
                   }`}
+                  style={i === activeImg ? { borderColor: 'var(--theme-primary)' } : {}}
                 >
                   <Image src={img} alt={`View ${i + 1}`} fill className="object-cover" />
                 </button>
@@ -220,14 +223,26 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
         {/* Details */}
         <div className="space-y-5">
           <div>
-            <p className="text-sm text-blue-600 font-medium uppercase tracking-wide mb-1">{frame.brandId?.name}</p>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">{localize(frame)}</h1>
+            <p
+              className="text-sm font-medium uppercase tracking-wide mb-1"
+              style={{ color: 'var(--theme-primary)' }}
+            >
+              {frame.brandId?.name}
+            </p>
+            <h1 className="text-3xl md:text-4xl font-black tracking-tight text-gray-900 leading-tight">{localize(frame)}</h1>
           </div>
 
           <div className="flex items-center gap-3 flex-wrap">
-            <span className="text-2xl md:text-3xl font-bold text-blue-700">₹{frame.framePrice.toLocaleString()}</span>
+            <span
+              className="text-2xl md:text-3xl font-black"
+              style={{ color: 'var(--theme-primary)' }}
+            >
+              ₹{frame.framePrice.toLocaleString()}
+            </span>
             <Badge variant="outline" className="capitalize text-sm">{frame.gender}</Badge>
-            {frame.featured && <Badge className="bg-blue-600 text-white text-xs">Featured</Badge>}
+            {frame.featured && (
+              <Badge className="text-white text-xs" style={{ background: 'var(--theme-primary, #2563eb)' }}>Featured</Badge>
+            )}
             {!needsLens && (
               <Badge className="bg-green-100 text-green-700 text-xs border-0">No Prescription Needed</Badge>
             )}
@@ -240,13 +255,21 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
           </div>
 
           {activeOffer && (
-            <div className="flex items-center gap-2 bg-red-50 border border-red-100 rounded-xl px-4 py-2.5">
-              <span className="text-red-600 font-bold text-lg">
+            <div
+              className="flex items-center gap-2 rounded-xl px-4 py-2.5 border"
+              style={{
+                background: 'color-mix(in srgb, var(--theme-primary) 10%, white)',
+                borderColor: 'color-mix(in srgb, var(--theme-primary) 20%, white)',
+              }}
+            >
+              <span className="font-black text-lg" style={{ color: 'var(--theme-primary)' }}>
                 {activeOffer.discountType === 'percentage' ? `${activeOffer.discountValue}% OFF` : `₹${activeOffer.discountValue} OFF`}
               </span>
               <div>
-                <p className="font-semibold text-red-700 text-sm">{activeOffer.title}</p>
-                {activeOffer.occasionName && <p className="text-red-500 text-xs">{activeOffer.occasionName}</p>}
+                <p className="font-semibold text-sm" style={{ color: 'var(--theme-primary)' }}>{activeOffer.title}</p>
+                {activeOffer.occasionName && (
+                  <p className="text-xs opacity-75" style={{ color: 'var(--theme-primary)' }}>{activeOffer.occasionName}</p>
+                )}
               </div>
             </div>
           )}
@@ -272,8 +295,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                     onClick={() => handleColorClick(i)}
                     title={color}
                     className={`relative w-8 h-8 rounded-full transition-all hover:scale-110 ${getColorClass(color)} ${
-                      i === activeColor ? 'ring-2 ring-offset-2 ring-blue-500 scale-110' : ''
+                      i === activeColor ? 'ring-2 ring-offset-2 scale-110' : ''
                     }`}
+                    style={i === activeColor ? { '--tw-ring-color': 'var(--theme-primary)' } as React.CSSProperties : {}}
                   >
                     {i === activeColor && (
                       <Check className="w-4 h-4 text-white absolute inset-0 m-auto drop-shadow" />
@@ -295,11 +319,14 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                   <button
                     key={i}
                     onClick={() => setActiveSize(i)}
-                    className={`px-4 py-1.5 rounded-lg border text-sm font-medium transition-all ${
+                    className={`px-4 py-1.5 rounded-xl border text-sm font-bold transition-all ${
                       i === activeSize
-                        ? 'border-blue-600 bg-blue-600 text-white shadow-sm'
-                        : 'border-gray-200 text-gray-700 hover:border-blue-400 hover:text-blue-600'
+                        ? 'text-white shadow-sm'
+                        : 'border-gray-200 text-gray-700 hover:border-gray-400'
                     }`}
+                    style={i === activeSize
+                      ? { background: 'var(--theme-primary, #2563eb)', borderColor: 'var(--theme-primary)' }
+                      : {}}
                   >
                     {size}
                   </button>
@@ -312,9 +339,10 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
           {needsLens ? (
             <button
               onClick={() => setWizardOpen(true)}
-              className="w-full bg-blue-700 hover:bg-blue-800 text-white text-base font-semibold py-3.5 rounded-2xl transition-all shadow-lg shadow-blue-700/25 flex items-center justify-center gap-2"
+              className="w-full text-white text-lg font-black py-4 rounded-2xl transition-all shadow-lg flex items-center justify-center gap-2"
+              style={{ background: 'var(--theme-primary, #2563eb)' }}
             >
-              👓 Customize Lens &amp; Inquire
+              Customize Lens &amp; Inquire
             </button>
           ) : (
             <div className="space-y-3">
@@ -334,7 +362,13 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
       {/* Related */}
       {related.length > 0 && (
         <div>
-          <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-6">Related Products</h2>
+          <p
+            className="text-xs font-black tracking-widest uppercase mb-1"
+            style={{ color: 'var(--theme-primary)' }}
+          >
+            RELATED
+          </p>
+          <h2 className="text-xl md:text-2xl font-black tracking-tight text-gray-900 mb-6">Related Products</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5">
             {related.map((f) => <ProductCard key={f._id} frame={f} />)}
           </div>

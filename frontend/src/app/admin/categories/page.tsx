@@ -186,7 +186,7 @@ export default function CategoriesPage() {
 
       {/* Modal */}
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+        <DialogContent className="w-[calc(100vw-1.5rem)] sm:max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editing ? 'Edit Category' : parentId ? 'New Sub-category' : 'New Top-level Category'}</DialogTitle>
           </DialogHeader>

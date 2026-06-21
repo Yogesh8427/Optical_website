@@ -1,10 +1,8 @@
 'use client';
 import { useCategories } from '@/hooks/useCategories';
 import { useBrands } from '@/hooks/useBrands';
-import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -57,7 +55,6 @@ export default function ProductFilters({ filters, onChange, onReset }: Props) {
   }
 
   function selectParent(pid: string) {
-    // Select the parent → backend returns all sub-cat products
     onChange({ ...filters, category: pid });
   }
 
@@ -70,21 +67,33 @@ export default function ProductFilters({ filters, onChange, onReset }: Props) {
   }
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
+      {/* Section title */}
+      <p
+        className="text-xs font-black uppercase tracking-widest"
+        style={{ color: 'var(--theme-primary)' }}
+      >
+        Filters
+      </p>
 
       {/* ── Category ── */}
       <div>
-        <Label className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2 block">{t.products.category}</Label>
+        <p className="text-xs font-black uppercase tracking-widest text-slate-500 mb-3">
+          {t.products.category}
+        </p>
 
         {/* Step 1 — parent buttons */}
         <div className="flex flex-wrap gap-2">
           <button
             onClick={clearCategory}
-            className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-all ${
-              !filters.category
-                ? 'bg-blue-600 text-white border-blue-600'
-                : 'bg-white text-slate-600 border-slate-200 hover:border-blue-300'
+            className={`px-3 py-1.5 rounded-xl text-sm font-bold transition-all ${
+              !filters.category ? '' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
+            style={
+              !filters.category
+                ? { background: 'var(--theme-primary)', color: '#fff' }
+                : undefined
+            }
           >
             {t.products.all}
           </button>
@@ -92,32 +101,40 @@ export default function ProductFilters({ filters, onChange, onReset }: Props) {
             <button
               key={p._id}
               onClick={() => selectParent(p._id)}
-              className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-all ${
+              className={`px-3 py-1.5 rounded-xl text-sm font-bold transition-all ${
                 activeParent?._id === p._id
-                  ? 'bg-blue-600 text-white border-blue-600'
-                  : 'bg-white text-slate-600 border-slate-200 hover:border-blue-300'
+                  ? ''
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
+              style={
+                activeParent?._id === p._id
+                  ? { background: 'var(--theme-primary)', color: '#fff' }
+                  : undefined
+              }
             >
               {localize(p)}
             </button>
           ))}
         </div>
 
-        {/* Step 2 — sub-category chips (shown when a parent is selected and has children) */}
+        {/* Step 2 — sub-category chips */}
         {activeParent && activeSubs.length > 0 && (
-          <div className="mt-3 pl-3 border-l-2 border-blue-200">
-            <p className="text-xs text-slate-400 mb-2 flex items-center gap-1">
-              <ChevronRight className="w-3 h-3" /> Filter inside <strong>{localize(activeParent)}</strong>
+          <div className="mt-3 pl-3 border-l-2 border-slate-200">
+            <p className="text-xs text-slate-400 mb-2 flex items-center gap-1 font-semibold">
+              <ChevronRight className="w-3 h-3" /> Inside <strong>{localize(activeParent)}</strong>
             </p>
-            <div className="flex flex-wrap gap-2">
-              {/* "All Men/Women/Kids" chip */}
+            <div className="flex flex-wrap gap-1.5">
+              {/* "All X" chip */}
               <button
                 onClick={() => selectParent(activeParent._id)}
-                className={`px-3 py-1 rounded-full text-xs font-medium border transition-all ${
-                  !selectedSubId
-                    ? 'bg-blue-100 text-blue-700 border-blue-300'
-                    : 'bg-white text-slate-500 border-slate-200 hover:border-blue-200'
+                className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all ${
+                  !selectedSubId ? '' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
                 }`}
+                style={
+                  !selectedSubId
+                    ? { background: 'var(--theme-primary)', color: '#fff' }
+                    : undefined
+                }
               >
                 All {localize(activeParent)}
               </button>
@@ -125,11 +142,14 @@ export default function ProductFilters({ filters, onChange, onReset }: Props) {
                 <button
                   key={s._id}
                   onClick={() => selectSub(s._id)}
-                  className={`px-3 py-1 rounded-full text-xs font-medium border transition-all ${
-                    selectedSubId === s._id
-                      ? 'bg-blue-100 text-blue-700 border-blue-300'
-                      : 'bg-white text-slate-500 border-slate-200 hover:border-blue-200'
+                  className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all ${
+                    selectedSubId === s._id ? '' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
                   }`}
+                  style={
+                    selectedSubId === s._id
+                      ? { background: 'var(--theme-primary)', color: '#fff' }
+                      : undefined
+                  }
                 >
                   {localize(s)}
                 </button>
@@ -141,9 +161,11 @@ export default function ProductFilters({ filters, onChange, onReset }: Props) {
 
       {/* ── Brand ── */}
       <div>
-        <Label className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2 block">{t.products.brand}</Label>
-        <Select value={filters.brand || 'all'} onValueChange={(v) => set('brand', v === 'all' ? '' : v)}>
-          <SelectTrigger>
+        <p className="text-xs font-black uppercase tracking-widest text-slate-500 mb-3">
+          {t.products.brand}
+        </p>
+        <Select value={filters.brand || 'all'} onValueChange={(v) => set('brand', v === 'all' ? '' : (v || ''))}>
+          <SelectTrigger className="rounded-xl border-slate-200 font-medium text-sm">
             <span className="text-sm">
               {filters.brand ? (brands.find((b) => b._id === filters.brand)?.name ?? t.products.allBrands) : t.products.allBrands}
             </span>
@@ -157,9 +179,13 @@ export default function ProductFilters({ filters, onChange, onReset }: Props) {
 
       {/* ── Gender ── */}
       <div>
-        <Label className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2 block">{t.products.gender}</Label>
-        <Select value={filters.gender || 'all'} onValueChange={(v) => set('gender', v === 'all' ? '' : v)}>
-          <SelectTrigger><SelectValue placeholder={t.products.all} /></SelectTrigger>
+        <p className="text-xs font-black uppercase tracking-widest text-slate-500 mb-3">
+          {t.products.gender}
+        </p>
+        <Select value={filters.gender || 'all'} onValueChange={(v) => set('gender', v === 'all' ? '' : (v || ''))}>
+          <SelectTrigger className="rounded-xl border-slate-200 font-medium text-sm">
+            <SelectValue placeholder={t.products.all} />
+          </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{t.products.all}</SelectItem>
             <SelectItem value="men">{t.products.men}</SelectItem>
@@ -172,20 +198,52 @@ export default function ProductFilters({ filters, onChange, onReset }: Props) {
 
       {/* ── Material ── */}
       <div>
-        <Label className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2 block">{t.products.material}</Label>
-        <Input placeholder="e.g. Metal, Acetate" value={filters.material} onChange={(e) => set('material', e.target.value)} />
+        <p className="text-xs font-black uppercase tracking-widest text-slate-500 mb-3">
+          {t.products.material}
+        </p>
+        <Input
+          className="rounded-xl border-slate-200 text-sm"
+          placeholder="e.g. Metal, Acetate"
+          value={filters.material}
+          onChange={(e) => set('material', e.target.value)}
+        />
       </div>
 
       {/* ── Price ── */}
       <div>
-        <Label className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2 block">{t.products.priceRange}</Label>
+        <p className="text-xs font-black uppercase tracking-widest text-slate-500 mb-3">
+          {t.products.priceRange}
+        </p>
         <div className="flex gap-2">
-          <Input type="number" placeholder="Min" value={filters.minPrice} onChange={(e) => set('minPrice', e.target.value)} />
-          <Input type="number" placeholder="Max" value={filters.maxPrice} onChange={(e) => set('maxPrice', e.target.value)} />
+          <Input
+            className="rounded-xl border-slate-200 text-sm"
+            type="number"
+            placeholder="Min"
+            value={filters.minPrice}
+            onChange={(e) => set('minPrice', e.target.value)}
+          />
+          <Input
+            className="rounded-xl border-slate-200 text-sm"
+            type="number"
+            placeholder="Max"
+            value={filters.maxPrice}
+            onChange={(e) => set('maxPrice', e.target.value)}
+          />
         </div>
       </div>
 
-      <Button variant="outline" className="w-full" onClick={onReset}>{t.products.resetFilters}</Button>
+      {/* Reset button */}
+      <button
+        onClick={onReset}
+        className="w-full py-2.5 rounded-xl font-black text-sm border-2 transition-all hover:opacity-80"
+        style={{
+          borderColor: 'var(--theme-primary)',
+          color: 'var(--theme-primary)',
+          background: 'transparent',
+        }}
+      >
+        {t.products.resetFilters}
+      </button>
     </div>
   );
 }

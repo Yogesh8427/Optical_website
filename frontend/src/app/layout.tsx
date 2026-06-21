@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Geist } from 'next/font/google';
+import { Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 import Providers from '@/components/Providers';
 import { Toaster } from '@/components/ui/sonner';
@@ -7,7 +7,11 @@ import { LanguageProvider } from '@/contexts/LanguageContext';
 import ThemeProvider from '@/components/ThemeProvider';
 import DynamicTitle from '@/components/DynamicTitle';
 
-const geist = Geist({ subsets: ['latin'], variable: '--font-geist' });
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  variable: '--font-sans',
+  weight: ['400', '500', '600', '700', '800'],
+});
 
 export const metadata: Metadata = {
   title: 'OptiVision — Premium Eyewear',
@@ -37,7 +41,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${geist.variable} antialiased`}>
+    <html lang="en" className={`${jakarta.variable} antialiased`}>
       <body className="min-h-screen flex flex-col" suppressHydrationWarning>
         <LanguageProvider>
           <Providers>

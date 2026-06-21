@@ -14,41 +14,67 @@ export default function ProductCard({ frame, offer }: { frame: Frame; offer?: { 
 
   return (
     <motion.div
-      whileHover={{ y: -6, boxShadow: '0 20px 48px rgba(0,0,0,0.12)' }}
+      whileHover={{ y: -6, boxShadow: '0 24px 48px rgba(0,0,0,0.13)' }}
       whileTap={{ scale: 0.97 }}
       transition={{ type: 'spring', stiffness: 340, damping: 24 }}
+      className="group rounded-2xl"
     >
-    <Link href={`/product/${frame.slug}`} className="group block rounded-2xl overflow-hidden border border-gray-100 bg-white">
-      <div className="relative h-52 bg-gray-50">
-        {img ? (
-          <Image src={img} alt={frame.name} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
-        ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-gray-300">
-            <Glasses className="w-12 h-12" />
-            <span className="text-xs">No image</span>
-          </div>
-        )}
-        {offer && (
-          <div className="absolute top-2 left-2 z-10 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-lg">
-            {offer.discountType === 'percentage' ? `${offer.discountValue}% OFF` : `₹${offer.discountValue} OFF`}
-          </div>
-        )}
-        {frame.featured && !offer && (
-          <Badge className="absolute top-2 left-2 bg-blue-600 text-white text-xs">Featured</Badge>
-        )}
-        {frame.inStock === false && (
-          <Badge className="absolute top-2 right-2 bg-red-100 text-red-700 text-xs border-0">Out of Stock</Badge>
-        )}
-      </div>
-      <div className="p-4">
-        <p className="text-xs text-gray-400 mb-1 font-medium uppercase tracking-wide">{frame.brandId?.name}</p>
-        <h3 className="font-semibold text-gray-900 text-sm leading-snug mb-3 line-clamp-2">{displayName}</h3>
-        <div className="flex items-center justify-between">
-          <span className="font-bold text-blue-700 text-base">₹{frame.framePrice.toLocaleString()}</span>
-          <Badge variant="outline" className="text-xs capitalize text-gray-500">{frame.gender}</Badge>
+      <Link href={`/product/${frame.slug}`} className="block rounded-2xl overflow-hidden bg-white shadow-md hover:shadow-xl transition-shadow duration-300">
+        {/* Image area */}
+        <div className="relative h-36 sm:h-56 bg-slate-50 overflow-hidden">
+          {img ? (
+            <Image
+              src={img}
+              alt={frame.name}
+              fill
+              className="object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+          ) : (
+            <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-slate-300">
+              <Glasses className="w-12 h-12" />
+              <span className="text-xs font-medium">No image</span>
+            </div>
+          )}
+
+          {/* Offer badge */}
+          {offer && (
+            <div
+              className="absolute top-2 left-2 z-10 text-white text-xs font-black px-2 py-0.5 rounded-lg"
+              style={{ background: 'var(--theme-primary)' }}
+            >
+              {offer.discountType === 'percentage' ? `${offer.discountValue}% OFF` : `₹${offer.discountValue} OFF`}
+            </div>
+          )}
+
+          {/* Featured badge */}
+          {frame.featured && !offer && (
+            <div className="absolute top-2 left-2 z-10 bg-amber-400 text-amber-900 text-xs font-black px-2 py-0.5 rounded-lg">
+              Featured
+            </div>
+          )}
+
+          {/* Out of Stock */}
+          {frame.inStock === false && (
+            <div className="absolute top-2 right-2 z-10 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-lg">
+              Out of Stock
+            </div>
+          )}
         </div>
-      </div>
-    </Link>
+
+        {/* Content area */}
+        <div className="p-2.5 sm:p-4 bg-white">
+          <p className="text-[10px] uppercase tracking-widest text-slate-400 mb-0.5 font-medium hidden sm:block">{frame.brandId?.name}</p>
+          <h3 className="font-bold text-slate-900 text-xs sm:text-sm leading-snug mb-2 line-clamp-2">{displayName}</h3>
+          <div className="flex items-center justify-between">
+            <span className="font-black text-sm sm:text-base" style={{ color: 'var(--theme-primary, #2563eb)' }}>
+              ₹{frame.framePrice.toLocaleString()}
+            </span>
+            <Badge variant="outline" className="text-[10px] sm:text-xs capitalize text-slate-400 border-slate-200 hidden sm:flex">
+              {frame.gender}
+            </Badge>
+          </div>
+        </div>
+      </Link>
     </motion.div>
   );
 }

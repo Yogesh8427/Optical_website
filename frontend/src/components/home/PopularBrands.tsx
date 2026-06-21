@@ -15,10 +15,13 @@ export default function PopularBrands() {
 
   if (isLoading) {
     return (
-      <section className="py-20 bg-zinc-950 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden py-20" style={{ background: 'linear-gradient(135deg, var(--theme-primary, #2563eb) 0%, color-mix(in srgb, var(--theme-primary, #2563eb) 60%, #000) 100%)' }}>
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
+          <span className="text-[10rem] md:text-[16rem] font-black text-white/5 whitespace-nowrap tracking-widest">BRANDS</span>
+        </div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-12 text-center">
-            <span className="text-xs font-black uppercase tracking-widest" style={{ color: 'var(--theme-primary)' }}>
+            <span className="text-xs font-black uppercase tracking-widest text-white/60">
               Brands
             </span>
             <h2 className="mt-3 text-4xl md:text-5xl font-black text-white tracking-tight">Popular Brands</h2>
@@ -34,8 +37,14 @@ export default function PopularBrands() {
   }
 
   return (
-    <section className="py-20 bg-zinc-950 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="relative overflow-hidden py-20" style={{ background: 'linear-gradient(135deg, var(--theme-primary, #2563eb) 0%, color-mix(in srgb, var(--theme-primary, #2563eb) 60%, #000) 100%)' }}>
+      {/* Watermark */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
+        <span className="text-[10rem] md:text-[16rem] font-black text-white/5 whitespace-nowrap tracking-widest">
+          BRANDS
+        </span>
+      </div>
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section header */}
         <motion.div
           className="mb-12 text-center"
@@ -44,7 +53,7 @@ export default function PopularBrands() {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <span className="text-xs font-black uppercase tracking-widest" style={{ color: 'var(--theme-primary)' }}>
+          <span className="text-xs font-black uppercase tracking-widest text-white/60">
             Brands
           </span>
           <h2 className="mt-3 text-4xl md:text-5xl font-black text-white tracking-tight">Popular Brands</h2>
