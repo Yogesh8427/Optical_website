@@ -86,11 +86,11 @@ export default function CouponsSection() {
         {/* Heading */}
         <div className="flex items-end justify-between mb-8">
           <div>
-            <p className="text-blue-600 text-sm font-semibold uppercase tracking-wider mb-1">Exclusive Deals</p>
+            <p className="text-sm font-semibold uppercase tracking-wider mb-1" style={{ color: 'var(--theme-primary, #2563eb)' }}>Exclusive Deals</p>
             <h2 className="text-2xl md:text-3xl font-bold text-slate-800">Coupons & Free Offers</h2>
             <p className="text-slate-500 mt-1 text-sm">Claim any offer below — just enter your name and phone number</p>
           </div>
-          <a href="/coupons" className="hidden md:flex items-center gap-1 text-blue-600 text-sm font-medium hover:underline">
+          <a href="/coupons" className="hidden md:flex items-center gap-1 text-sm font-medium hover:underline" style={{ color: 'var(--theme-primary, #2563eb)' }}>
             View all <ArrowRight className="w-3.5 h-3.5" />
           </a>
         </div>
@@ -158,10 +158,9 @@ export default function CouponsSection() {
                     disabled={isFull}
                     onClick={() => { setSelected(c); setClaimed(null); }}
                     className={`w-full py-2 rounded-xl text-sm font-semibold transition-colors ${
-                      isFull
-                        ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                        : 'bg-blue-600 hover:bg-blue-700 text-white'
+                      isFull ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'text-white btn-glow'
                     }`}
+                    style={isFull ? {} : { background: 'var(--theme-primary, #2563eb)' }}
                   >
                     {isFull ? 'Fully Claimed' : 'Claim Now'}
                   </button>
@@ -173,7 +172,7 @@ export default function CouponsSection() {
 
         {/* View all on mobile */}
         <div className="mt-6 text-center md:hidden">
-          <a href="/coupons" className="inline-flex items-center gap-1.5 text-blue-600 text-sm font-medium hover:underline">
+          <a href="/coupons" className="inline-flex items-center gap-1.5 text-sm font-medium hover:underline" style={{ color: 'var(--theme-primary, #2563eb)' }}>
             View all coupons <ArrowRight className="w-3.5 h-3.5" />
           </a>
         </div>
