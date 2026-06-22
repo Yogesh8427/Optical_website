@@ -80,8 +80,8 @@ function QuickInquiry({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
-      <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full max-w-md shadow-2xl max-h-[90dvh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm pb-16 sm:pb-0">
+      <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full max-w-md shadow-2xl overflow-y-auto" style={{ maxHeight: 'calc(85dvh - env(safe-area-inset-bottom, 0px))' }}>
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b">
           <div>

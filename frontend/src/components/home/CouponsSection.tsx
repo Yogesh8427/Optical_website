@@ -180,7 +180,7 @@ export default function CouponsSection() {
 
       {/* Claim modal */}
       {selected && !claimed && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center px-4" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }} onClick={() => setSelected(null)}>
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center px-4 pb-16 sm:pb-0" onClick={() => setSelected(null)}>
           <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm" onClick={e => e.stopPropagation()}>
             <div className="flex items-center gap-3 mb-4">
               <div className={`w-10 h-10 rounded-xl ${typeConfig[selected.type]?.iconBg ?? 'bg-blue-100'} flex items-center justify-center shrink-0`}>
@@ -213,7 +213,7 @@ export default function CouponsSection() {
 
       {/* Success modal */}
       {claimed && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center px-4" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }} onClick={() => setClaimed(null)}>
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center px-4 pb-16 sm:pb-0" onClick={() => setClaimed(null)}>
           <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-sm text-center" onClick={e => e.stopPropagation()}>
             <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
               <CheckCircle className="w-8 h-8 text-green-600" />
