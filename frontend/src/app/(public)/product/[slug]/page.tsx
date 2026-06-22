@@ -233,9 +233,15 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   const related: Frame[] = data?.related ?? [];
   if (!frame) return <div className="text-center py-20 text-gray-500">Product not found.</div>;
 
-  const activeOffer = offersData?.data?.find((o: { productIds?: Array<{ _id?: string } | string>; discountType: string; discountValue: number; title: string; occasionName?: string }) =>
-    !o.productIds?.length || o.productIds.some((p) => ((p as { _id?: string })._id ?? p) === frame._id)
-  ) ?? null;
+  type OfferEntry = { productIds?: Array<{ _id?: string } | string>; brandIds?: Array<{ _id?: string } | string>; categoryIds?: Array<{ _id?: string } | string>; discountType: string; discountValue: number; title: string; occasionName?: string; couponCode?: string };
+  const getId = (x: unknown): string => typeof x === 'string' ? x : (x as { _id?: string })?._id ?? '';
+  const activeOffers: OfferEntry[] = (offersData?.data ?? []).filter((o: OfferEntry) => {
+    const byProduct = o.productIds?.some((p) => getId(p) === frame._id);
+    const byBrand   = o.brandIds?.some((b) => getId(b) === getId(frame.brandId));
+    const byCategory = o.categoryIds?.some((c) => getId(c) === getId(frame.categoryId));
+    const isGlobal  = !o.productIds?.length && !o.brandIds?.length && !o.categoryIds?.length;
+    return byProduct || byBrand || byCategory || isGlobal;
+  });
 
   const colors = frame.colors ?? [];
   const colorImages = _colorImages;
@@ -391,23 +397,33 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
             )}
           </div>
 
-          {activeOffer && (
-            <div
-              className="flex items-center gap-2 rounded-xl px-4 py-2.5 border"
-              style={{
-                background: 'color-mix(in srgb, var(--theme-primary) 10%, white)',
-                borderColor: 'color-mix(in srgb, var(--theme-primary) 20%, white)',
-              }}
-            >
-              <span className="font-black text-lg" style={{ color: 'var(--theme-primary)' }}>
-                {activeOffer.discountType === 'percentage' ? `${activeOffer.discountValue}% OFF` : `₹${activeOffer.discountValue} OFF`}
-              </span>
-              <div>
-                <p className="font-semibold text-sm" style={{ color: 'var(--theme-primary)' }}>{activeOffer.title}</p>
-                {activeOffer.occasionName && (
-                  <p className="text-xs opacity-75" style={{ color: 'var(--theme-primary)' }}>{activeOffer.occasionName}</p>
-                )}
-              </div>
+          {activeOffers.length > 0 && (
+            <div className="space-y-2">
+              {activeOffers.length > 1 && (
+                <p className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--theme-primary)' }}>
+                  🎁 Multiple offers available — claim one
+                </p>
+              )}
+              {activeOffers.map((offer, i) => (
+                <div
+                  key={i}
+                  className="flex items-center gap-2 rounded-xl px-4 py-2.5 border"
+                  style={{
+                    background: 'color-mix(in srgb, var(--theme-primary) 10%, white)',
+                    borderColor: 'color-mix(in srgb, var(--theme-primary) 20%, white)',
+                  }}
+                >
+                  <span className="font-black text-lg" style={{ color: 'var(--theme-primary)' }}>
+                    {offer.discountType === 'percentage' ? `${offer.discountValue}% OFF` : `₹${offer.discountValue} OFF`}
+                  </span>
+                  <div>
+                    <p className="font-semibold text-sm" style={{ color: 'var(--theme-primary)' }}>{offer.title}</p>
+                    {offer.occasionName && (
+                      <p className="text-xs opacity-75" style={{ color: 'var(--theme-primary)' }}>{offer.occasionName}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
           )}
 

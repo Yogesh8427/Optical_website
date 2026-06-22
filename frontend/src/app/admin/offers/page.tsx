@@ -92,9 +92,12 @@ export default function AdminOffersPage() {
     const fd = new FormData();
     const { selectedBrands, selectedCategories, selectedProducts, ...rest } = form;
     Object.entries(rest).forEach(([k, v]) => fd.append(k, String(v)));
-    selectedBrands.forEach(id => fd.append('brandIds', id));
-    selectedCategories.forEach(id => fd.append('categoryIds', id));
-    selectedProducts.forEach(id => fd.append('productIds', id));
+    if (selectedBrands.length === 0) fd.append('brandIds', '');
+    else selectedBrands.forEach(id => fd.append('brandIds', id));
+    if (selectedCategories.length === 0) fd.append('categoryIds', '');
+    else selectedCategories.forEach(id => fd.append('categoryIds', id));
+    if (selectedProducts.length === 0) fd.append('productIds', '');
+    else selectedProducts.forEach(id => fd.append('productIds', id));
     if (bannerFile) fd.append('bannerImage', bannerFile);
     try {
       if (editing) {
