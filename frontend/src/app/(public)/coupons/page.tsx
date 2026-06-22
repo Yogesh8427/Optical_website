@@ -45,7 +45,7 @@ export default function CouponsPage() {
   const [name, setName]   = useState('');
   const [phone, setPhone] = useState('');
   const [claimed, setClaimed] = useState<{ claimId: string; code: string; title: string; description: string } | null>(null);
-  useBodyScrollLock(!!(selected || claimed));
+  useBodyScrollLock(!!selected);
 
   const { data, isLoading } = useQuery({
     queryKey: ['coupons-public'],
