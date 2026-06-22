@@ -1,5 +1,6 @@
 'use client';
 import { use, useState, useEffect, useCallback, useRef } from 'react';
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock';
 import Image from 'next/image';
 import { useFrame } from '@/hooks/useFrames';
 import { useSettings } from '@/hooks/useSettings';
@@ -47,6 +48,7 @@ function QuickInquiry({
   const [note, setNote] = useState('');
   const [checkup, setCheckup] = useState(false);
   const [sending, setSending] = useState(false);
+  useBodyScrollLock(true);
 
   function buildUrl() {
     const productUrl = productSlug ? `${window.location.origin}/product/${productSlug}` : '';
@@ -164,6 +166,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   const [wizardOpen, setWizardOpen] = useState(false);
   const [quickOpen, setQuickOpen] = useState(false);
   const [zoomOpen, setZoomOpen] = useState(false);
+  useBodyScrollLock(wizardOpen || quickOpen || zoomOpen);
   const [paused, setPaused] = useState(false);
   const [prevImg, setPrevImg] = useState<number | null>(null);
   const [direction, setDirection] = useState<'left' | 'right'>('right');

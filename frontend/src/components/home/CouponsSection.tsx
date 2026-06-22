@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import api from '@/lib/api';
@@ -51,6 +52,7 @@ export default function CouponsSection() {
   const [name, setName]           = useState('');
   const [phone, setPhone]         = useState('');
   const [claimed, setClaimed]     = useState<{ claimId: string; code: string; title: string } | null>(null);
+  useBodyScrollLock(!!(selected || claimed));
 
   const { data } = useQuery({
     queryKey: ['coupons-public'],
