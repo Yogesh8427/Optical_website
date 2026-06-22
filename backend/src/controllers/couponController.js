@@ -19,7 +19,7 @@ exports.getPublic = async (req, res, next) => {
     }).sort({ createdAt: -1 });
     const safe = coupons.map(({ _id, code, title, description, type, discountType, discountValue, validUntil, maxUses, usedCount, bannerImage, bgColor }) => ({
       _id, code, title, description, type, discountType, discountValue, validUntil, maxUses, usedCount, bannerImage, bgColor,
-      remaining: maxUses - usedCount,
+      remaining: maxUses === 0 ? 9999 : maxUses - usedCount,
     }));
     res.json({ success: true, data: safe });
   } catch (err) { next(err); }
@@ -31,7 +31,7 @@ exports.getByCode = async (req, res, next) => {
     if (!coupon) return res.status(404).json({ success: false, message: 'Invalid or expired coupon code' });
     const now = new Date();
     if (coupon.validUntil && coupon.validUntil < now) return res.status(400).json({ success: false, message: 'This coupon has expired' });
-    if (coupon.usedCount >= coupon.maxUses) return res.status(400).json({ success: false, message: 'This coupon has reached its usage limit' });
+    if (coupon.maxUses > 0 && coupon.usedCount >= coupon.maxUses) return res.status(400).json({ success: false, message: 'This coupon has reached its usage limit' });
     const { claims, ...safe } = coupon.toObject();
     res.json({ success: true, data: { ...safe, claimsCount: claims.length } });
   } catch (err) { next(err); }
@@ -53,7 +53,7 @@ exports.claim = async (req, res, next) => {
 
     const now = new Date();
     if (coupon.validUntil && coupon.validUntil < now) return res.status(400).json({ success: false, message: 'This coupon has expired' });
-    if (coupon.usedCount >= coupon.maxUses) return res.status(400).json({ success: false, message: 'This coupon has reached its usage limit' });
+    if (coupon.maxUses > 0 && coupon.usedCount >= coupon.maxUses) return res.status(400).json({ success: false, message: 'This coupon has reached its usage limit' });
 
     // Block same phone
     if (coupon.claims.find(c => c.phone === phone)) {
