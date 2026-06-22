@@ -52,18 +52,14 @@ exports.claim = async (req, res, next) => {
     if (!coupon) return res.status(404).json({ success: false, message: 'Invalid or expired coupon' });
 
     const now = new Date();
-    if (coupon.validUntil && coupon.validUntil < now) return res.status(400).json({ success: false, message: 'This coupon has expired' });
-    if (coupon.maxUses > 0 && coupon.usedCount >= coupon.maxUses) return res.status(400).json({ success: false, message: 'This coupon has reached its usage limit' });
+    if (coupon.validUntil && coupon.validUntil < now)
+      return res.status(400).json({ success: false, message: 'This coupon has expired' });
+    if (coupon.maxUses > 0 && coupon.usedCount >= coupon.maxUses)
+      return res.status(400).json({ success: false, message: 'This coupon has reached its usage limit' });
 
     // Block same phone
-    if (coupon.claims.find(c => c.phone === phone)) {
+    if (coupon.claims.find(c => c.phone === phone))
       return res.status(400).json({ success: false, message: 'This phone number has already claimed this coupon' });
-    }
-    // Block same IP (Option 3) — skip for localhost/private IPs
-    const isPrivateIp = !ip || ip === '::1' || ip.startsWith('127.') || ip.startsWith('192.168.') || ip.startsWith('10.');
-    if (!isPrivateIp && coupon.claims.find(c => c.ip === ip)) {
-      return res.status(400).json({ success: false, message: 'A coupon has already been claimed from your device/network. Visit our store for assistance.' });
-    }
 
     const claimId = 'CLM-' + Math.random().toString(36).substring(2, 10).toUpperCase();
     coupon.claims.push({ claimId, name, phone, ip });
