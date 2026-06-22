@@ -7,12 +7,12 @@ import type { WizardFormData, EyePrescription } from '@/types';
 
 // Standard SPH / CYL values from -20.00 to +20.00 in 0.25 steps
 const SPH_CYL_OPTIONS: string[] = [];
-for (let v = -20; v <= 20; v += 0.25) {
+for (let v = -10; v <= 10; v += 0.25) {
   SPH_CYL_OPTIONS.push((v >= 0 ? '+' : '') + v.toFixed(2));
 }
 
 // Axis: 0 to 180
-const AXIS_OPTIONS: string[] = Array.from({ length: 181 }, (_, i) => String(180 - i));
+const AXIS_OPTIONS: string[] = Array.from({ length: 181 }, (_, i) => String(i));
 
 // ADD values
 const ADD_OPTIONS = ['', '+0.75', '+1.00', '+1.25', '+1.50', '+1.75', '+2.00', '+2.25', '+2.50', '+2.75', '+3.00', '+3.50', '+4.00'];
@@ -79,7 +79,7 @@ function PowerCombo({ value, onChange, options, placeholder, label }: ComboProps
       {open && filtered.length > 0 && (
         <div className="absolute z-50 mt-1 w-full bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
           <ul className="max-h-44 overflow-y-auto">
-            {filtered.slice(0, 80).map(opt => (
+            {filtered.slice(0, 200).map(opt => (
               <li
                 key={opt}
                 className={`px-3 py-1.5 text-sm cursor-pointer hover:bg-slate-50 ${opt === value ? 'font-bold' : ''}`}
@@ -135,13 +135,35 @@ export default function Step3bManual({ data, onUpdate, onNext, onBack }: Props) 
       <EyeFields label="Right Eye (OD)" value={data.rightEye} onChange={(v) => onUpdate({ rightEye: v })} />
       <EyeFields label="Left Eye (OS)"  value={data.leftEye}  onChange={(v) => onUpdate({ leftEye: v })} />
 
-      <div>
-        <PowerCombo
-          label="ADD (optional — for reading / bifocal lenses)"
-          placeholder="e.g. +1.50"
-          options={ADD_OPTIONS}
-          value={data.add ?? ''}
-          onChange={v => onUpdate({ add: v })}
+      {/* ADD — pill selector so no dropdown clipping at bottom of modal */}
+      <div className="bg-slate-50 rounded-xl p-4">
+        <p className="font-black text-sm text-slate-700 mb-3">ADD <span className="font-normal text-slate-400 text-xs">(optional — bifocal / reading)</span></p>
+        <div className="flex flex-wrap gap-2">
+          {ADD_OPTIONS.map(opt => {
+            const active = (data.add ?? '') === opt;
+            return (
+              <button
+                key={opt || 'none'}
+                type="button"
+                onClick={() => onUpdate({ add: opt })}
+                className="px-3 py-1.5 rounded-lg text-sm font-semibold border transition-all"
+                style={active
+                  ? { background: 'var(--theme-primary, #2563eb)', color: '#fff', borderColor: 'var(--theme-primary, #2563eb)' }
+                  : { background: '#fff', color: '#475569', borderColor: '#e2e8f0' }
+                }
+              >
+                {opt || 'None'}
+              </button>
+            );
+          })}
+        </div>
+        {/* Allow custom ADD value */}
+        <input
+          type="text"
+          className="mt-3 w-full h-9 px-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 bg-white"
+          placeholder="Or type custom value e.g. +1.75"
+          value={ADD_OPTIONS.includes(data.add ?? '') ? '' : (data.add ?? '')}
+          onChange={e => onUpdate({ add: e.target.value })}
         />
       </div>
 

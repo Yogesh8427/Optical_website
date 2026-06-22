@@ -5,7 +5,7 @@ import NextImage from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   Glasses, LayoutDashboard, Image, Tag, Award, Layers, List,
-  MessageSquare, Settings, LogOut, Star, HelpCircle, ChevronRight, X, ScrollText, ShieldCheck, Percent, Ticket,
+  MessageSquare, Settings, LogOut, Star, HelpCircle, ChevronRight, X, ScrollText, ShieldCheck, Percent, Ticket, Package,
 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { useSettings } from '@/hooks/useSettings';
@@ -35,8 +35,9 @@ const navGroups: NavGroup[] = [
   {
     label: 'Lens Options',
     items: [
-      { href: '/admin/lens-brands', label: 'Lens Brands', icon: Layers },
-      { href: '/admin/lens-types',  label: 'Lens Types',  icon: List },
+      { href: '/admin/lens-brands',   label: 'Lens Brands',    icon: Layers },
+      { href: '/admin/lens-products', label: 'Lens Products',  icon: Package },
+      { href: '/admin/lens-types',    label: 'Lens Types',     icon: List },
     ],
   },
   {
