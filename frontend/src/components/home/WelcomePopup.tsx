@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { useMutation } from '@tanstack/react-query';
@@ -31,6 +32,7 @@ function benefitText(c: PublicCoupon) {
 
 export default function WelcomePopup() {
   const [visible, setVisible]   = useState(false);
+  useBodyScrollLock(visible);
   const [step, setStep]         = useState<'offers' | 'claim' | 'success'>('offers');
   const [selected, setSelected] = useState<PublicCoupon | null>(null);
   const [name, setName]         = useState('');

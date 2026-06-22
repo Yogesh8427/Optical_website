@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect, useMemo, Suspense } from 'react';
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock';
 import { useSearchParams } from 'next/navigation';
 import { useFrames } from '@/hooks/useFrames';
 import ProductCard from '@/components/products/ProductCard';
@@ -23,6 +24,7 @@ function ProductsPageInner() {
 
   const [filters, setFilters] = useState<Filters>(EMPTY);
   const [filterOpen, setFilterOpen] = useState(false);
+  useBodyScrollLock(filterOpen);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
 

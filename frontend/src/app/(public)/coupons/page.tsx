@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { Gift, CheckCircle, Tag, Eye, Clock, Users, X, Ticket } from 'lucide-react';
@@ -44,6 +45,7 @@ export default function CouponsPage() {
   const [name, setName]   = useState('');
   const [phone, setPhone] = useState('');
   const [claimed, setClaimed] = useState<{ claimId: string; code: string; title: string; description: string } | null>(null);
+  useBodyScrollLock(!!(selected || claimed));
 
   const { data, isLoading } = useQuery({
     queryKey: ['coupons-public'],
