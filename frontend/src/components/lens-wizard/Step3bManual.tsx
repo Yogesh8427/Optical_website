@@ -7,7 +7,7 @@ import type { WizardFormData, EyePrescription } from '@/types';
 
 // Standard SPH / CYL values from -20.00 to +20.00 in 0.25 steps
 const SPH_CYL_OPTIONS: string[] = [];
-for (let v = 20; v >= -20; v -= 0.25) {
+for (let v = -0.25; v <= 20; v += 0.25) {
   SPH_CYL_OPTIONS.push((v >= 0 ? '+' : '') + v.toFixed(2));
 }
 
