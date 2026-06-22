@@ -7,12 +7,12 @@ import type { WizardFormData, EyePrescription } from '@/types';
 
 // Standard SPH / CYL values from -20.00 to +20.00 in 0.25 steps
 const SPH_CYL_OPTIONS: string[] = [];
-for (let v = -20; v <= 20; v += 0.25) {
+for (let v = 20; v >= -20; v -= 0.25) {
   SPH_CYL_OPTIONS.push((v >= 0 ? '+' : '') + v.toFixed(2));
 }
 
 // Axis: 0 to 180
-const AXIS_OPTIONS: string[] = Array.from({ length: 181 }, (_, i) => String(i));
+const AXIS_OPTIONS: string[] = Array.from({ length: 181 }, (_, i) => String(180 - i));
 
 // ADD values
 const ADD_OPTIONS = ['', '+0.75', '+1.00', '+1.25', '+1.50', '+1.75', '+2.00', '+2.25', '+2.50', '+2.75', '+3.00', '+3.50', '+4.00'];
