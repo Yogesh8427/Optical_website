@@ -49,7 +49,6 @@ exports.claim = async (req, res, next) => {
       ? { _id: req.params.id, active: true }
       : { code: req.params.id.toUpperCase(), active: true };
     const coupon = await Coupon.findOne(query);
-    console.log('[claim] id:', req.params.id, 'found:', !!coupon, coupon ? { maxUses: coupon.maxUses, usedCount: coupon.usedCount, active: coupon.active, validUntil: coupon.validUntil } : null);
     if (!coupon) return res.status(404).json({ success: false, message: 'Invalid or expired coupon' });
 
     const now = new Date();
@@ -60,7 +59,6 @@ exports.claim = async (req, res, next) => {
 
     // Block same phone
     const alreadyClaimed = coupon.claims.find(c => c.phone === phone);
-    console.log('[claim] phone:', phone, 'alreadyClaimed:', !!alreadyClaimed);
     if (alreadyClaimed)
       return res.status(400).json({ success: false, message: 'This phone number has already claimed this coupon' });
 
