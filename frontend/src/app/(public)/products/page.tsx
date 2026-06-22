@@ -49,9 +49,25 @@ function ProductsPageInner() {
   const { data: offersData } = useOffers(true);
   const offerMap = useMemo(() => {
     const map = new Map();
-    offersData?.data?.forEach((o: { productIds?: Array<{ _id?: string } | string>; discountType: string; discountValue: number }) => o.productIds?.forEach((p) => map.set((p as { _id?: string })._id ?? p, o)));
+    const getId = (x: unknown): string => typeof x === 'string' ? x : (x as { _id?: string })?._id ?? '';
+    offersData?.data?.forEach((o: {
+      productIds?: unknown[]; brandIds?: unknown[]; categoryIds?: unknown[];
+      discountType: string; discountValue: number;
+    }) => {
+      o.productIds?.forEach(p => map.set(getId(p), o));
+      o.brandIds?.forEach(b => { const id = getId(b); if (id) map.set('brand:' + id, o); });
+      o.categoryIds?.forEach(c => { const id = getId(c); if (id) map.set('cat:' + id, o); });
+    });
     return map;
   }, [offersData]);
+
+  function getOffer(frame: { _id: string; brandId?: unknown; categoryId?: unknown }) {
+    const getId = (x: unknown): string => typeof x === 'string' ? x : (x as { _id?: string })?._id ?? '';
+    return offerMap.get(frame._id)
+      ?? offerMap.get('brand:' + getId(frame.brandId))
+      ?? offerMap.get('cat:' + getId(frame.categoryId))
+      ?? null;
+  }
 
   const { data, isLoading } = useFrames({
     search: search || undefined,
@@ -236,7 +252,7 @@ function ProductsPageInner() {
                       viewport={{ once: true }}
                       transition={{ delay: i * 0.04 }}
                     >
-                      <ProductCard frame={frame} offer={offerMap.get(frame._id) ?? null} />
+                      <ProductCard frame={frame} offer={getOffer(frame)} />
                     </motion.div>
                   ))}
                 </div>

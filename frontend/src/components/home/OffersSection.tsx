@@ -5,6 +5,16 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 
+function getOfferLink(offer: Offer & { brandIds?: Array<{_id:string;name:string}>; categoryIds?: Array<{_id:string;slug:string}> }) {
+  const b = offer.brandIds?.[0];
+  const c = offer.categoryIds?.[0];
+  const p = offer.productIds?.[0];
+  if (b) return `/products?brand=${typeof b === 'object' ? b._id : b}`;
+  if (c) return `/products?category=${typeof c === 'object' ? c.slug ?? c._id : c}`;
+  if (p) return `/products?product=${typeof p === 'object' ? p._id ?? p : p}`;
+  return '/products';
+}
+
 export default function OffersSection() {
   const { data } = useOffers(true);
   const offers: Offer[] = data?.data ?? [];
@@ -81,10 +91,10 @@ export default function OffersSection() {
                       )}
                     </div>
                     <Link
-                      href="/products"
+                      href={getOfferLink(offer as Offer & { brandIds?: Array<{_id:string;name:string}>; categoryIds?: Array<{_id:string;slug:string}> })}
                       className="shrink-0 text-xs bg-white text-slate-900 font-bold px-4 py-2 rounded-full hover:bg-white/90 transition-colors"
                     >
-                      {offer.productIds?.length > 0 ? 'Shop Now →' : 'Browse All →'}
+                      Shop Now →
                     </Link>
                   </div>
                 </div>
