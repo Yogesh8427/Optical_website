@@ -66,7 +66,7 @@ export default function Footer() {
   ].filter((s) => s.href?.trim());
 
   return (
-    <footer className="bg-slate-950 text-slate-400 mt-auto mb-16 md:mb-0">
+    <footer className="bg-slate-950 text-slate-400 mt-auto pb-16 md:pb-0">
       {/* Top accent bar */}
       <div className="h-1 w-full" style={{ background: 'var(--theme-primary)' }} />
 
