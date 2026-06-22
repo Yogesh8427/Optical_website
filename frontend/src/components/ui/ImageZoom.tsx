@@ -20,11 +20,7 @@ export default function ImageZoom({ images, activeIndex, onClose, onPrev, onNext
       if (e.key === 'ArrowRight') onNext();
     }
     document.addEventListener('keydown', handleKey);
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.removeEventListener('keydown', handleKey);
-      document.body.style.overflow = '';
-    };
+    return () => document.removeEventListener('keydown', handleKey);
   }, [onClose, onPrev, onNext]);
 
   return (
