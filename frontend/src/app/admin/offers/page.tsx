@@ -1,6 +1,9 @@
 'use client';
 import { useState, useRef } from 'react';
 import { useOffers, useCreateOffer, useUpdateOffer, useDeleteOffer } from '@/hooks/useOffers';
+import { useBrands } from '@/hooks/useBrands';
+import { useCategories } from '@/hooks/useCategories';
+import { useFrames } from '@/hooks/useFrames';
 import { Offer } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,6 +25,9 @@ const emptyForm = {
   startDate: '',
   endDate: '',
   active: true,
+  selectedBrands: [] as string[],
+  selectedCategories: [] as string[],
+  selectedProducts: [] as string[],
 };
 
 function fmtDate(d?: string) {
@@ -32,6 +38,12 @@ function fmtDate(d?: string) {
 export default function AdminOffersPage() {
   const { data, isLoading } = useOffers();
   const offers: Offer[] = data?.data ?? [];
+  const { data: brandsData } = useBrands();
+  const { data: catsData } = useCategories();
+  const { data: framesData } = useFrames({ limit: 200 });
+  const allBrands = brandsData?.data ?? [];
+  const allCategories = catsData?.data ?? [];
+  const allFrames = framesData?.data ?? [];
   const createOffer = useCreateOffer();
   const updateOffer = useUpdateOffer();
   const deleteOffer = useDeleteOffer();
@@ -49,6 +61,12 @@ export default function AdminOffersPage() {
     setOpen(true);
   }
 
+  function getId(x: unknown): string {
+    if (typeof x === 'string') return x;
+    if (x && typeof x === 'object' && '_id' in x) return (x as { _id: string })._id;
+    return '';
+  }
+
   function openEdit(o: Offer) {
     setEditing(o);
     setForm({
@@ -61,6 +79,9 @@ export default function AdminOffersPage() {
       startDate: o.startDate ? o.startDate.slice(0, 10) : '',
       endDate: o.endDate ? o.endDate.slice(0, 10) : '',
       active: o.active,
+      selectedBrands: ((o as unknown as { brandIds?: unknown[] }).brandIds ?? []).map(getId).filter(Boolean),
+      selectedCategories: ((o as unknown as { categoryIds?: unknown[] }).categoryIds ?? []).map(getId).filter(Boolean),
+      selectedProducts: (o.productIds ?? []).map(getId).filter(Boolean),
     });
     setBannerFile(null);
     setOpen(true);
@@ -69,7 +90,11 @@ export default function AdminOffersPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const fd = new FormData();
-    Object.entries(form).forEach(([k, v]) => fd.append(k, String(v)));
+    const { selectedBrands, selectedCategories, selectedProducts, ...rest } = form;
+    Object.entries(rest).forEach(([k, v]) => fd.append(k, String(v)));
+    selectedBrands.forEach(id => fd.append('brandIds', id));
+    selectedCategories.forEach(id => fd.append('categoryIds', id));
+    selectedProducts.forEach(id => fd.append('productIds', id));
     if (bannerFile) fd.append('bannerImage', bannerFile);
     try {
       if (editing) {
@@ -255,6 +280,64 @@ export default function AdminOffersPage() {
                 </span>
               </div>
             </div>
+            {/* Apply to Brands */}
+            {allBrands.length > 0 && (
+              <div className="space-y-1.5">
+                <Label>Apply to Brands <span className="text-slate-400 font-normal text-xs">(optional — leave empty for all)</span></Label>
+                <div className="flex flex-wrap gap-2 p-3 border border-slate-200 rounded-xl max-h-32 overflow-y-auto">
+                  {allBrands.map((b: { _id: string; name: string }) => {
+                    const selected = form.selectedBrands.includes(b._id);
+                    return (
+                      <button key={b._id} type="button"
+                        onClick={() => setForm(f => ({ ...f, selectedBrands: selected ? f.selectedBrands.filter(id => id !== b._id) : [...f.selectedBrands, b._id] }))}
+                        className={`px-3 py-1 rounded-lg text-xs font-semibold border transition-all ${selected ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-600 border-slate-200 hover:border-blue-300'}`}>
+                        {b.name}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Apply to Categories */}
+            {allCategories.length > 0 && (
+              <div className="space-y-1.5">
+                <Label>Apply to Categories <span className="text-slate-400 font-normal text-xs">(optional)</span></Label>
+                <div className="flex flex-wrap gap-2 p-3 border border-slate-200 rounded-xl max-h-32 overflow-y-auto">
+                  {allCategories.map((c: { _id: string; name: string }) => {
+                    const selected = form.selectedCategories.includes(c._id);
+                    return (
+                      <button key={c._id} type="button"
+                        onClick={() => setForm(f => ({ ...f, selectedCategories: selected ? f.selectedCategories.filter(id => id !== c._id) : [...f.selectedCategories, c._id] }))}
+                        className={`px-3 py-1 rounded-lg text-xs font-semibold border transition-all ${selected ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-600 border-slate-200 hover:border-blue-300'}`}>
+                        {c.name}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Apply to Specific Products */}
+            {allFrames.length > 0 && (
+              <div className="space-y-1.5">
+                <Label>Apply to Specific Products <span className="text-slate-400 font-normal text-xs">(optional)</span></Label>
+                <div className="flex flex-col gap-1 p-3 border border-slate-200 rounded-xl max-h-40 overflow-y-auto">
+                  {allFrames.map((f: { _id: string; name: string }) => {
+                    const selected = form.selectedProducts.includes(f._id);
+                    return (
+                      <label key={f._id} className="flex items-center gap-2 cursor-pointer hover:bg-slate-50 px-1 py-0.5 rounded">
+                        <input type="checkbox" checked={selected}
+                          onChange={() => setForm(fm => ({ ...fm, selectedProducts: selected ? fm.selectedProducts.filter(id => id !== f._id) : [...fm.selectedProducts, f._id] }))}
+                          className="accent-blue-600" />
+                        <span className="text-sm text-slate-700">{f.name}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             <div className="flex items-center gap-2">
               <input type="checkbox" id="offerActive" checked={form.active} onChange={e => setForm(f => ({ ...f, active: e.target.checked }))} className="rounded" />
               <Label htmlFor="offerActive">Active</Label>
