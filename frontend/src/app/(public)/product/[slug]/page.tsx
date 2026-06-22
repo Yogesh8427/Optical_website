@@ -48,7 +48,6 @@ function QuickInquiry({
   const [note, setNote] = useState('');
   const [checkup, setCheckup] = useState(false);
   const [sending, setSending] = useState(false);
-  useBodyScrollLock(true);
 
   function buildUrl() {
     const productUrl = productSlug ? `${window.location.origin}/product/${productSlug}` : '';
