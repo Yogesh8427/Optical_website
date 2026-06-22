@@ -6,6 +6,7 @@ import { Toaster } from '@/components/ui/sonner';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import ThemeProvider from '@/components/ThemeProvider';
 import DynamicTitle from '@/components/DynamicTitle';
+import PwaInstallPrompt from '@/components/PwaInstallPrompt';
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -50,6 +51,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <DynamicTitle />
             {children}
             <Toaster richColors position="top-right" />
+            <PwaInstallPrompt />
           </Providers>
         </LanguageProvider>
       </body>

@@ -166,7 +166,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   const [wizardOpen, setWizardOpen] = useState(false);
   const [quickOpen, setQuickOpen] = useState(false);
   const [zoomOpen, setZoomOpen] = useState(false);
-  useBodyScrollLock(wizardOpen || quickOpen || zoomOpen);
+  useBodyScrollLock(quickOpen || zoomOpen);
   const [paused, setPaused] = useState(false);
   const [prevImg, setPrevImg] = useState<number | null>(null);
   const [direction, setDirection] = useState<'left' | 'right'>('right');
