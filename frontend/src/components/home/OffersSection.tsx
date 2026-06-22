@@ -8,10 +8,19 @@ import { motion } from 'framer-motion';
 function getOfferLink(offer: Offer & { brandIds?: Array<{_id:string;name:string}>; categoryIds?: Array<{_id:string;slug:string}> }) {
   const b = offer.brandIds?.[0];
   const c = offer.categoryIds?.[0];
-  const p = offer.productIds?.[0];
+  const products = offer.productIds ?? [];
+
   if (b) return `/products?brand=${typeof b === 'object' ? b._id : b}`;
   if (c) return `/products?category=${typeof c === 'object' ? c.slug ?? c._id : c}`;
-  if (p) return `/products?product=${typeof p === 'object' ? p._id ?? p : p}`;
+
+  // Single product — go directly to product detail page
+  if (products.length === 1) {
+    const p = products[0] as { slug?: string; _id?: string } | string;
+    const slug = typeof p === 'object' ? p.slug ?? p._id : p;
+    if (slug) return `/product/${slug}`;
+  }
+
+  // Multiple products — go to products page (badges will show on matching cards)
   return '/products';
 }
 
