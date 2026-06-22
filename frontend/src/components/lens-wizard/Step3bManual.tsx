@@ -130,8 +130,14 @@ function EyeFields({ label, value, onChange }: { label: string; value: EyePrescr
 }
 
 export default function Step3bManual({ data, onUpdate, onNext, onBack }: Props) {
+  // At least one eye must have SPH filled to continue
+  const hasEntry = !!(data.rightEye.sph?.trim() || data.leftEye.sph?.trim());
+
   return (
     <div className="space-y-4 py-2">
+      <p className="text-xs text-slate-500 bg-slate-50 rounded-lg px-3 py-2">
+        Enter SPH value for at least one eye. All other fields (CYL, AXIS, ADD) are optional.
+      </p>
       <EyeFields label="Right Eye (OD)" value={data.rightEye} onChange={(v) => onUpdate({ rightEye: v })} />
       <EyeFields label="Left Eye (OS)"  value={data.leftEye}  onChange={(v) => onUpdate({ leftEye: v })} />
 
@@ -167,11 +173,16 @@ export default function Step3bManual({ data, onUpdate, onNext, onBack }: Props) 
         />
       </div>
 
+      {!hasEntry && (
+        <p className="text-xs text-red-500 text-center -mt-1">Please enter SPH for at least one eye to continue.</p>
+      )}
+
       <div className="flex gap-3 pt-1">
         <Button variant="ghost" onClick={onBack} className="flex-1">Back</Button>
         <Button
           onClick={onNext}
-          className="flex-1 text-white btn-glow"
+          disabled={!hasEntry}
+          className="flex-1 text-white btn-glow disabled:opacity-50 disabled:cursor-not-allowed"
           style={{ background: 'var(--theme-primary, #2563eb)' }}
         >
           Continue
