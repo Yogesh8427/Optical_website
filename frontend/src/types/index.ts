@@ -223,6 +223,7 @@ export interface WizardFormData {
   lensBrandId: string;
   lensTypes: string[];
   notes: string;
+  needsCheckup: boolean;
   customerName: string;
   phone: string;
   email: string;

@@ -36,9 +36,10 @@ function getColorClass(color: string) {
 
 // ── WhatsApp inquiry form ────────────────────────────────────────────────────
 function QuickInquiry({
-  productName, selectedColor, selectedSize, onClose, whatsappNumber,
+  productName, productSlug, productImage, selectedColor, selectedSize, onClose, whatsappNumber,
 }: {
-  productName: string; selectedColor: string; selectedSize: string;
+  productName: string; productSlug: string; productImage: string;
+  selectedColor: string; selectedSize: string;
   onClose: () => void; whatsappNumber: string;
 }) {
   const [name, setName] = useState('');
@@ -48,18 +49,23 @@ function QuickInquiry({
   const [sending, setSending] = useState(false);
 
   function buildUrl() {
+    const productUrl = productSlug ? `${window.location.origin}/product/${productSlug}` : '';
+    const divider = '─────────────────';
     const lines = [
-      'Hello,',
-      `I am interested in: *${productName}*`,
-      selectedColor ? `Color: ${selectedColor}` : null,
-      selectedSize  ? `Size: ${selectedSize}` : null,
-      '',
-      `Name: ${name}`,
-      `Phone: ${phone}`,
-      checkup ? `Eye Check-up: I would like a check-up at the store` : null,
-      note ? `Note: ${note}` : null,
-      '',
-      'Please share the price and availability. Thank you!',
+      '*New Frame Inquiry*',
+      divider,
+      `*Frame:* ${productName}`,
+      selectedColor ? `*Colour:* ${selectedColor}` : null,
+      selectedSize  ? `*Size:* ${selectedSize}`    : null,
+      productUrl    ? `*Product Page:* ${productUrl}`  : null,
+      productImage  ? `*Product Image:* ${productImage}` : null,
+      divider,
+      `*Name:* ${name}`,
+      `*Phone:* ${phone}`,
+      checkup ? '*Needs eye check-up at store*' : null,
+      note    ? `*Note:* ${note}`                : null,
+      divider,
+      'Please share price and availability.',
     ].filter((l) => l !== null).join('\n');
 
     const num = whatsappNumber.replace(/\D/g, '');
@@ -530,6 +536,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
       {quickOpen && (
         <QuickInquiry
           productName={frame.name}
+          productSlug={frame.slug ?? slug}
+          productImage={activeColorImages[0] ?? ''}
           selectedColor={colors[activeColor] ?? ''}
           selectedSize={frame.sizes?.[activeSize] ?? ''}
           whatsappNumber={whatsappNumber}

@@ -1,7 +1,7 @@
 const Inquiry = require('../models/Inquiry');
 const Frame = require('../models/Frame');
 const LensBrand = require('../models/LensBrand');
-const LensType = require('../models/LensType');
+const LensProduct = require('../models/LensProduct');
 const Settings = require('../models/Settings');
 const buildWhatsAppUrl = require('../utils/whatsappMessage');
 const { uploadToCloudinary } = require('../middleware/upload');
@@ -12,7 +12,7 @@ exports.create = async (req, res, next) => {
       frameId, customerName, phone, email, city,
       powerRequired, rightEye, leftEye, add,
       lensBrandId, lensTypes, notes,
-      selectedColor, selectedSize,
+      selectedColor, selectedSize, needsCheckup,
     } = req.body;
 
     let prescriptionFile = '';
@@ -33,24 +33,41 @@ exports.create = async (req, res, next) => {
       selectedSize: selectedSize || '',
     });
 
-    // Build WhatsApp URL
-    const [frame, lensBrand, lensTypesDocs, settings] = await Promise.all([
+    // Build WhatsApp URL — fetch frame, brand, lens product, settings
+    const lensProductId = Array.isArray(lensTypes) ? lensTypes[0] : null;
+    const [frame, lensBrand, lensProductDoc, settings] = await Promise.all([
       Frame.findById(frameId),
       lensBrandId ? LensBrand.findById(lensBrandId) : null,
-      lensTypes?.length ? LensType.find({ _id: { $in: lensTypes } }) : [],
+      lensProductId ? LensProduct.findById(lensProductId) : null,
       Settings.findOne(),
     ]);
 
+    // First image of selected colour (comma-separated slot)
+    const colorIndex = frame?.colors?.indexOf(selectedColor) ?? 0;
+    const imageSlot = frame?.images?.[colorIndex >= 0 ? colorIndex : 0] || frame?.images?.[0] || '';
+    const frameImage = imageSlot ? imageSlot.split(',')[0].trim() : '';
+
+    const siteUrl = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || '';
+
+    const powerBool = powerRequired === 'true' || powerRequired === true;
+
     const whatsappUrl = settings?.whatsappNumber
       ? buildWhatsAppUrl(settings.whatsappNumber, {
-          frameName: frame?.name || 'Unknown',
+          frameName:    frame?.name  || 'Unknown',
+          frameSlug:    frame?.slug  || '',
+          frameImage,
+          framePrice:   frame?.framePrice || 0,
           selectedColor: selectedColor || '',
-          selectedSize: selectedSize || '',
-          powerRequired: powerRequired === 'true' || powerRequired === true,
-          lensBrand: lensBrand?.name || '',
-          lensTypes: lensTypesDocs.map((t) => t.name),
-          customerName,
-          phone,
+          selectedSize:  selectedSize  || '',
+          powerRequired: powerBool,
+          lensBrand:     lensBrand?.name     || '',
+          lensProduct:   lensProductDoc?.name || '',
+          rightEye:      powerBool ? (typeof rightEye === 'string' ? JSON.parse(rightEye || '{}') : rightEye) : null,
+          leftEye:       powerBool ? (typeof leftEye  === 'string' ? JSON.parse(leftEye  || '{}') : leftEye)  : null,
+          add:           powerBool ? add : null,
+          customerName, phone, email, city, notes,
+          needsCheckup:  needsCheckup === 'true' || needsCheckup === true,
+          siteUrl,
         })
       : null;
 

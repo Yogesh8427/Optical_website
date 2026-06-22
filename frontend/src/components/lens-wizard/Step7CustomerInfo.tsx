@@ -47,6 +47,7 @@ export default function Step7CustomerInfo({ data, onBack, onClose }: Props) {
     form.append('phone', values.phone);
     if (values.email) form.append('email', values.email);
     if (values.city) form.append('city', values.city);
+    if (data.needsCheckup) form.append('needsCheckup', 'true');
 
     mutate(form, {
       onSuccess: (res) => {

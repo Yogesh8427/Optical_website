@@ -27,6 +27,7 @@ const defaultData: WizardFormData = {
   lensBrandId: '',
   lensTypes: [],
   notes: '',
+  needsCheckup: false,
   customerName: '',
   phone: '',
   email: '',
