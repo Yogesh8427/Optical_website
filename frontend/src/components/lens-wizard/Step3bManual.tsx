@@ -104,7 +104,7 @@ function EyeFields({ label, value, onChange }: { label: string; value: EyePrescr
       <p className="font-black text-sm text-slate-700">{label}</p>
       <div className="grid grid-cols-3 gap-3">
         <PowerCombo
-          label="SPH"
+          label="Power"
           placeholder="e.g. -1.50"
           options={SPH_CYL_OPTIONS}
           value={value.sph}
@@ -136,7 +136,7 @@ export default function Step3bManual({ data, onUpdate, onNext, onBack }: Props) 
   return (
     <div className="space-y-4 py-2">
       <p className="text-xs text-slate-500 bg-slate-50 rounded-lg px-3 py-2">
-        Enter SPH for <strong>both eyes</strong>. If no power in one eye, enter <strong>0</strong>. CYL, AXIS and ADD are optional.
+        Enter Power for <strong>both eyes</strong>. If no power in one eye, enter <strong>0</strong>. CYL, AXIS and ADD are optional.
       </p>
       <EyeFields label="Right Eye (OD)" value={data.rightEye} onChange={(v) => onUpdate({ rightEye: v })} />
       <EyeFields label="Left Eye (OS)"  value={data.leftEye}  onChange={(v) => onUpdate({ leftEye: v })} />
@@ -174,7 +174,7 @@ export default function Step3bManual({ data, onUpdate, onNext, onBack }: Props) 
       </div>
 
       {!hasEntry && (
-        <p className="text-xs text-red-500 text-center -mt-1">Please enter SPH for both eyes to continue. Use 0 if one eye has no power.</p>
+        <p className="text-xs text-red-500 text-center -mt-1">Please enter Power for both eyes to continue. Use 0 if one eye has no power.</p>
       )}
 
       <div className="flex gap-3 pt-1">
