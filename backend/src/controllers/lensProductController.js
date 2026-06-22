@@ -7,6 +7,7 @@ exports.getAll = async (req, res, next) => {
     if (req.query.brandId) filter.brandId = req.query.brandId;
     const data = await LensProduct.find(filter)
       .populate('brandId', 'name logo')
+      .populate('lensTypeId', 'name')
       .sort({ sortOrder: 1, name: 1 });
     res.json({ success: true, data });
   } catch (err) { next(err); }
@@ -19,6 +20,7 @@ exports.getAllAdmin = async (req, res, next) => {
     if (req.query.brandId) filter.brandId = req.query.brandId;
     const data = await LensProduct.find(filter)
       .populate('brandId', 'name logo')
+      .populate('lensTypeId', 'name')
       .sort({ sortOrder: 1, name: 1 });
     res.json({ success: true, data });
   } catch (err) { next(err); }
@@ -28,7 +30,7 @@ exports.getAllAdmin = async (req, res, next) => {
 exports.create = async (req, res, next) => {
   try {
     const doc = await LensProduct.create(req.body);
-    const populated = await doc.populate('brandId', 'name logo');
+    const populated = await doc.populate([{ path: 'brandId', select: 'name logo' }, { path: 'lensTypeId', select: 'name' }]);
     res.status(201).json({ success: true, data: populated });
   } catch (err) { next(err); }
 };
@@ -37,7 +39,8 @@ exports.create = async (req, res, next) => {
 exports.update = async (req, res, next) => {
   try {
     const doc = await LensProduct.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
-      .populate('brandId', 'name logo');
+      .populate('brandId', 'name logo')
+      .populate('lensTypeId', 'name');
     if (!doc) return res.status(404).json({ success: false, message: 'Lens product not found' });
     res.json({ success: true, data: doc });
   } catch (err) { next(err); }

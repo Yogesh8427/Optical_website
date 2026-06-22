@@ -4,6 +4,7 @@ import api from '@/lib/api';
 export interface LensProduct {
   _id: string;
   brandId: { _id: string; name: string; logo: string };
+  lensTypeId?: { _id: string; name: string } | null;
   name: string;
   description: string;
   price: number;

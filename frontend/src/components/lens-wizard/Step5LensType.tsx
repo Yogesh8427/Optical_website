@@ -56,9 +56,16 @@ export default function Step5LensType({ data, onUpdate, onNext, onBack }: Props)
               } : {}}
             >
               <div className="flex-1 min-w-0">
-                <p className="font-bold text-sm" style={active ? { color: 'var(--theme-primary, #2563eb)' } : { color: '#1e293b' }}>
-                  {p.name}
-                </p>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <p className="font-bold text-sm" style={active ? { color: 'var(--theme-primary, #2563eb)' } : { color: '#1e293b' }}>
+                    {p.name}
+                  </p>
+                  {p.lensTypeId?.name && (
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 font-bold">
+                      {p.lensTypeId.name}
+                    </span>
+                  )}
+                </div>
                 {p.description && (
                   <p className="text-xs text-slate-400 mt-0.5 line-clamp-2">{p.description}</p>
                 )}
