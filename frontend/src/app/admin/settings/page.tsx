@@ -190,14 +190,14 @@ export default function SettingsPage() {
   const setSo = setSec(setSocial);
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <div className="space-y-4 max-w-7xl mx-auto">
       <h1 className="text-xl md:text-2xl font-bold text-slate-800">Settings</h1>
 
       {/* ── Row 1: Store Info + Contact ─────────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
 
         {/* Store Info */}
-        <form onSubmit={saveStore} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-4">
+        <form onSubmit={saveStore} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 space-y-3">
           <h2 className="font-semibold text-slate-800 text-base">Store Info</h2>
 
           <div>
@@ -244,8 +244,8 @@ export default function SettingsPage() {
         </form>
 
         {/* Contact Details */}
-        <form onSubmit={saveContact} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-4">
-          <h2 className="font-semibold text-slate-800 text-base">📞 Contact Details</h2>
+        <form onSubmit={saveContact} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 space-y-3">
+          <h2 className="font-semibold text-slate-800 text-base">Contact Details</h2>
 
           <div>
             <Label>WhatsApp Number (with country code)</Label>
@@ -269,7 +269,7 @@ export default function SettingsPage() {
       </div>
 
       {/* ── Theme Colours (full width) ───────────────────────── */}
-      <form onSubmit={saveTheme} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-4">
+      <form onSubmit={saveTheme} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 space-y-3">
         <div className="flex items-start justify-between flex-wrap gap-2">
           <div>
             <h2 className="font-semibold text-slate-800 text-base">🎨 Theme Colours</h2>
@@ -277,7 +277,7 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {/* Primary */}
           <div className="rounded-xl border border-slate-200 p-4 space-y-2">
             <p className="text-xs font-semibold text-slate-600">Primary Colour</p>
@@ -392,11 +392,11 @@ export default function SettingsPage() {
       </form>
 
       {/* ── Row 2: Social Links + SEO ───────────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
 
         {/* Social Links */}
-        <form onSubmit={saveSocial} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-4">
-          <h2 className="font-semibold text-slate-800 text-base">🔗 Social Links</h2>
+        <form onSubmit={saveSocial} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 space-y-3">
+          <h2 className="font-semibold text-slate-800 text-base">Social Links</h2>
           {(['facebook', 'instagram', 'twitter', 'youtube'] as const).map((s) => (
             <div key={s}>
               <Label className="capitalize">{s}</Label>
@@ -407,7 +407,7 @@ export default function SettingsPage() {
         </form>
 
         {/* SEO */}
-        <form onSubmit={saveSEO} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-4">
+        <form onSubmit={saveSEO} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 space-y-3">
           <h2 className="font-semibold text-slate-800 text-base">SEO Defaults</h2>
           <div>
             <Label>Default Title</Label>
@@ -415,16 +415,18 @@ export default function SettingsPage() {
           </div>
           <div>
             <Label>Default Description</Label>
-            <Textarea value={seo.seoDescription} onChange={(e) => setSeo((p) => ({ ...p, seoDescription: e.target.value }))} className="mt-1" rows={5} />
+            <Textarea value={seo.seoDescription} onChange={(e) => setSeo((p) => ({ ...p, seoDescription: e.target.value }))} className="mt-1" rows={3} />
           </div>
           <SaveBtn pending={saving.seo} label="Save SEO" />
         </form>
       </div>
 
       {/* ── About Page Content (full width) ─────────────────── */}
-      <form onSubmit={saveAbout} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-4">
-        <h2 className="font-semibold text-slate-800 text-base">📄 About Page Content</h2>
-        <p className="text-xs text-slate-400">This content appears on the public About Us page.</p>
+      <form onSubmit={saveAbout} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 space-y-3">
+        <div>
+          <h2 className="font-semibold text-slate-800 text-base">About Page Content</h2>
+          <p className="text-xs text-slate-400">This content appears on the public About Us page.</p>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div>
