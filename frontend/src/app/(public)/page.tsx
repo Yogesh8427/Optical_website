@@ -30,7 +30,7 @@ export default function HomePage() {
       <FadeIn delay={0.05}><PopularBrands /></FadeIn>
       <FadeIn delay={0.05}><Testimonials /></FadeIn>
       <FadeIn delay={0.05}><FAQSection /></FadeIn>
-      <FadeIn delay={0.05}><ContactSection /></FadeIn>
+      <ContactSection />
     </>
   );
 }
