@@ -254,8 +254,8 @@ export default function CouponsPage() {
 
       {/* Claim modal */}
       {selected && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center p-4" onClick={() => setSelected(null)}>
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setSelected(null)}>
+          <div className="bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl w-full max-w-sm overflow-y-auto" style={{ maxHeight: 'calc(90dvh - env(safe-area-inset-bottom, 0px))', paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 72px)' }} onClick={e => e.stopPropagation()}>
 
             {/* Modal header — primary gradient */}
             <div
