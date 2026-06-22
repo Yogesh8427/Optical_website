@@ -54,7 +54,7 @@ export default function CouponsSection() {
   const [claimed, setClaimed]     = useState<{ claimId: string; code: string; title: string } | null>(null);
   useBodyScrollLock(!!(selected || claimed));
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['coupons-public'],
     queryFn: () => api.get('/coupons/public').then(r => r.data),
   });
@@ -64,7 +64,19 @@ export default function CouponsSection() {
       api.post(`/coupons/${id}/claim`, { name, phone }).then(r => r.data),
   });
 
-  const coupons: PublicCoupon[] = (data?.data ?? []).slice(0, 4); // show max 4 on homepage
+  const coupons: PublicCoupon[] = (data?.data ?? []).slice(0, 4);
+  if (isLoading) return (
+    <section className="py-20 bg-slate-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="h-8 w-40 bg-slate-200 rounded-xl animate-pulse mx-auto mb-12" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="h-48 bg-slate-200 rounded-2xl animate-pulse" />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
   if (!coupons.length) return null;
 
   async function handleClaim(e: React.FormEvent) {

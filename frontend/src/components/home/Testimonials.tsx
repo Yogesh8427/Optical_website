@@ -6,11 +6,23 @@ import { Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function Testimonials() {
-  const { data } = useQuery<ApiResponse<Testimonial[]>>({
+  const { data, isLoading } = useQuery<ApiResponse<Testimonial[]>>({
     queryKey: ['testimonials'],
     queryFn: () => api.get('/testimonials').then((r) => r.data),
   });
   const testimonials = data?.data ?? [];
+  if (isLoading) return (
+    <section className="py-20 bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="h-8 w-48 bg-slate-200 rounded-xl animate-pulse mx-auto mb-12" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="rounded-2xl bg-slate-100 animate-pulse h-48" />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
   if (!testimonials.length) return null;
 
   return (

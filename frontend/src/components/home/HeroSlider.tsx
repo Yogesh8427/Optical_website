@@ -15,7 +15,7 @@ export default function HeroSlider() {
   const [direction, setDirection] = useState<'left' | 'right'>('right');
   const [animating, setAnimating] = useState(false);
 
-  const { data } = useQuery<ApiResponse<Banner[]>>({
+  const { data, isLoading } = useQuery<ApiResponse<Banner[]>>({
     queryKey: ['banners'],
     queryFn: () => api.get('/banners').then((r) => r.data),
   });
@@ -47,6 +47,14 @@ export default function HeroSlider() {
   const exitClass = direction === 'right'
     ? 'animate-slide-out-left'
     : 'animate-slide-out-right';
+
+  if (isLoading) {
+    return (
+      <div className="relative h-[520px] overflow-hidden bg-slate-200 animate-pulse">
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 animate-shimmer bg-[length:200%_100%]" />
+      </div>
+    );
+  }
 
   if (!banners.length) {
     return (

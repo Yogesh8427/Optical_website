@@ -7,13 +7,23 @@ import { ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function FAQSection() {
-  const { data } = useQuery<ApiResponse<FAQ[]>>({
+  const { data, isLoading } = useQuery<ApiResponse<FAQ[]>>({
     queryKey: ['faqs'],
     queryFn: () => api.get('/faqs').then((r) => r.data),
   });
   const faqs = data?.data ?? [];
   const [open, setOpen] = useState<string | null>(null);
 
+  if (isLoading) return (
+    <section className="py-20 bg-slate-950">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="h-8 w-32 bg-slate-700 rounded-xl animate-pulse mx-auto mb-12" />
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="h-14 bg-slate-800 rounded-2xl animate-pulse mb-3" />
+        ))}
+      </div>
+    </section>
+  );
   if (!faqs.length) return null;
 
   return (
