@@ -66,7 +66,7 @@ export default function Footer() {
   ].filter((s) => s.href?.trim());
 
   return (
-    <footer className="bg-slate-950 text-slate-400 mt-auto pb-16 md:pb-0">
+    <footer className="bg-slate-950 text-slate-400 mt-auto">
       {/* Top accent bar */}
       <div className="h-1 w-full" style={{ background: 'var(--theme-primary)' }} />
 
@@ -197,7 +197,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="border-t border-slate-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-2">
+        <div className="border-t border-slate-800 pt-6 pb-20 md:pb-6 flex flex-col sm:flex-row items-center justify-between gap-2">
           <p className="text-xs text-slate-600">
             &copy; {new Date().getFullYear()} {storeName}. {t.footer.rights}
           </p>
