@@ -66,7 +66,7 @@ function ProductsPageInner() {
     return map;
   }, [offersData]);
 
-  function getOffer(frame: { _id: string; brandId?: unknown; categoryId?: unknown }) {
+  function getOffer(frame: { _id: string; brandId?: unknown; categoryId?: unknown }): { discountType: string; discountValue: number } | null {
     const sid = (x: unknown): string => {
       if (!x) return '';
       if (typeof x === 'string') return x;
