@@ -41,7 +41,7 @@ export default function NewArrivals() {
         </motion.div>
 
         {/* Horizontal scroll on mobile, grid on desktop */}
-        <div className="flex overflow-x-auto gap-4 pb-3 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-4 md:gap-5 md:overflow-visible md:pb-0">
+        <div className="flex overflow-x-auto gap-4 pb-3 snap-x snap-mandatory [touch-action:pan-x] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-4 md:gap-5 md:overflow-visible md:pb-0">
           {isLoading
             ? Array.from({ length: 4 }).map((_, i) => (
                 <div key={i} className="flex-shrink-0 w-[140px] md:w-auto snap-start">
