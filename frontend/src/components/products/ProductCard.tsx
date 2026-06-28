@@ -21,7 +21,7 @@ export default function ProductCard({ frame, offer }: { frame: Frame; offer?: { 
     >
       <Link href={`/product/${frame.slug}`} className="card-shimmer flex flex-col h-full rounded-2xl overflow-hidden bg-white shadow-md hover:shadow-2xl transition-all duration-300">
         {/* Image area — fixed height so all cards align */}
-        <div className="relative h-36 sm:h-52 shrink-0 bg-slate-50 overflow-hidden">
+        <div className="relative h-[110px] sm:h-52 shrink-0 bg-slate-50 overflow-hidden">
           {img ? (
             <Image
               src={img}
@@ -62,17 +62,14 @@ export default function ProductCard({ frame, offer }: { frame: Frame; offer?: { 
         </div>
 
         {/* Content area — flex-1 pushes price to bottom so all cards are same height */}
-        <div className="flex flex-col flex-1 p-2.5 sm:p-4 bg-white">
-          <p className="text-[10px] uppercase tracking-widest text-slate-400 mb-0.5 font-medium hidden sm:block">{frame.brandId?.name}</p>
-          <h3 className="font-bold text-slate-900 text-xs sm:text-sm leading-snug mb-2 line-clamp-2 flex-1">{displayName}</h3>
-          <div className="flex items-center justify-between mt-auto">
-            <span className="font-black text-sm sm:text-base" style={{ color: 'var(--theme-primary, #2563eb)' }}>
-              ₹{frame.framePrice.toLocaleString()}
-            </span>
-            <Badge variant="outline" className="text-[10px] sm:text-xs capitalize text-slate-400 border-slate-200 hidden sm:flex">
-              {frame.gender}
-            </Badge>
-          </div>
+        <div className="flex flex-col p-2 sm:p-4 bg-white">
+          <h3 className="font-bold text-slate-900 text-[11px] sm:text-sm leading-snug line-clamp-1 sm:line-clamp-2">{displayName}</h3>
+          <span className="font-black text-xs sm:text-base mt-1" style={{ color: 'var(--theme-primary, #2563eb)' }}>
+            ₹{frame.framePrice.toLocaleString()}
+          </span>
+          <Badge variant="outline" className="text-[10px] capitalize text-slate-400 border-slate-200 hidden sm:flex mt-1">
+            {frame.gender}
+          </Badge>
         </div>
       </Link>
     </motion.div>

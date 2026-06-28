@@ -199,6 +199,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   const [direction, setDirection] = useState<'left' | 'right'>('right');
   const [animating, setAnimating] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const touchStartX = useRef<number | null>(null);
 
   const whatsappNumber = settingsData?.data?.whatsappNumber
     ?? process.env.NEXT_PUBLIC_WHATSAPP_NUMBER
@@ -261,13 +262,18 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   const related: Frame[] = data?.related ?? [];
   if (!frame) return <div className="text-center py-20 text-gray-500">Product not found.</div>;
 
-  type OfferEntry = { productIds?: Array<{ _id?: string } | string>; brandIds?: Array<{ _id?: string } | string>; categoryIds?: Array<{ _id?: string } | string>; discountType: string; discountValue: number; title: string; occasionName?: string; couponCode?: string };
-  const getId = (x: unknown): string => typeof x === 'string' ? x : (x as { _id?: string })?._id ?? '';
+  type OfferEntry = { productIds?: unknown[]; brandIds?: unknown[]; categoryIds?: unknown[]; discountType: string; discountValue: number; title: string; occasionName?: string; couponCode?: string };
+  const sid = (x: unknown): string => {
+    if (!x) return '';
+    if (typeof x === 'string') return x;
+    const o = x as Record<string, unknown>;
+    return String(o._id ?? o.id ?? '');
+  };
   const activeOffers: OfferEntry[] = (offersData?.data ?? []).filter((o: OfferEntry) => {
-    const byProduct = o.productIds?.some((p) => getId(p) === frame._id);
-    const byBrand   = o.brandIds?.some((b) => getId(b) === getId(frame.brandId));
-    const byCategory = o.categoryIds?.some((c) => getId(c) === getId(frame.categoryId));
-    const isGlobal  = !o.productIds?.length && !o.brandIds?.length && !o.categoryIds?.length;
+    const byProduct  = o.productIds?.some((p) => sid(p) === frame._id);
+    const byBrand    = o.brandIds?.some((b) => sid(b) === sid(frame.brandId));
+    const byCategory = o.categoryIds?.some((c) => sid(c) === sid(frame.categoryId));
+    const isGlobal   = !o.productIds?.length && !o.brandIds?.length && !o.categoryIds?.length;
     return byProduct || byBrand || byCategory || isGlobal;
   });
 
@@ -281,8 +287,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-16">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-8 pb-32 md:pb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 mb-8 md:mb-16">
 
         {/* Images */}
         <div className="space-y-3">
@@ -301,10 +307,21 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
 
           {/* Main image carousel */}
           <div
-            className="relative h-80 md:h-[420px] rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 cursor-zoom-in select-none"
+            className="relative h-64 md:h-[420px] rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 cursor-zoom-in select-none"
             onClick={() => displayImage && setZoomOpen(true)}
             onMouseEnter={() => setPaused(true)}
             onMouseLeave={() => setPaused(false)}
+            onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
+            onTouchEnd={(e) => {
+              if (touchStartX.current === null) return;
+              const delta = e.changedTouches[0].clientX - touchStartX.current;
+              touchStartX.current = null;
+              if (Math.abs(delta) < 40) return;
+              const total = activeColorImages.length;
+              if (total <= 1) return;
+              if (delta < 0) goToImg((activeImg + 1) % total, 'right', total);
+              else goToImg((activeImg - 1 + total) % total, 'left', total);
+            }}
           >
             {/* Exiting slide */}
             {prevImg !== null && activeColorImages[prevImg] && (
@@ -402,12 +419,12 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
             >
               {frame.brandId?.name}
             </p>
-            <h1 className="text-3xl md:text-4xl font-black tracking-tight text-gray-900 leading-tight">{localize(frame)}</h1>
+            <h1 className="text-xl md:text-4xl font-black tracking-tight text-gray-900 leading-tight">{localize(frame)}</h1>
           </div>
 
           <div className="flex items-center gap-3 flex-wrap">
             <span
-              className="text-2xl md:text-3xl font-black"
+              className="text-xl md:text-3xl font-black"
               style={{ color: 'var(--theme-primary)' }}
             >
               ₹{frame.framePrice.toLocaleString()}
@@ -527,8 +544,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
             </div>
           )}
 
-          {/* ── CTA ── */}
-          <div className="space-y-3">
+          {/* ── CTA — desktop only (mobile gets sticky bar) ── */}
+          <div className="hidden md:block space-y-3">
             <button
               onClick={() => setQuickOpen(true)}
               className="btn-glow w-full text-white text-base font-bold py-4 rounded-2xl transition-all shadow-lg flex items-center justify-center gap-2"
@@ -556,18 +573,41 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
       {/* Related */}
       {related.length > 0 && (
         <div>
-          <p
-            className="text-xs font-black tracking-widest uppercase mb-1"
-            style={{ color: 'var(--theme-primary)' }}
-          >
-            RELATED
-          </p>
-          <h2 className="text-xl md:text-2xl font-black tracking-tight text-gray-900 mb-6">Related Products</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5">
-            {related.map((f) => <ProductCard key={f._id} frame={f} />)}
+          <p className="text-xs font-black tracking-widest uppercase mb-1" style={{ color: 'var(--theme-primary)' }}>RELATED</p>
+          <h2 className="text-lg md:text-2xl font-black tracking-tight text-gray-900 mb-4">Related Products</h2>
+          <div className="flex overflow-x-auto overflow-y-hidden gap-4 pb-3 snap-x snap-mandatory [touch-action:pan-x] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-4 md:overflow-visible md:pb-0">
+            {related.map((f) => (
+              <div key={f._id} className="flex-shrink-0 w-[140px] md:w-auto snap-start">
+                <ProductCard frame={f} />
+              </div>
+            ))}
           </div>
         </div>
       )}
+
+      {/* ── Sticky CTA bar — mobile only ── */}
+      <div className="md:hidden fixed bottom-16 left-0 right-0 z-40 px-4 pb-2 pt-3 bg-white/90 backdrop-blur-md border-t border-slate-100 shadow-2xl">
+        <div className="flex gap-2">
+          <button
+            onClick={() => setQuickOpen(true)}
+            className="btn-glow flex-1 text-white text-sm font-bold py-3 rounded-xl flex items-center justify-center gap-2"
+            style={{ background: 'var(--theme-primary, #2563eb)' }}
+          >
+            <WhatsAppIcon className="w-4 h-4" />
+            Inquire
+          </button>
+          {frame.requiresLens !== false && (
+            <button
+              onClick={() => setWizardOpen(true)}
+              className="flex-1 border-2 text-sm font-bold py-3 rounded-xl flex items-center justify-center gap-2"
+              style={{ borderColor: 'var(--theme-primary)', color: 'var(--theme-primary)' }}
+            >
+              Add Lenses
+            </button>
+          )}
+          <ShareButton name={frame.name} slug={frame.slug} image={displayImage ?? frame.images?.[0]?.split(',')[0]?.trim()} />
+        </div>
+      </div>
 
       {/* Lens Wizard — optional prescription */}
       {wizardOpen && (

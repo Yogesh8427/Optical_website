@@ -55,12 +55,12 @@ export default function ContactSection() {
 
   return (
     <section
-      className="py-20 text-white relative overflow-hidden"
+      className="py-8 md:py-20 text-white relative overflow-hidden"
       style={{ background: 'linear-gradient(135deg, var(--theme-primary, #2563eb) 0%, color-mix(in srgb, var(--theme-primary, #2563eb) 60%, #000) 100%)' }}
     >
       {/* Watermark */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
-        <span className="text-[10rem] md:text-[16rem] font-black text-white/5 whitespace-nowrap tracking-widest">TALK</span>
+        <span className="hidden md:block text-[10rem] md:text-[16rem] font-black text-white/5 whitespace-nowrap tracking-widest">TALK</span>
       </div>
 
       {/* Floating orbs */}
@@ -71,8 +71,8 @@ export default function ContactSection() {
 
       <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <p className="text-xs font-black uppercase tracking-widest mb-3 text-white/60">CONTACT</p>
-        <h2 className="text-5xl font-black tracking-tight mb-4">Let&apos;s Talk</h2>
-        <p className="text-white/70 mb-14 text-lg max-w-xl mx-auto leading-relaxed">
+        <h2 className="text-2xl md:text-5xl font-black tracking-tight mb-3">Let&apos;s Talk</h2>
+        <p className="text-white/70 mb-8 md:mb-14 text-sm md:text-lg max-w-xl mx-auto leading-relaxed">
           Have questions about frames or lenses? We&apos;d love to help you find the perfect eyewear.
         </p>
 

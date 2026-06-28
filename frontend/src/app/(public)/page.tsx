@@ -32,7 +32,7 @@ export default function HomePage() {
       <FadeIn delay={0.05}><RepairSection /></FadeIn>
       <FadeIn delay={0.05}><Testimonials /></FadeIn>
       <FadeIn delay={0.05}><FAQSection /></FadeIn>
-      <ContactSection />
+      <div className="hidden md:block"><ContactSection /></div>
     </>
   );
 }

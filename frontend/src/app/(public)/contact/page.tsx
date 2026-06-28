@@ -99,9 +99,9 @@ export default function ContactPage() {
   ].filter((c) => c.show);
 
   return (
-    <div>
+    <div className="pb-20">
       {/* Hero */}
-      <section className="relative overflow-hidden py-20 px-4 sm:px-6 lg:px-8" style={{ background: 'linear-gradient(135deg, var(--theme-primary, #2563eb) 0%, color-mix(in srgb, var(--theme-primary, #2563eb) 60%, #000) 100%)' }}>
+      <section className="relative overflow-hidden py-8 md:py-20 px-4 sm:px-6 lg:px-8" style={{ background: 'linear-gradient(135deg, var(--theme-primary, #2563eb) 0%, color-mix(in srgb, var(--theme-primary, #2563eb) 60%, #000) 100%)' }}>
         {/* Watermark */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
           <span className="text-[10rem] md:text-[16rem] font-black text-white/5 whitespace-nowrap tracking-widest">
@@ -113,7 +113,7 @@ export default function ContactPage() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className="text-xs font-black uppercase tracking-widest mb-4 text-white/60"
+            className="text-xs font-black uppercase tracking-widest mb-2 text-white/60"
           >
             Contact
           </motion.p>
@@ -121,7 +121,7 @@ export default function ContactPage() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.1 }}
-            className="text-5xl font-black tracking-tight text-white mb-4"
+            className="text-2xl md:text-5xl font-black tracking-tight text-white mb-2 md:mb-4"
           >
             Contact {storeName}
           </motion.h1>
@@ -129,7 +129,7 @@ export default function ContactPage() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.2 }}
-            className="text-slate-400 text-lg"
+            className="text-slate-400 text-sm md:text-lg"
           >
             We&apos;d love to hear from you. Reach us through any of the channels below.
           </motion.p>
@@ -137,10 +137,10 @@ export default function ContactPage() {
       </section>
 
       {/* Cards */}
-      <section className="bg-white py-16 px-4 sm:px-6 lg:px-8">
+      <section className="bg-white py-5 md:py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           {contactCards.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-5">
               {contactCards.map((card, i) => (
                 <motion.div
                   key={i}
@@ -148,7 +148,7 @@ export default function ContactPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: i * 0.1 }}
-                  className="relative overflow-hidden flex items-start gap-4 p-5 rounded-2xl shadow-md text-white"
+                  className="relative overflow-hidden flex items-start gap-3 p-4 md:p-5 rounded-2xl shadow-md text-white"
                   style={{ background: 'linear-gradient(135deg, var(--theme-primary, #2563eb) 0%, color-mix(in srgb, var(--theme-primary, #2563eb) 60%, #000) 100%)' }}
                 >
                   <div className="absolute -top-4 -right-4 w-20 h-20 rounded-full bg-white/5 pointer-events-none" />
@@ -179,7 +179,7 @@ export default function ContactPage() {
               transition={{ duration: 0.4 }}
               className="mt-12"
             >
-              <h2 className="text-4xl md:text-5xl font-black tracking-tight text-gray-900 mb-6">
+              <h2 className="text-2xl md:text-5xl font-black tracking-tight text-gray-900 mb-4 md:mb-6">
                 Find Us
               </h2>
               <div className="rounded-2xl overflow-hidden border border-slate-800 h-72 shadow-md">

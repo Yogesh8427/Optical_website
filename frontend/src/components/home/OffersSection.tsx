@@ -30,17 +30,17 @@ export default function OffersSection() {
   if (!offers.length) return null;
 
   return (
-    <section className="py-20 px-4 bg-white">
+    <section className="py-6 md:py-20 px-4 bg-white">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-10">
+        <div className="mb-4 md:mb-10">
           <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: 'var(--theme-primary)' }}>
             OFFERS
           </p>
-          <h2 className="text-4xl font-black text-slate-900 tracking-tight">Exclusive Deals</h2>
+          <h2 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight">Exclusive Deals</h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="flex overflow-x-auto overflow-y-hidden gap-4 pb-3 snap-x snap-mandatory [touch-action:pan-x] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-5 md:overflow-visible md:pb-0">
           {offers.map((offer, i) => (
             <motion.div
               key={offer._id}
@@ -48,7 +48,7 @@ export default function OffersSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-40px' }}
               transition={{ duration: 0.4, delay: i * 0.08, ease: 'easeOut' }}
-              className="relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 min-h-[200px] flex flex-col justify-between"
+              className="flex-shrink-0 w-[260px] md:w-auto snap-start relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 min-h-[200px] flex flex-col justify-between"
               style={{ backgroundColor: offer.bgColor || '#2563eb' }}
             >
               {/* Background image */}

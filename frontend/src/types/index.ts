@@ -185,6 +185,8 @@ export interface Offer {
   discountType: 'percentage' | 'flat';
   discountValue: number;
   productIds: { _id: string; name: string; slug: string; images: string[]; framePrice: number }[];
+  brandIds: { _id: string; name: string; logo: string }[];
+  categoryIds: { _id: string; name: string; slug: string }[];
   bannerImage: string;
   bgColor: string;
   startDate?: string;

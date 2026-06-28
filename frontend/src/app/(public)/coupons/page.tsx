@@ -76,7 +76,7 @@ export default function CouponsPage() {
   /* ── Claimed success screen ── */
   if (claimed) {
     return (
-      <div className="min-h-screen bg-slate-50 py-16 px-4">
+      <div className="min-h-screen bg-slate-50 py-8 px-4 pb-20">
         <div className="max-w-md mx-auto">
           <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 text-center">
             <div
@@ -116,11 +116,11 @@ export default function CouponsPage() {
 
   /* ── Main page ── */
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 pb-20">
 
       {/* Hero header — primary gradient */}
       <div
-        className="relative overflow-hidden py-16 px-4 text-white text-center"
+        className="relative overflow-hidden py-8 md:py-16 px-4 text-white text-center"
         style={{ background: 'linear-gradient(135deg, var(--theme-primary,#2563eb) 0%, color-mix(in srgb, var(--theme-primary,#2563eb) 60%,#000) 100%)' }}
       >
         {/* Floating orbs */}
@@ -136,12 +136,12 @@ export default function CouponsPage() {
           <div className="inline-flex items-center justify-center w-14 h-14 bg-white/15 rounded-2xl mb-4">
             <Ticket className="w-7 h-7 text-white" />
           </div>
-          <h1 className="text-3xl md:text-4xl font-black tracking-tight">Exclusive Offers &amp; Coupons</h1>
-          <p className="text-white/70 mt-2 text-base">Pick a coupon and claim it with your name and phone number</p>
+          <h1 className="text-2xl md:text-4xl font-black tracking-tight">Exclusive Offers &amp; Coupons</h1>
+          <p className="text-white/70 mt-1 text-sm md:text-base">Pick a coupon and claim it with your name and phone number</p>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-10">
+      <div className="max-w-4xl mx-auto px-4 py-5 md:py-10">
 
         {/* Loading */}
         {isLoading && (
@@ -174,7 +174,7 @@ export default function CouponsPage() {
                 >
                   {/* Banner image */}
                   {c.bannerImage && (
-                    <div className="relative h-40 w-full shrink-0">
+                    <div className="relative h-32 md:h-40 w-full shrink-0">
                       <img src={c.bannerImage} alt={c.title} className="w-full h-full object-cover" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                       <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between">
@@ -187,7 +187,7 @@ export default function CouponsPage() {
                     </div>
                   )}
 
-                  <div className="p-5 flex flex-col gap-4 flex-1">
+                  <div className="p-4 md:p-5 flex flex-col gap-3 md:gap-4 flex-1">
                     {/* Top row — icon + title + benefit */}
                     {!c.bannerImage && (
                       <div className="flex items-start justify-between gap-3">

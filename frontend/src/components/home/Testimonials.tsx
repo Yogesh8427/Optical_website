@@ -12,9 +12,9 @@ export default function Testimonials() {
   });
   const testimonials = data?.data ?? [];
   if (isLoading) return (
-    <section className="py-20 bg-white">
+    <section className="py-6 md:py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="h-8 w-48 bg-slate-200 rounded-xl animate-pulse mx-auto mb-12" />
+        <div className="h-8 w-48 bg-slate-200 rounded-xl animate-pulse mx-auto mb-5 md:mb-12" />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {Array.from({ length: 3 }).map((_, i) => (
             <div key={i} className="rounded-2xl bg-slate-100 animate-pulse h-48" />
@@ -26,7 +26,7 @@ export default function Testimonials() {
   if (!testimonials.length) return null;
 
   return (
-    <section className="py-20 bg-white relative overflow-hidden">
+    <section className="py-6 md:py-20 bg-white relative overflow-hidden">
       {/* Subtle animated background blobs */}
       <div className="pointer-events-none select-none absolute inset-0">
         <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full blur-3xl animate-breathe" style={{ background: 'color-mix(in srgb, var(--theme-primary,#2563eb) 8%, transparent)' }} />
@@ -35,7 +35,7 @@ export default function Testimonials() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         {/* Section header */}
         <motion.div
-          className="mb-12 text-center"
+          className="mb-5 md:mb-12 text-center"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -44,17 +44,17 @@ export default function Testimonials() {
           <span className="text-xs font-black uppercase tracking-widest" style={{ color: 'var(--theme-primary)' }}>
             Testimonials
           </span>
-          <h2 className="mt-3 text-4xl md:text-5xl font-black text-slate-900 tracking-tight">
+          <h2 className="mt-3 text-2xl md:text-5xl font-black text-slate-900 tracking-tight">
             What Our Customers Say
           </h2>
         </motion.div>
 
-        {/* Grid — 1 col on mobile, 3 col on desktop */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        {/* Horizontal scroll on mobile, grid on desktop */}
+        <div className="flex overflow-x-auto overflow-y-hidden gap-4 pb-3 snap-x snap-mandatory [touch-action:pan-x] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-3 md:gap-5 md:overflow-visible md:pb-0">
           {testimonials.map((t, idx) => (
             <motion.div
               key={t._id}
-              className="w-full"
+              className="flex-shrink-0 w-[280px] md:w-auto snap-start"
               initial={{ opacity: 0, y: 32 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}

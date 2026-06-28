@@ -21,19 +21,19 @@ export default function RepairSection() {
   const href = whatsapp ? `https://wa.me/${whatsapp}?text=${message}` : '#';
 
   return (
-    <section className="py-16 px-4 bg-slate-50">
+    <section className="py-6 md:py-16 px-4 bg-slate-50">
       <div className="max-w-7xl mx-auto">
-        <div className="rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8"
+        <div className="rounded-2xl p-4 md:p-12 flex flex-row md:flex-row items-center justify-between gap-4"
           style={{ background: 'linear-gradient(135deg, var(--theme-primary, #2563eb) 0%, color-mix(in srgb, var(--theme-primary, #2563eb) 70%, #000) 100%)' }}>
 
-          <div className="flex items-center gap-5 text-white">
-            <div className="w-16 h-16 rounded-2xl bg-white/15 flex items-center justify-center shrink-0">
-              <Wrench className="w-8 h-8 text-white" />
+          <div className="flex items-center gap-3 text-white flex-1 min-w-0">
+            <div className="w-10 h-10 md:w-16 md:h-16 rounded-xl md:rounded-2xl bg-white/15 flex items-center justify-center shrink-0">
+              <Wrench className="w-5 h-5 md:w-8 md:h-8 text-white" />
             </div>
-            <div>
-              <h2 className="text-2xl md:text-3xl font-black text-white">Frame Repair Service</h2>
-              <p className="text-white/75 mt-1 text-sm md:text-base max-w-md">
-                Broken hinge? Bent frame? Send us a message on WhatsApp — we&apos;ll check if it can be repaired and guide you from there.
+            <div className="min-w-0">
+              <h2 className="text-base md:text-3xl font-black text-white leading-tight">Frame Repair Service</h2>
+              <p className="text-white/75 mt-0.5 text-xs md:text-base line-clamp-2 md:line-clamp-none">
+                Broken hinge? Bent frame? Chat with us on WhatsApp.
               </p>
             </div>
           </div>
@@ -42,11 +42,11 @@ export default function RepairSection() {
             href={href}
             target="_blank"
             rel="noopener noreferrer"
-            className="shrink-0 flex items-center gap-3 bg-white font-black text-sm px-6 py-4 rounded-2xl hover:bg-white/90 transition-colors shadow-lg whitespace-nowrap"
+            className="shrink-0 flex items-center gap-2 bg-white font-black text-xs md:text-sm px-3 md:px-6 py-2.5 md:py-4 rounded-xl md:rounded-2xl hover:bg-white/90 transition-colors shadow-lg whitespace-nowrap"
             style={{ color: 'var(--theme-primary, #2563eb)' }}
           >
-            <WhatsAppIcon className="w-5 h-5" />
-            Enquire for Repair
+            <WhatsAppIcon className="w-4 h-4 md:w-5 md:h-5" />
+            <span className="hidden sm:inline">Enquire for </span>Repair
           </a>
         </div>
       </div>

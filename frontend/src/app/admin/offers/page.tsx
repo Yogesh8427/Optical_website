@@ -316,24 +316,29 @@ export default function AdminOffersPage() {
               </div>
             )}
 
-            {/* Apply to Categories */}
-            {allCategories.length > 0 && (
-              <div className="space-y-1.5">
-                <Label>Apply to Categories <span className="text-slate-400 font-normal text-xs">(optional)</span></Label>
-                <div className="flex flex-wrap gap-2 p-3 border border-slate-200 rounded-xl max-h-32 overflow-y-auto">
-                  {allCategories.map((c: { _id: string; name: string }) => {
-                    const selected = form.selectedCategories.includes(c._id);
-                    return (
-                      <button key={c._id} type="button"
-                        onClick={() => setForm(f => ({ ...f, selectedCategories: selected ? f.selectedCategories.filter(id => id !== c._id) : [...f.selectedCategories, c._id] }))}
-                        className={`px-3 py-1 rounded-lg text-xs font-semibold border transition-all ${selected ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-600 border-slate-200 hover:border-blue-300'}`}>
-                        {c.name}
-                      </button>
-                    );
-                  })}
+            {/* Apply to Categories — sub-categories only (frames are assigned to sub-categories) */}
+            {allCategories.length > 0 && (() => {
+              const subCats = allCategories.filter((c: { _id: string; name: string; parentId?: unknown }) => !!c.parentId);
+              if (!subCats.length) return null;
+              return (
+                <div className="space-y-1.5">
+                  <Label>Apply to Categories <span className="text-slate-400 font-normal text-xs">(optional)</span></Label>
+                  <div className="flex flex-wrap gap-2 p-3 border border-slate-200 rounded-xl max-h-32 overflow-y-auto">
+                    {subCats.map((c: { _id: string; name: string; parentId?: { name?: string } | string }) => {
+                      const selected = form.selectedCategories.includes(c._id);
+                      const parentName = c.parentId && typeof c.parentId === 'object' ? (c.parentId as { name?: string }).name : null;
+                      return (
+                        <button key={c._id} type="button"
+                          onClick={() => setForm(f => ({ ...f, selectedCategories: selected ? f.selectedCategories.filter(id => id !== c._id) : [...f.selectedCategories, c._id] }))}
+                          className={`px-3 py-1 rounded-lg text-xs font-semibold border transition-all ${selected ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-600 border-slate-200 hover:border-blue-300'}`}>
+                          {parentName ? `${parentName} › ${c.name}` : c.name}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
 
             {/* Apply to Specific Products */}
             {allFrames.length > 0 && (

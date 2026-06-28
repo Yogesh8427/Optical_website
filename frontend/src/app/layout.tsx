@@ -7,6 +7,7 @@ import { LanguageProvider } from '@/contexts/LanguageContext';
 import ThemeProvider from '@/components/ThemeProvider';
 import DynamicTitle from '@/components/DynamicTitle';
 import PwaInstallPrompt from '@/components/PwaInstallPrompt';
+import RegisterSW from '@/components/RegisterSW';
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -29,7 +30,7 @@ export const metadata: Metadata = {
   },
   appleWebApp: {
     capable: true,
-    statusBarStyle: 'default',
+    statusBarStyle: 'black-translucent',
     title: 'OptiVision',
   },
   viewport: {
@@ -52,6 +53,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             {children}
             <Toaster richColors position="top-right" />
             <PwaInstallPrompt />
+            <RegisterSW />
           </Providers>
         </LanguageProvider>
       </body>

@@ -24,15 +24,15 @@ export default function CategoryGrid() {
 
   if (isLoading) {
     return (
-      <section className="py-20 bg-white">
+      <section className="py-6 md:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-12 text-center">
+          <div className="mb-5 md:mb-12 text-center">
             <span className="text-xs font-black uppercase tracking-widest" style={{ color: 'var(--theme-primary)' }}>
               Collections
             </span>
-            <h2 className="mt-3 text-4xl md:text-5xl font-black text-slate-900 tracking-tight">Browse Categories</h2>
+            <h2 className="mt-3 text-2xl md:text-5xl font-black text-slate-900 tracking-tight">Browse Categories</h2>
           </div>
-          <div className="flex gap-5 overflow-x-auto pb-4 md:grid md:grid-cols-3 md:overflow-visible">
+          <div className="flex overflow-x-auto overflow-y-hidden gap-4 pb-3 md:grid md:grid-cols-3 md:gap-5 md:overflow-visible md:pb-0">
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="flex-shrink-0 w-36 sm:w-44 md:w-auto h-32 sm:h-40 md:h-64 bg-slate-100 rounded-2xl animate-pulse" />
             ))}
@@ -43,7 +43,7 @@ export default function CategoryGrid() {
   }
 
   return (
-    <section className="py-20 bg-white relative overflow-hidden">
+    <section className="py-6 md:py-20 bg-white relative overflow-hidden">
       <div className="pointer-events-none select-none absolute inset-0">
         <div className="absolute top-0 right-0 w-64 h-64 rounded-full blur-3xl animate-float-drift" style={{ background: 'color-mix(in srgb, var(--theme-primary,#2563eb) 7%, transparent)', animationDelay: '1s' }} />
         <div className="absolute bottom-0 left-0 w-72 h-72 rounded-full blur-3xl animate-breathe" style={{ background: 'color-mix(in srgb, var(--theme-primary,#2563eb) 5%, transparent)' }} />
@@ -51,7 +51,7 @@ export default function CategoryGrid() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         {/* Section header */}
         <motion.div
-          className="mb-12 text-center"
+          className="mb-5 md:mb-12 text-center"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -60,14 +60,14 @@ export default function CategoryGrid() {
           <span className="text-xs font-black uppercase tracking-widest" style={{ color: 'var(--theme-primary)' }}>
             Collections
           </span>
-          <h2 className="mt-3 text-4xl md:text-5xl font-black text-slate-900 tracking-tight">
+          <h2 className="mt-3 text-2xl md:text-5xl font-black text-slate-900 tracking-tight">
             Browse Categories
           </h2>
-          <p className="mt-3 text-slate-500 text-lg">{t.home.categorySubtitle}</p>
+          <p className="mt-1 text-slate-500 text-sm md:text-lg">{t.home.categorySubtitle}</p>
         </motion.div>
 
         {/* Horizontal scroll on mobile, 3-col grid on desktop */}
-        <div className="flex gap-5 overflow-x-auto pb-4 snap-x snap-mandatory md:grid md:grid-cols-3 md:overflow-visible md:pb-0">
+        <div className="flex overflow-x-auto overflow-y-hidden gap-4 pb-3 snap-x snap-mandatory [touch-action:pan-x] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-3 md:gap-5 md:overflow-visible md:pb-0">
           {categories.map((cat, idx) => {
             const { icon: Icon } = categoryIcons[cat.slug] ?? fallbackIcon;
             return (

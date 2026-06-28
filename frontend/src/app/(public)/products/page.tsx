@@ -48,24 +48,34 @@ function ProductsPageInner() {
 
   const { data: offersData } = useOffers(true);
   const offerMap = useMemo(() => {
-    const map = new Map();
-    const getId = (x: unknown): string => typeof x === 'string' ? x : (x as { _id?: string })?._id ?? '';
-    offersData?.data?.forEach((o: {
+    const map = new Map<string, unknown>();
+    const sid = (x: unknown): string => {
+      if (!x) return '';
+      if (typeof x === 'string') return x;
+      const o = x as Record<string, unknown>;
+      return String(o._id ?? o.id ?? '');
+    };
+    (offersData?.data ?? []).forEach((o: {
       productIds?: unknown[]; brandIds?: unknown[]; categoryIds?: unknown[];
       discountType: string; discountValue: number;
     }) => {
-      o.productIds?.forEach(p => map.set(getId(p), o));
-      o.brandIds?.forEach(b => { const id = getId(b); if (id) map.set('brand:' + id, o); });
-      o.categoryIds?.forEach(c => { const id = getId(c); if (id) map.set('cat:' + id, o); });
+      o.productIds?.forEach(p => { const id = sid(p); if (id) map.set(id, o); });
+      o.brandIds?.forEach(b => { const id = sid(b); if (id) map.set('brand:' + id, o); });
+      o.categoryIds?.forEach(c => { const id = sid(c); if (id) map.set('cat:' + id, o); });
     });
     return map;
   }, [offersData]);
 
   function getOffer(frame: { _id: string; brandId?: unknown; categoryId?: unknown }) {
-    const getId = (x: unknown): string => typeof x === 'string' ? x : (x as { _id?: string })?._id ?? '';
+    const sid = (x: unknown): string => {
+      if (!x) return '';
+      if (typeof x === 'string') return x;
+      const o = x as Record<string, unknown>;
+      return String(o._id ?? o.id ?? '');
+    };
     return offerMap.get(frame._id)
-      ?? offerMap.get('brand:' + getId(frame.brandId))
-      ?? offerMap.get('cat:' + getId(frame.categoryId))
+      ?? offerMap.get('brand:' + sid(frame.brandId))
+      ?? offerMap.get('cat:' + sid(frame.categoryId))
       ?? null;
   }
 
@@ -88,12 +98,12 @@ function ProductsPageInner() {
   const activeCatName = catData?.data?.find((c) => c._id === filters.category)?.name;
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 pb-20">
       {/* ── Dark Hero Header ── */}
-      <section className="relative overflow-hidden text-white py-12 px-4 sm:px-6 lg:px-8" style={{ background: 'linear-gradient(135deg, var(--theme-primary, #2563eb) 0%, color-mix(in srgb, var(--theme-primary, #2563eb) 60%, #000) 100%)' }}>
+      <section className="relative overflow-hidden text-white py-6 md:py-12 px-4 sm:px-6 lg:px-8" style={{ background: 'linear-gradient(135deg, var(--theme-primary, #2563eb) 0%, color-mix(in srgb, var(--theme-primary, #2563eb) 60%, #000) 100%)' }}>
         {/* Watermark */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
-          <span className="text-[10rem] md:text-[16rem] font-black text-white/5 whitespace-nowrap tracking-widest">
+          <span className="hidden md:block text-[10rem] md:text-[16rem] font-black text-white/5 whitespace-nowrap tracking-widest">
             FRAMES
           </span>
         </div>
@@ -106,7 +116,7 @@ function ProductsPageInner() {
             <p className="text-xs font-black uppercase tracking-widest mb-3 text-white/60">
               Browse
             </p>
-            <h1 className="text-4xl md:text-5xl font-black tracking-tight text-white mb-6">
+            <h1 className="text-2xl md:text-5xl font-black tracking-tight text-white mb-4 md:mb-6">
               {activeCatName ? activeCatName : t.products.title}
             </h1>
 

@@ -15,16 +15,16 @@ export default function PopularBrands() {
 
   if (isLoading) {
     return (
-      <section className="relative overflow-hidden py-20" style={{ background: 'linear-gradient(135deg, var(--theme-primary, #2563eb) 0%, color-mix(in srgb, var(--theme-primary, #2563eb) 60%, #000) 100%)' }}>
+      <section className="relative overflow-hidden py-8 md:py-20" style={{ background: 'linear-gradient(135deg, var(--theme-primary, #2563eb) 0%, color-mix(in srgb, var(--theme-primary, #2563eb) 60%, #000) 100%)' }}>
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
-          <span className="text-[10rem] md:text-[16rem] font-black text-white/5 whitespace-nowrap tracking-widest">BRANDS</span>
+          <span className="hidden md:block text-[10rem] md:text-[16rem] font-black text-white/5 whitespace-nowrap tracking-widest">BRANDS</span>
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-12 text-center">
+          <div className="mb-6 md:mb-12 text-center">
             <span className="text-xs font-black uppercase tracking-widest text-white/60">
               Brands
             </span>
-            <h2 className="mt-3 text-4xl md:text-5xl font-black text-white tracking-tight">Popular Brands</h2>
+            <h2 className="mt-2 text-2xl md:text-5xl font-black text-white tracking-tight">Popular Brands</h2>
           </div>
           <div className="flex justify-center gap-4 flex-wrap">
             {Array.from({ length: 6 }).map((_, i) => (
@@ -37,7 +37,7 @@ export default function PopularBrands() {
   }
 
   return (
-    <section className="relative overflow-hidden py-20" style={{ background: 'linear-gradient(135deg, var(--theme-primary, #2563eb) 0%, color-mix(in srgb, var(--theme-primary, #2563eb) 60%, #000) 100%)' }}>
+    <section className="relative overflow-hidden py-8 md:py-20" style={{ background: 'linear-gradient(135deg, var(--theme-primary, #2563eb) 0%, color-mix(in srgb, var(--theme-primary, #2563eb) 60%, #000) 100%)' }}>
       {/* Floating orbs */}
       <div className="pointer-events-none select-none absolute inset-0">
         <div className="absolute -top-16 right-1/4 w-80 h-80 rounded-full bg-white/10 blur-3xl animate-float" style={{ animationDelay: '0.5s' }} />
@@ -53,7 +53,7 @@ export default function PopularBrands() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section header */}
         <motion.div
-          className="mb-12 text-center"
+          className="mb-6 md:mb-12 text-center"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -62,7 +62,7 @@ export default function PopularBrands() {
           <span className="text-xs font-black uppercase tracking-widest text-white/60">
             Brands
           </span>
-          <h2 className="mt-3 text-4xl md:text-5xl font-black text-white tracking-tight">Popular Brands</h2>
+          <h2 className="mt-2 text-2xl md:text-5xl font-black text-white tracking-tight">Popular Brands</h2>
           <p className="mt-3 text-zinc-400 text-lg">Trusted names in premium eyewear</p>
         </motion.div>
       </div>

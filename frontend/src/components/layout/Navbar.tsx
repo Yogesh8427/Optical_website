@@ -38,7 +38,7 @@ export default function Navbar() {
   return (
     <>
       <nav className={cn(
-        'sticky top-0 z-50 transition-all duration-300',
+        'hidden md:block sticky top-0 z-50 transition-all duration-300',
         scrolled
           ? 'bg-white/95 backdrop-blur-md shadow-lg border-b border-slate-100'
           : 'bg-transparent'
