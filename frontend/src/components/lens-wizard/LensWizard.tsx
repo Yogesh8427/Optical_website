@@ -54,32 +54,39 @@ export default function LensWizard({ frameId, frameName, selectedColor = '', sel
   function next() { setStep((s) => s + 1); }
   function back() { setStep((s) => s - 1); }
 
-  // When user picks "No lens" in Step 1 — skip all lens steps, go straight to contact info
+  // Zero-number path: skip prescription steps, go straight to lens brand
+  function skipToLensBrand() { setStep(4); }
+
+  // No-lens path: skip everything, go straight to contact info
   function skipToContact() { setStep(7); }
 
   function getStepTitle() {
-    if (step === 7 && !data.powerRequired) return 'Your Contact Information';
     const titles: Record<number, string> = {
-      1: 'Do you need powered lenses?',
+      1: 'Add Lenses',
       2: 'Provide your prescription',
       3: 'Prescription details',
       4: 'Select Lens Brand',
-      5: 'Select Lens Type(s)',
+      5: 'Select Lens Product',
       6: 'Additional Notes',
       7: 'Your Contact Information',
     };
-    return titles[step] ?? 'Customize Lens';
-  }
-
-  // Progress: if no lens selected, only 2 steps total (Step1 + Contact)
-  function getProgress() {
-    if (step === 7 && !data.powerRequired) return 100;
-    return (step / 7) * 100;
+    return titles[step] ?? 'Add Lenses';
   }
 
   function getStepLabel() {
-    if (step === 7 && !data.powerRequired) return 'Step 2 of 2';
+    // No-lens path (step 7 with no power and no lensBrandId chosen)
+    if (step === 7 && !data.powerRequired && !data.lensBrandId) return 'Step 2 of 2';
+    // Zero-number path: steps are 1 → 4 → 5 → 6 → 7 = 5 visible steps
+    if (!data.powerRequired && step >= 4) {
+      const zeroStepMap: Record<number, string> = { 4: 'Step 2 of 5', 5: 'Step 3 of 5', 6: 'Step 4 of 5', 7: 'Step 5 of 5' };
+      return zeroStepMap[step] ?? `Step ${step} of 7`;
+    }
     return `Step ${step} of 7`;
+  }
+
+  function getProgress() {
+    if (step === 7 && !data.powerRequired && !data.lensBrandId) return 100;
+    return (step / 7) * 100;
   }
 
   function handleClose() {
@@ -99,18 +106,18 @@ export default function LensWizard({ frameId, frameName, selectedColor = '', sel
           </div>
         </DialogHeader>
 
-        {step === 1 && <Step1Power data={data} onUpdate={update} onNext={next} onSkipToContact={skipToContact} />}
+        {step === 1 && <Step1Power data={data} onUpdate={update} onNext={next} onSkipToContact={skipToContact} onSkipToLensBrand={skipToLensBrand} />}
         {step === 2 && <Step2PrescriptionMethod data={data} onUpdate={update} onNext={next} onBack={back} />}
         {step === 3 && data.prescriptionMethod === 'upload' && <Step3aUpload data={data} onUpdate={update} onNext={next} onBack={back} />}
         {step === 3 && data.prescriptionMethod === 'manual' && <Step3bManual data={data} onUpdate={update} onNext={next} onBack={back} />}
-        {step === 4 && <Step4LensBrand data={data} onUpdate={update} onNext={next} onBack={back} />}
+        {step === 4 && <Step4LensBrand data={data} onUpdate={update} onNext={next} onBack={() => setStep(1)} />}
         {step === 5 && <Step5LensType data={data} onUpdate={update} onNext={next} onBack={back} />}
         {step === 6 && <Step6Notes data={data} onUpdate={update} onNext={next} onBack={back} />}
         {step === 7 && (
           <Step7CustomerInfo
             data={data}
             onUpdate={update}
-            onBack={() => data.powerRequired ? back() : setStep(1)}
+            onBack={back}
             onClose={handleClose}
           />
         )}

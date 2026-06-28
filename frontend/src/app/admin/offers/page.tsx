@@ -4,6 +4,8 @@ import { useOffers, useCreateOffer, useUpdateOffer, useDeleteOffer } from '@/hoo
 import { useBrands } from '@/hooks/useBrands';
 import { useCategories } from '@/hooks/useCategories';
 import { useFrames } from '@/hooks/useFrames';
+import { useLensBrands } from '@/hooks/useLensBrands';
+import { useLensProducts } from '@/hooks/useLensProducts';
 import { Offer } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -28,6 +30,8 @@ const emptyForm = {
   selectedBrands: [] as string[],
   selectedCategories: [] as string[],
   selectedProducts: [] as string[],
+  selectedLensBrands: [] as string[],
+  selectedLensTypes: [] as string[],
 };
 
 function fmtDate(d?: string) {
@@ -41,9 +45,13 @@ export default function AdminOffersPage() {
   const { data: brandsData } = useBrands();
   const { data: catsData } = useCategories();
   const { data: framesData } = useFrames({ limit: 200 });
+  const { data: lensBrandsData } = useLensBrands();
+  const { data: lensProductsData } = useLensProducts();
   const allBrands = brandsData?.data ?? [];
   const allCategories = catsData?.data ?? [];
   const allFrames = framesData?.data ?? [];
+  const allLensBrands = lensBrandsData?.data ?? [];
+  const allLensTypes = lensProductsData?.data ?? [];
   const createOffer = useCreateOffer();
   const updateOffer = useUpdateOffer();
   const deleteOffer = useDeleteOffer();
@@ -82,6 +90,8 @@ export default function AdminOffersPage() {
       selectedBrands: ((o as unknown as { brandIds?: unknown[] }).brandIds ?? []).map(getId).filter(Boolean),
       selectedCategories: ((o as unknown as { categoryIds?: unknown[] }).categoryIds ?? []).map(getId).filter(Boolean),
       selectedProducts: (o.productIds ?? []).map(getId).filter(Boolean),
+      selectedLensBrands: ((o as unknown as { lensBrandIds?: unknown[] }).lensBrandIds ?? []).map(getId).filter(Boolean),
+      selectedLensTypes: ((o as unknown as { lensProductIds?: unknown[] }).lensProductIds ?? []).map(getId).filter(Boolean),
     });
     setBannerFile(null);
     setOpen(true);
@@ -90,7 +100,7 @@ export default function AdminOffersPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const fd = new FormData();
-    const { selectedBrands, selectedCategories, selectedProducts, ...rest } = form;
+    const { selectedBrands, selectedCategories, selectedProducts, selectedLensBrands, selectedLensTypes, ...rest } = form;
     Object.entries(rest).forEach(([k, v]) => fd.append(k, String(v)));
     if (selectedBrands.length === 0) fd.append('brandIds', '');
     else selectedBrands.forEach(id => fd.append('brandIds', id));
@@ -98,6 +108,10 @@ export default function AdminOffersPage() {
     else selectedCategories.forEach(id => fd.append('categoryIds', id));
     if (selectedProducts.length === 0) fd.append('productIds', '');
     else selectedProducts.forEach(id => fd.append('productIds', id));
+    if (selectedLensBrands.length === 0) fd.append('lensBrandIds', '');
+    else selectedLensBrands.forEach(id => fd.append('lensBrandIds', id));
+    if (selectedLensTypes.length === 0) fd.append('lensProductIds', '');
+    else selectedLensTypes.forEach(id => fd.append('lensProductIds', id));
     if (bannerFile) fd.append('bannerImage', bannerFile);
     try {
       if (editing) {
@@ -334,6 +348,46 @@ export default function AdminOffersPage() {
                           onChange={() => setForm(fm => ({ ...fm, selectedProducts: selected ? fm.selectedProducts.filter(id => id !== f._id) : [...fm.selectedProducts, f._id] }))}
                           className="accent-blue-600" />
                         <span className="text-sm text-slate-700">{f.name}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Apply to Lens Brands */}
+            {allLensBrands.length > 0 && (
+              <div className="space-y-1.5">
+                <Label>Apply to Lens Brands <span className="text-slate-400 font-normal text-xs">(optional — show badge when user picks this lens brand)</span></Label>
+                <div className="flex flex-wrap gap-2 p-3 border border-slate-200 rounded-xl max-h-32 overflow-y-auto">
+                  {allLensBrands.map((lb: { _id: string; name: string }) => {
+                    const selected = form.selectedLensBrands.includes(lb._id);
+                    return (
+                      <button key={lb._id} type="button"
+                        onClick={() => setForm(f => ({ ...f, selectedLensBrands: selected ? f.selectedLensBrands.filter(id => id !== lb._id) : [...f.selectedLensBrands, lb._id] }))}
+                        className={`px-3 py-1 rounded-lg text-xs font-semibold border transition-all ${selected ? 'bg-purple-600 text-white border-purple-600' : 'bg-white text-slate-600 border-slate-200 hover:border-purple-300'}`}>
+                        {lb.name}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Apply to Lens Products (Lens Types) */}
+            {allLensTypes.length > 0 && (
+              <div className="space-y-1.5">
+                <Label>Apply to Lens Products <span className="text-slate-400 font-normal text-xs">(optional — show badge on specific lens products)</span></Label>
+                <div className="flex flex-col gap-1 p-3 border border-slate-200 rounded-xl max-h-40 overflow-y-auto">
+                  {allLensTypes.map((lt: { _id: string; name: string; lensTypeId?: { name: string } }) => {
+                    const selected = form.selectedLensTypes.includes(lt._id);
+                    return (
+                      <label key={lt._id} className="flex items-center gap-2 cursor-pointer hover:bg-slate-50 px-1 py-0.5 rounded">
+                        <input type="checkbox" checked={selected}
+                          onChange={() => setForm(fm => ({ ...fm, selectedLensTypes: selected ? fm.selectedLensTypes.filter(id => id !== lt._id) : [...fm.selectedLensTypes, lt._id] }))}
+                          className="accent-purple-600" />
+                        <span className="text-sm text-slate-700">{lt.name}</span>
+                        {lt.lensTypeId?.name && <span className="text-xs text-slate-400">({lt.lensTypeId.name})</span>}
                       </label>
                     );
                   })}

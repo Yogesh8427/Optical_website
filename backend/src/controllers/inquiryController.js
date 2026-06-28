@@ -2,6 +2,7 @@ const Inquiry = require('../models/Inquiry');
 const Frame = require('../models/Frame');
 const LensBrand = require('../models/LensBrand');
 const LensProduct = require('../models/LensProduct');
+const Offer = require('../models/Offer');
 const Settings = require('../models/Settings');
 const buildWhatsAppUrl = require('../utils/whatsappMessage');
 const { uploadToCloudinary } = require('../middleware/upload');
@@ -48,8 +49,35 @@ exports.create = async (req, res, next) => {
     const frameImage = imageSlot ? imageSlot.split(',')[0].trim() : '';
 
     const siteUrl = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || '';
-
     const powerBool = powerRequired === 'true' || powerRequired === true;
+    const now = new Date();
+    const activeFilter = { active: true, $or: [{ endDate: null }, { endDate: { $gte: now } }], $and: [{ $or: [{ startDate: null }, { startDate: { $lte: now } }] }] };
+
+    // Find applicable frame offer (by product, brand, or category)
+    const frameOfferDoc = frame ? await Offer.findOne({
+      ...activeFilter,
+      $or: [
+        { productIds: frame._id },
+        { brandIds: frame.brandId },
+        { categoryIds: frame.categoryId },
+        { productIds: { $size: 0 }, brandIds: { $size: 0 }, categoryIds: { $size: 0 }, lensBrandIds: { $size: 0 }, lensProductIds: { $size: 0 } },
+      ],
+    }) : null;
+
+    // Find applicable lens offer (by lens brand or lens product)
+    const lensOfferDoc = lensBrandId || lensProductId ? await Offer.findOne({
+      ...activeFilter,
+      $or: [
+        ...(lensBrandId ? [{ lensBrandIds: lensBrandId }] : []),
+        ...(lensProductId ? [{ lensProductIds: lensProductId }] : []),
+      ],
+    }) : null;
+
+    function offerLabel(o) {
+      if (!o) return null;
+      const disc = o.discountType === 'percentage' ? `${o.discountValue}% OFF` : `₹${o.discountValue} OFF`;
+      return `${o.title} — ${disc}${o.couponCode ? ` (Code: ${o.couponCode})` : ''}`;
+    }
 
     const whatsappUrl = settings?.whatsappNumber
       ? buildWhatsAppUrl(settings.whatsappNumber, {
@@ -68,6 +96,8 @@ exports.create = async (req, res, next) => {
           customerName, phone, email, city, notes,
           needsCheckup:  needsCheckup === 'true' || needsCheckup === true,
           siteUrl,
+          frameOffer: offerLabel(frameOfferDoc),
+          lensOffer:  offerLabel(lensOfferDoc),
         })
       : null;
 

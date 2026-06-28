@@ -3,13 +3,24 @@ import { Button } from '@/components/ui/button';
 import { Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLensProducts, type LensProduct } from '@/hooks/useLensProducts';
+import { useOffers } from '@/hooks/useOffers';
 import type { WizardFormData } from '@/types';
 
 interface Props { data: WizardFormData; onUpdate: (p: Partial<WizardFormData>) => void; onNext: () => void; onBack: () => void; }
 
 export default function Step5LensType({ data, onUpdate, onNext, onBack }: Props) {
   const { data: res, isLoading } = useLensProducts(data.lensBrandId || undefined);
+  const { data: offersRes } = useOffers(true);
   const products = res?.data ?? [];
+
+  // Build a map: lensProductId → offer
+  const lensTypeOfferMap = new Map<string, { discountType: string; discountValue: number; title: string }>();
+  (offersRes?.data ?? []).forEach((o: { lensProductIds?: Array<{ _id?: string } | string>; discountType: string; discountValue: number; title: string }) => {
+    o.lensProductIds?.forEach((lp) => {
+      const id = typeof lp === 'string' ? lp : lp._id ?? '';
+      if (id) lensTypeOfferMap.set(id, o);
+    });
+  });
 
   const selectedId = data.lensTypes[0] ?? '';
 
@@ -41,13 +52,14 @@ export default function Step5LensType({ data, onUpdate, onNext, onBack }: Props)
       <div className="space-y-2">
         {products.map((p: LensProduct) => {
           const active = selectedId === p._id;
+          const offer = lensTypeOfferMap.get(p._id);
           return (
             <button
               key={p._id}
               type="button"
               onClick={() => select(p._id)}
               className={cn(
-                'w-full flex items-center justify-between gap-4 px-4 py-3 rounded-xl border-2 text-left transition-all',
+                'relative w-full flex items-center justify-between gap-4 px-4 py-3 rounded-xl border-2 text-left transition-all',
                 active ? 'shadow-sm' : 'border-slate-200 hover:border-slate-300 bg-white'
               )}
               style={active ? {
@@ -55,6 +67,13 @@ export default function Step5LensType({ data, onUpdate, onNext, onBack }: Props)
                 background: 'color-mix(in srgb, var(--theme-primary, #2563eb) 8%, white)',
               } : {}}
             >
+              {/* Offer badge */}
+              {offer && (
+                <span className="absolute -top-2 -right-2 text-[10px] font-black text-white px-1.5 py-0.5 rounded-full z-10"
+                  style={{ background: 'var(--theme-primary, #2563eb)' }}>
+                  {offer.discountType === 'percentage' ? `${offer.discountValue}% OFF` : `₹${offer.discountValue} OFF`}
+                </span>
+              )}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
                   <p className="font-bold text-sm" style={active ? { color: 'var(--theme-primary, #2563eb)' } : { color: '#1e293b' }}>
@@ -63,6 +82,12 @@ export default function Step5LensType({ data, onUpdate, onNext, onBack }: Props)
                   {p.lensTypeId?.name && (
                     <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 font-bold">
                       {p.lensTypeId.name}
+                    </span>
+                  )}
+                  {offer && (
+                    <span className="text-[10px] px-2 py-0.5 rounded-full font-bold text-white"
+                      style={{ background: 'var(--theme-primary, #2563eb)' }}>
+                      {offer.title}
                     </span>
                   )}
                 </div>

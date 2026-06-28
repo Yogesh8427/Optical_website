@@ -6,6 +6,7 @@ function buildWhatsAppUrl(whatsappNumber, inquiry) {
     rightEye, leftEye, add,
     customerName, phone, email, city, notes,
     needsCheckup, siteUrl,
+    frameOffer, lensOffer,
   } = inquiry;
 
   const divider = '─────────────────';
@@ -62,6 +63,12 @@ function buildWhatsAppUrl(whatsappNumber, inquiry) {
     city  ? `*City:* ${city}`   : null,
     needsCheckup ? '*Needs eye check-up at store*' : null,
     notes ? `*Notes:* ${notes}` : null,
+
+    // Offers customer is eligible for
+    (frameOffer || lensOffer) ? divider : null,
+    (frameOffer || lensOffer) ? '*🎁 Applicable Offers:*' : null,
+    frameOffer ? `• ${frameOffer}` : null,
+    lensOffer  ? `• ${lensOffer}`  : null,
 
     divider,
     'Please reply with price quote and availability.',

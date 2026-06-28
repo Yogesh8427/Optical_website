@@ -5,6 +5,7 @@ import OffersSection from '@/components/home/OffersSection';
 import CouponsSection from '@/components/home/CouponsSection';
 import NewArrivals from '@/components/home/NewArrivals';
 import PopularBrands from '@/components/home/PopularBrands';
+import RepairSection from '@/components/home/RepairSection';
 import Testimonials from '@/components/home/Testimonials';
 import FAQSection from '@/components/home/FAQSection';
 import ContactSection from '@/components/home/ContactSection';
@@ -28,6 +29,7 @@ export default function HomePage() {
       <FadeIn delay={0.05}><CouponsSection /></FadeIn>
       <FadeIn delay={0.05}><NewArrivals /></FadeIn>
       <FadeIn delay={0.05}><PopularBrands /></FadeIn>
+      <FadeIn delay={0.05}><RepairSection /></FadeIn>
       <FadeIn delay={0.05}><Testimonials /></FadeIn>
       <FadeIn delay={0.05}><FAQSection /></FadeIn>
       <ContactSection />

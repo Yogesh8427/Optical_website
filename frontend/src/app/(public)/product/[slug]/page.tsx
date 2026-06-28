@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import ProductCard from '@/components/products/ProductCard';
 import LensWizard from '@/components/lens-wizard/LensWizard';
-import { Check, X, ZoomIn } from 'lucide-react';
+import { Check, X, ZoomIn, Share2, Copy, CheckCheck } from 'lucide-react';
 
 function WhatsAppIcon({ className }: { className?: string }) {
   return (
@@ -21,6 +21,34 @@ function WhatsAppIcon({ className }: { className?: string }) {
 import ImageZoom from '@/components/ui/ImageZoom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import type { Frame } from '@/types';
+
+function ShareButton({ name, slug, image }: { name: string; slug: string; image?: string }) {
+  const [copied, setCopied] = useState(false);
+  const url = typeof window !== 'undefined' ? `${window.location.origin}/product/${slug}` : `/product/${slug}`;
+
+  async function handleShare() {
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: name, text: `Check out ${name}`, url });
+      } catch { /* user cancelled */ }
+    } else {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  }
+
+  return (
+    <button
+      onClick={handleShare}
+      title="Share this product"
+      className="flex items-center justify-center gap-2 px-4 py-3 rounded-2xl border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all text-slate-600 text-sm font-semibold shrink-0"
+    >
+      {copied ? <CheckCheck className="w-4 h-4 text-green-500" /> : <Share2 className="w-4 h-4" />}
+      {copied ? 'Copied!' : 'Share'}
+    </button>
+  );
+}
 
 const COLOR_MAP: Record<string, string> = {
   gold: 'bg-yellow-400', silver: 'bg-gray-300', black: 'bg-gray-900',
@@ -509,15 +537,18 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
               <WhatsAppIcon className="w-5 h-5" />
               Inquire on WhatsApp
             </button>
-            {frame.requiresLens !== false && (
-              <button
-                onClick={() => setWizardOpen(true)}
-                className="w-full border-2 text-sm font-semibold py-3 rounded-2xl transition-all flex items-center justify-center gap-2 hover:bg-gray-50"
-                style={{ borderColor: 'var(--theme-primary, #2563eb)', color: 'var(--theme-primary, #2563eb)' }}
-              >
-                Add Power
-              </button>
-            )}
+            <div className="flex gap-3">
+              {frame.requiresLens !== false && (
+                <button
+                  onClick={() => setWizardOpen(true)}
+                  className="flex-1 border-2 text-sm font-semibold py-3 rounded-2xl transition-all flex items-center justify-center gap-2 hover:bg-gray-50"
+                  style={{ borderColor: 'var(--theme-primary, #2563eb)', color: 'var(--theme-primary, #2563eb)' }}
+                >
+                  Add Lenses
+                </button>
+              )}
+              <ShareButton name={frame.name} slug={frame.slug} image={displayImage ?? frame.images?.[0]?.split(',')[0]?.trim()} />
+            </div>
           </div>
         </div>
       </div>

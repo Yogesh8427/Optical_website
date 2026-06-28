@@ -19,6 +19,8 @@ exports.getAll = async (req, res, next) => {
       .populate('productIds', 'name slug images framePrice')
       .populate('brandIds', 'name logo')
       .populate('categoryIds', 'name slug')
+      .populate('lensBrandIds', 'name logo')
+      .populate('lensProductIds', 'name')
       .sort({ createdAt: -1 });
     res.json({ success: true, data: offers });
   } catch (err) { next(err); }
@@ -26,14 +28,16 @@ exports.getAll = async (req, res, next) => {
 
 exports.create = async (req, res, next) => {
   try {
-    const { title, description, occasionName, discountType, discountValue, productIds, brandIds, categoryIds, bgColor, startDate, endDate, active } = req.body;
+    const { title, description, occasionName, discountType, discountValue, productIds, brandIds, categoryIds, lensBrandIds, lensProductIds, bgColor, startDate, endDate, active } = req.body;
     let bannerImage = '';
     if (req.file) bannerImage = await uploadToCloudinary(req.file.buffer, 'offers');
     const offer = await Offer.create({
       title, description, occasionName, discountType, discountValue,
-      productIds: parseIds(productIds),
-      brandIds: parseIds(brandIds),
-      categoryIds: parseIds(categoryIds),
+      productIds:    parseIds(productIds),
+      brandIds:      parseIds(brandIds),
+      categoryIds:   parseIds(categoryIds),
+      lensBrandIds:  parseIds(lensBrandIds),
+      lensProductIds: parseIds(lensProductIds),
       bannerImage, bgColor, startDate, endDate, active,
     });
     res.status(201).json({ success: true, data: offer });
@@ -42,11 +46,13 @@ exports.create = async (req, res, next) => {
 
 exports.update = async (req, res, next) => {
   try {
-    const { title, description, occasionName, discountType, discountValue, productIds, brandIds, categoryIds, bgColor, startDate, endDate, active } = req.body;
+    const { title, description, occasionName, discountType, discountValue, productIds, brandIds, categoryIds, lensBrandIds, lensProductIds, bgColor, startDate, endDate, active } = req.body;
     const updates = { title, description, occasionName, discountType, discountValue, bgColor, startDate, endDate, active };
-    if (productIds  !== undefined) updates.productIds  = parseIds(productIds);
-    if (brandIds    !== undefined) updates.brandIds    = parseIds(brandIds);
-    if (categoryIds !== undefined) updates.categoryIds = parseIds(categoryIds);
+    if (productIds     !== undefined) updates.productIds     = parseIds(productIds);
+    if (brandIds       !== undefined) updates.brandIds       = parseIds(brandIds);
+    if (categoryIds    !== undefined) updates.categoryIds    = parseIds(categoryIds);
+    if (lensBrandIds   !== undefined) updates.lensBrandIds   = parseIds(lensBrandIds);
+    if (lensProductIds !== undefined) updates.lensProductIds = parseIds(lensProductIds);
     if (req.file) updates.bannerImage = await uploadToCloudinary(req.file.buffer, 'offers');
     const offer = await Offer.findByIdAndUpdate(req.params.id, updates, { new: true });
     if (!offer) return res.status(404).json({ success: false, message: 'Offer not found' });
