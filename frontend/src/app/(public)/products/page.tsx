@@ -173,10 +173,11 @@ function ProductsPageInner() {
             <X className="w-4 h-4 text-slate-600" />
           </button>
         </div>
-        <div className="overflow-y-auto px-5 py-4" style={{ maxHeight: 'calc(85vh - 64px)' }}>
+        {/* pb-20 ensures "Apply" button clears the h-16 bottom nav */}
+        <div className="overflow-y-auto px-5 py-4 pb-20" style={{ maxHeight: 'calc(85vh - 64px)' }}>
           <ProductFilters
             filters={filters}
-            onChange={(f) => { setFilters(f); setPage(1); }}
+            onChange={(f) => { setFilters(f); setPage(1); setFilterOpen(false); }}
             onReset={() => { setFilters(EMPTY); setPage(1); }}
           />
           <button
@@ -184,8 +185,18 @@ function ProductsPageInner() {
             className="w-full mt-4 py-3 rounded-xl text-white font-black text-sm btn-glow"
             style={{ background: 'var(--theme-primary, #2563eb)' }}
           >
-            Show Results
+            {Object.values(filters).some(Boolean)
+              ? `Apply Filters (${Object.values(filters).filter(Boolean).length} active)`
+              : 'Apply Filters'}
           </button>
+          {Object.values(filters).some(Boolean) && (
+            <button
+              onClick={() => { setFilters(EMPTY); setPage(1); setFilterOpen(false); }}
+              className="w-full mt-2 py-2.5 rounded-xl text-slate-500 font-semibold text-sm border border-slate-200"
+            >
+              Clear All Filters
+            </button>
+          )}
         </div>
       </div>
 
