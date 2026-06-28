@@ -4,6 +4,7 @@ import { Offer } from '@/types';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import ScrollRow from '@/components/ui/ScrollRow';
 
 function getOfferLink(offer: Offer & { brandIds?: Array<{_id:string;name:string}>; categoryIds?: Array<{_id:string;slug:string}> }) {
   const b = offer.brandIds?.[0];
@@ -40,7 +41,7 @@ export default function OffersSection() {
           <h2 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight">Exclusive Deals</h2>
         </div>
 
-        <div className="flex overflow-x-auto gap-4 pb-3 snap-x snap-mandatory [touch-action:pan-x] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-5 md:overflow-visible md:pb-0">
+        <ScrollRow className="flex overflow-x-auto gap-4 pb-3 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-5 md:overflow-visible md:pb-0">
           {offers.map((offer, i) => (
             <motion.div
               key={offer._id}
@@ -110,7 +111,7 @@ export default function OffersSection() {
               </div>
             </motion.div>
           ))}
-        </div>
+        </ScrollRow>
       </div>
     </section>
   );

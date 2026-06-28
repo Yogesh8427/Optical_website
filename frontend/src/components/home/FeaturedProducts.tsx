@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useOffers } from "@/hooks/useOffers";
 import { motion } from "framer-motion";
+import ScrollRow from '@/components/ui/ScrollRow';
 
 export default function FeaturedProducts() {
   const { t } = useLanguage();
@@ -80,7 +81,7 @@ export default function FeaturedProducts() {
         </motion.div>
 
         {/* Horizontal scroll on mobile, grid on desktop */}
-<div className="flex overflow-x-auto gap-4 pb-3 snap-x snap-mandatory [touch-action:pan-x] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-4 md:gap-5 md:overflow-visible md:pb-0">
+<ScrollRow className="flex overflow-x-auto gap-4 pb-3 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-4 md:gap-5 md:overflow-visible md:pb-0">
           {isLoading
             ? Array.from({ length: 4 }).map((_, i) => (
                 <div
@@ -105,7 +106,7 @@ export default function FeaturedProducts() {
                   />
                 </motion.div>
               ))}
-        </div>
+        </ScrollRow>
       </div>
     </section>
   );

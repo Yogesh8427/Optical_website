@@ -4,6 +4,7 @@ import api from '@/lib/api';
 import type { Testimonial, ApiResponse } from '@/types';
 import { Star } from 'lucide-react';
 import { motion } from 'framer-motion';
+import ScrollRow from '@/components/ui/ScrollRow';
 
 export default function Testimonials() {
   const { data, isLoading } = useQuery<ApiResponse<Testimonial[]>>({
@@ -50,7 +51,7 @@ export default function Testimonials() {
         </motion.div>
 
         {/* Horizontal scroll on mobile, grid on desktop */}
-        <div className="flex overflow-x-auto gap-4 pb-3 snap-x snap-mandatory [touch-action:pan-x] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-3 md:gap-5 md:overflow-visible md:pb-0">
+        <ScrollRow className="flex overflow-x-auto gap-4 pb-3 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-3 md:gap-5 md:overflow-visible md:pb-0">
           {testimonials.map((t, idx) => (
             <motion.div
               key={t._id}
@@ -98,7 +99,7 @@ export default function Testimonials() {
               </div>
             </motion.div>
           ))}
-        </div>
+        </ScrollRow>
       </div>
     </section>
   );

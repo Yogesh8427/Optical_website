@@ -5,6 +5,7 @@ import ProductCard from '@/components/products/ProductCard';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useOffers } from '@/hooks/useOffers';
 import { motion } from 'framer-motion';
+import ScrollRow from '@/components/ui/ScrollRow';
 
 export default function NewArrivals() {
   const { data, isLoading } = useFrames({ limit: 4 });
@@ -41,7 +42,7 @@ export default function NewArrivals() {
         </motion.div>
 
         {/* Horizontal scroll on mobile, grid on desktop */}
-        <div className="flex overflow-x-auto gap-4 pb-3 snap-x snap-mandatory [touch-action:pan-x] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-4 md:gap-5 md:overflow-visible md:pb-0">
+        <ScrollRow className="flex overflow-x-auto gap-4 pb-3 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-4 md:gap-5 md:overflow-visible md:pb-0">
           {isLoading
             ? Array.from({ length: 4 }).map((_, i) => (
                 <div key={i} className="flex-shrink-0 w-[140px] md:w-auto snap-start">
@@ -60,7 +61,7 @@ export default function NewArrivals() {
                   <ProductCard frame={frame} offer={offerMap.get(frame._id) ?? null} />
                 </motion.div>
               ))}
-        </div>
+        </ScrollRow>
       </div>
     </section>
   );

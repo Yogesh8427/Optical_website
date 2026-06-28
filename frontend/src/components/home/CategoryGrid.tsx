@@ -5,6 +5,7 @@ import { useCategories } from '@/hooks/useCategories';
 import { Glasses, Sun, Monitor, Dumbbell, Baby, Sparkles } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { motion } from 'framer-motion';
+import ScrollRow from '@/components/ui/ScrollRow';
 
 const categoryIcons: Record<string, { icon: React.ElementType; color: string }> = {
   'mens-glasses':     { icon: Glasses,  color: 'text-slate-300' },
@@ -32,11 +33,11 @@ export default function CategoryGrid() {
             </span>
             <h2 className="mt-3 text-2xl md:text-5xl font-black text-slate-900 tracking-tight">Browse Categories</h2>
           </div>
-          <div className="flex overflow-x-auto gap-4 pb-3 [touch-action:pan-x] md:grid md:grid-cols-3 md:gap-5 md:overflow-visible md:pb-0">
+          <ScrollRow className="flex overflow-x-auto gap-4 pb-3 md:grid md:grid-cols-3 md:gap-5 md:overflow-visible md:pb-0">
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="flex-shrink-0 w-36 sm:w-44 md:w-auto h-32 sm:h-40 md:h-64 bg-slate-100 rounded-2xl animate-pulse" />
             ))}
-          </div>
+          </ScrollRow>
         </div>
       </section>
     );
@@ -67,7 +68,7 @@ export default function CategoryGrid() {
         </motion.div>
 
         {/* Horizontal scroll on mobile, 3-col grid on desktop */}
-        <div className="flex overflow-x-auto gap-4 pb-3 snap-x snap-mandatory [touch-action:pan-x] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-3 md:gap-5 md:overflow-visible md:pb-0">
+        <ScrollRow className="flex overflow-x-auto gap-4 pb-3 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-3 md:gap-5 md:overflow-visible md:pb-0">
           {categories.map((cat, idx) => {
             const { icon: Icon } = categoryIcons[cat.slug] ?? fallbackIcon;
             return (
@@ -118,7 +119,7 @@ export default function CategoryGrid() {
               </motion.div>
             );
           })}
-        </div>
+        </ScrollRow>
       </div>
     </section>
   );
