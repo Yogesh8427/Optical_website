@@ -11,7 +11,7 @@ interface Props {
 
 export default function FadeIn({ children, delay = 0, className, direction = 'up' }: Props) {
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-60px' });
+  const inView = useInView(ref, { once: true, margin: '0px' });
 
   const initial = {
     opacity: 0,

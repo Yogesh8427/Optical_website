@@ -67,7 +67,7 @@ export default function CategoryGrid() {
         </motion.div>
 
         {/* Horizontal scroll on mobile, 3-col grid on desktop */}
-        <div className="flex overflow-x-auto overflow-y-hidden gap-4 pb-3 snap-x snap-mandatory [touch-action:pan-x] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-3 md:gap-5 md:overflow-visible md:pb-0">
+        <div className="flex overflow-x-auto overflow-y-hidden gap-4 pb-3 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-3 md:gap-5 md:overflow-visible md:pb-0">
           {categories.map((cat, idx) => {
             const { icon: Icon } = categoryIcons[cat.slug] ?? fallbackIcon;
             return (

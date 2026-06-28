@@ -177,7 +177,7 @@ function ProductsPageInner() {
         <div className="overflow-y-auto px-5 py-4 pb-20" style={{ maxHeight: 'calc(85vh - 64px)' }}>
           <ProductFilters
             filters={filters}
-            onChange={(f) => { setFilters(f); setPage(1); setFilterOpen(false); }}
+            onChange={(f) => { setFilters(f); setPage(1); }}
             onReset={() => { setFilters(EMPTY); setPage(1); }}
           />
           <button
