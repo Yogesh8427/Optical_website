@@ -5,7 +5,7 @@ import ProductCard from '@/components/products/ProductCard';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useOffers } from '@/hooks/useOffers';
 import { motion } from 'framer-motion';
-import ScrollRow from '@/components/ui/ScrollRow';
+import Link from 'next/link';
 
 export default function NewArrivals() {
   const { data, isLoading } = useFrames({ limit: 4 });
@@ -41,18 +41,14 @@ export default function NewArrivals() {
           <p className="mt-1 text-slate-500 text-sm md:text-lg">Fresh styles added to our collection</p>
         </motion.div>
 
-        {/* Horizontal scroll on mobile, grid on desktop */}
-        <ScrollRow className="flex overflow-x-auto gap-4 pb-3 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-4 md:gap-5 md:overflow-visible md:pb-0">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5">
           {isLoading
             ? Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="flex-shrink-0 w-[140px] md:w-auto snap-start">
-                  <Skeleton className="h-56 rounded-xl bg-slate-100" />
-                </div>
+                <Skeleton key={i} className="h-56 rounded-xl bg-slate-100" />
               ))
             : frames.map((frame, idx) => (
                 <motion.div
                   key={frame._id}
-                  className="flex-shrink-0 w-[140px] md:w-auto snap-start"
                   initial={{ opacity: 0, y: 32 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -61,7 +57,18 @@ export default function NewArrivals() {
                   <ProductCard frame={frame} offer={offerMap.get(frame._id) ?? null} />
                 </motion.div>
               ))}
-        </ScrollRow>
+        </div>
+
+        {/* View All */}
+        <div className="mt-8 text-center">
+          <Link
+            href="/products"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm border-2 transition-colors"
+            style={{ borderColor: 'var(--theme-primary)', color: 'var(--theme-primary)' }}
+          >
+            View All Products &rarr;
+          </Link>
+        </div>
       </div>
     </section>
   );

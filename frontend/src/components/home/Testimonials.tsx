@@ -4,14 +4,13 @@ import api from '@/lib/api';
 import type { Testimonial, ApiResponse } from '@/types';
 import { Star } from 'lucide-react';
 import { motion } from 'framer-motion';
-import ScrollRow from '@/components/ui/ScrollRow';
 
 export default function Testimonials() {
   const { data, isLoading } = useQuery<ApiResponse<Testimonial[]>>({
     queryKey: ['testimonials'],
     queryFn: () => api.get('/testimonials').then((r) => r.data),
   });
-  const testimonials = data?.data ?? [];
+  const testimonials = (data?.data ?? []).slice(0, 4);
   if (isLoading) return (
     <section className="py-6 md:py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -50,12 +49,11 @@ export default function Testimonials() {
           </h2>
         </motion.div>
 
-        {/* Horizontal scroll on mobile, grid on desktop */}
-        <ScrollRow className="flex overflow-x-auto gap-4 pb-3 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-3 md:gap-5 md:overflow-visible md:pb-0">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-5">
           {testimonials.map((t, idx) => (
             <motion.div
               key={t._id}
-              className="flex-shrink-0 w-[280px] md:w-auto snap-start"
+              className=""
               initial={{ opacity: 0, y: 32 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -99,7 +97,7 @@ export default function Testimonials() {
               </div>
             </motion.div>
           ))}
-        </ScrollRow>
+        </div>
       </div>
     </section>
   );

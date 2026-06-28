@@ -7,11 +7,10 @@ import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useOffers } from "@/hooks/useOffers";
 import { motion } from "framer-motion";
-import ScrollRow from '@/components/ui/ScrollRow';
 
 export default function FeaturedProducts() {
   const { t } = useLanguage();
-  const { data, isLoading } = useFrames({ featured: true, limit: 8 });
+  const { data, isLoading } = useFrames({ featured: true, limit: 4 });
   const frames = data?.data ?? [];
   const { data: offersData } = useOffers(true);
   const offerMap = useMemo(() => {
@@ -80,21 +79,14 @@ export default function FeaturedProducts() {
           </Link>
         </motion.div>
 
-        {/* Horizontal scroll on mobile, grid on desktop */}
-<ScrollRow className="flex overflow-x-auto gap-4 pb-3 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-4 md:gap-5 md:overflow-visible md:pb-0">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5">
           {isLoading
             ? Array.from({ length: 4 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="flex-shrink-0 w-[140px] md:w-auto snap-start"
-                >
-                  <Skeleton className="h-56 rounded-xl bg-slate-800" />
-                </div>
+                <Skeleton key={i} className="h-56 rounded-xl bg-slate-800" />
               ))
             : frames.map((frame, idx) => (
                 <motion.div
                   key={frame._id}
-                  className="flex-shrink-0 w-[140px] md:w-auto snap-start"
                   initial={{ opacity: 0, y: 28 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -106,7 +98,7 @@ export default function FeaturedProducts() {
                   />
                 </motion.div>
               ))}
-        </ScrollRow>
+        </div>
       </div>
     </section>
   );

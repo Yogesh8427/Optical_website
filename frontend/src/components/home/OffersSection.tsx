@@ -4,7 +4,6 @@ import { Offer } from '@/types';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import ScrollRow from '@/components/ui/ScrollRow';
 
 function getOfferLink(offer: Offer & { brandIds?: Array<{_id:string;name:string}>; categoryIds?: Array<{_id:string;slug:string}> }) {
   const b = offer.brandIds?.[0];
@@ -27,7 +26,8 @@ function getOfferLink(offer: Offer & { brandIds?: Array<{_id:string;name:string}
 
 export default function OffersSection() {
   const { data } = useOffers(true);
-  const offers: Offer[] = data?.data ?? [];
+  const allOffers: Offer[] = data?.data ?? [];
+  const offers = allOffers.slice(0, 4);
   if (!offers.length) return null;
 
   return (
@@ -41,7 +41,7 @@ export default function OffersSection() {
           <h2 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight">Exclusive Deals</h2>
         </div>
 
-        <ScrollRow className="flex overflow-x-auto gap-4 pb-3 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-5 md:overflow-visible md:pb-0">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
           {offers.map((offer, i) => (
             <motion.div
               key={offer._id}
@@ -49,7 +49,7 @@ export default function OffersSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-40px' }}
               transition={{ duration: 0.4, delay: i * 0.08, ease: 'easeOut' }}
-              className="flex-shrink-0 w-[260px] md:w-auto snap-start relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 min-h-[200px] flex flex-col justify-between"
+              className="relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 min-h-[200px] flex flex-col justify-between"
               style={{ backgroundColor: offer.bgColor || '#2563eb' }}
             >
               {/* Background image */}
@@ -111,7 +111,19 @@ export default function OffersSection() {
               </div>
             </motion.div>
           ))}
-        </ScrollRow>
+        </div>
+
+        {allOffers.length > 4 && (
+          <div className="mt-8 text-center">
+            <Link
+              href="/coupons"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm border-2 transition-colors"
+              style={{ borderColor: 'var(--theme-primary)', color: 'var(--theme-primary)' }}
+            >
+              View All Offers &rarr;
+            </Link>
+          </div>
+        )}
       </div>
     </section>
   );
