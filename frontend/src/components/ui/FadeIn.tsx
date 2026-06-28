@@ -11,20 +11,17 @@ interface Props {
 
 export default function FadeIn({ children, delay = 0, className, direction = 'up' }: Props) {
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '0px' });
+  const inView = useInView(ref, { once: true, amount: 0.1 });
 
-  const initial = {
-    opacity: 0,
-    y: direction === 'up' ? 32 : 0,
-    x: direction === 'left' ? -32 : direction === 'right' ? 32 : 0,
-  };
+  const hiddenY = direction === 'up' ? 24 : 0;
+  const hiddenX = direction === 'left' ? -24 : direction === 'right' ? 24 : 0;
 
   return (
     <motion.div
       ref={ref}
-      initial={initial}
-      animate={inView ? { opacity: 1, y: 0, x: 0 } : initial}
-      transition={{ duration: 0.55, delay, ease: [0.22, 1, 0.36, 1] }}
+      initial={{ opacity: 0, y: hiddenY, x: hiddenX }}
+      animate={inView ? { opacity: 1, y: 0, x: 0 } : { opacity: 0, y: hiddenY, x: hiddenX }}
+      transition={{ duration: 0.45, delay, ease: [0.22, 1, 0.36, 1] }}
       className={className}
     >
       {children}

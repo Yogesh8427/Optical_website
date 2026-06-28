@@ -575,7 +575,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
         <div>
           <p className="text-xs font-black tracking-widest uppercase mb-1" style={{ color: 'var(--theme-primary)' }}>RELATED</p>
           <h2 className="text-lg md:text-2xl font-black tracking-tight text-gray-900 mb-4">Related Products</h2>
-          <div className="flex overflow-x-auto overflow-y-hidden gap-4 pb-3 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-4 md:overflow-visible md:pb-0">
+          <div className="flex overflow-x-auto gap-4 pb-3 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-4 md:overflow-visible md:pb-0">
             {related.map((f) => (
               <div key={f._id} className="flex-shrink-0 w-[140px] md:w-auto snap-start">
                 <ProductCard frame={f} />
