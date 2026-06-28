@@ -48,7 +48,7 @@ function ProductsPageInner() {
 
   const { data: offersData } = useOffers(true);
   const offerMap = useMemo(() => {
-    const map = new Map<string, unknown>();
+    const map = new Map<string, { discountType: string; discountValue: number }>();
     const sid = (x: unknown): string => {
       if (!x) return '';
       if (typeof x === 'string') return x;
